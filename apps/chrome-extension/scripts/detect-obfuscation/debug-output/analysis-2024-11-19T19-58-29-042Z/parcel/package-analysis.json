@@ -1,0 +1,48 @@
+{
+  "files": [
+    {
+      "matchCount": 12,
+      "name": "changelog.ec1332e2.js",
+      "patterns": [
+        "suspiciousHex",
+        "functionConstruction",
+        "unicodeEscapes",
+        "suspiciousBase64",
+        "encodedEval"
+      ]
+    },
+    {
+      "matchCount": 12,
+      "name": "changelog.ec1332e2.js",
+      "patterns": [
+        "suspiciousHex",
+        "functionConstruction",
+        "unicodeEscapes",
+        "suspiciousBase64",
+        "encodedEval"
+      ]
+    },
+    {
+      "matchCount": 12,
+      "name": "pdf.worker.min.5b13412d.js",
+      "patterns": ["functionConstruction", "hexStrings", "unicodeEscapes"]
+    },
+    {
+      "matchCount": 12,
+      "name": "pdf.worker.min.5b13412d.js",
+      "patterns": ["functionConstruction", "hexStrings", "unicodeEscapes"]
+    },
+    {
+      "matchCount": 12,
+      "name": "pdf.worker.min.5b13412d.js",
+      "patterns": ["functionConstruction", "hexStrings", "unicodeEscapes"]
+    },
+    {
+      "matchCount": 12,
+      "name": "pdf.worker.min.5b13412d.js",
+      "patterns": ["functionConstruction", "hexStrings", "unicodeEscapes"]
+    }
+  ],
+  "isKnownPackage": false,
+  "name": "parcel"
+}

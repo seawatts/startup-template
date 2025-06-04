@@ -1,0 +1,256 @@
+---
+title: 'CLI Reference'
+description: 'Command line interface for Acme'
+---
+
+## Installation
+
+Install the Acme CLI globally using your preferred package manager:
+
+<CodeGroup>
+
+```bash homebrew
+brew install acme
+```
+
+```bash npm
+npm install -g @acme/cli
+```
+
+```bash yarn
+yarn global add @acme/cli
+```
+
+```bash pnpm
+pnpm add -g @acme/cli
+```
+
+```bash bun
+bun add -g @acme/cli
+```
+
+```bash deno
+deno install @acme/cli
+```
+
+</CodeGroup>
+
+## Quick Start
+
+1. Initialize your project:
+```bash
+npx @acme/cli init
+```
+
+2. Start the webhook:
+```bash
+acme listen
+```
+
+3. Use the generated webhook URL in your provider's settings:
+```bash
+https://acme.sh/wh_your_webhook_id
+```
+
+## Core Commands
+
+### Start Webhook
+```bash
+# Basic usage
+acme listen
+
+# With custom client ID
+acme listen --client-id dev-1
+
+# With debug logging
+acme listen --debug
+
+# Redirect to remote URL
+acme --redirect https://api.example.com
+```
+
+### Initialize Project
+```bash
+# Using npx
+npx @acme/cli init
+
+# Using bunx
+bunx @acme/cli init
+
+# Using pnpm
+pnpm dlx @acme/cli init
+
+# Using deno
+deno run --allow-net --allow-read --allow-write npm:@acme/cli init
+```
+
+## Command Line Options
+
+| Option | Alias | Description | Required | Default |
+|--------|-------|-------------|----------|---------|
+| `--port` | `-p` | Local service port | Yes* | - |
+| `--webhook-id` | `-t` | Webhook ID | Yes* | - |
+| `--client-id` | `-c` | Unique client ID | No | Auto-generated |
+| `--redirect` | `-r` | Redirect URL | Yes* | - |
+| `--debug` | `-d` | Enable debug logs | No | `false` |
+| `--ping` | - | Health check config | No | `true` |
+| `--help` | `-h` | Show help | No | - |
+| `--version` | `-v` | Show version | No | - |
+
+\* Either `--port` or `--redirect` must be provided, but not both.
+
+## Configuration
+
+### Configuration File
+Create an `acme.config.yaml` in your project root:
+
+```yaml
+webhookId: "wh_your_webhook_id"
+debug: false
+telemetry: true
+destination:
+  - name: "your-endpoint"
+    url: "http://localhost:3000/api/webhooks"
+source:
+  - name: "stripe"
+  - name: "github"
+delivery:
+  - source: "stripe"
+    destination: "your-endpoint"
+  - source: "github"
+    destination: "your-endpoint"
+```
+
+### Environment Variables
+
+All CLI options can be set via environment variables:
+
+```bash
+# Core settings
+WEBHOOK_PORT=3000
+WEBHOOK_API_KEY=your_api_key
+WEBHOOK_CLIENT_ID=dev-1
+WEBHOOK_DEBUG=true
+
+# Advanced settings
+WEBHOOK_REDIRECT=https://api.example.com
+WEBHOOK_PING=true
+```
+
+## Interactive UI
+
+The CLI includes an interactive terminal UI that shows:
+
+- Connection status
+- Webhook activity
+- Error messages
+- Debug information (when enabled)
+
+<Frame>
+  <img src="/images/cli-ui.png" alt="CLI UI" />
+</Frame>
+
+### UI Elements
+
+- **Status Bar**: Shows connection status and client ID
+- **Activity Log**: Real-time webhook request log
+- **Debug Panel**: Detailed debug information (visible with `--debug`)
+- **Error Messages**: Highlighted in red for visibility
+
+## Health Checks
+
+The `--ping` option configures connection health monitoring:
+
+```bash
+# Disable health checks
+acme listen --ping false
+
+# Check specific port
+acme listen --ping 3001
+
+# Check specific URL
+acme listen --ping https://api.example.com/health
+```
+
+## Authentication
+
+Authentication data is stored locally at `~/.acme/auth-storage.json`:
+- Authentication state
+- User tokens
+- Organization ID
+- Basic user info
+
+To clear auth data:
+```bash
+rm ~/.acme/auth-storage.json
+```
+
+## Exit Codes
+
+| Code | Description |
+|------|-------------|
+| 0 | Success |
+| 1 | General error |
+| 2 | Invalid configuration |
+| 3 | Network error |
+| 4 | Authentication error |
+
+## Examples
+
+### Basic Development Setup
+```bash
+# Start webhook on default port
+acme listen --webhook-id your_webhook_id
+```
+
+### Team Development
+```bash
+# Developer 1
+acme listen --client-id dev1 --webhook-id team_webhook_id
+
+# Developer 2
+acme listen --client-id dev2 --webhook-id team_webhook_id
+```
+
+### Production Redirect
+```bash
+# Redirect to production API
+acme --redirect https://api.production.com --webhook-id prod_webhook_id
+```
+
+### Custom Health Checks
+```bash
+# Check specific health endpoint
+acme listen --ping https://localhost:3000/health
+```
+
+## Best Practices
+
+1. **Use Client IDs**: Always specify a meaningful client ID in team environments
+2. **Enable Debug Logging**: Use `--debug` when troubleshooting issues
+3. **Health Checks**: Configure appropriate health checks for your setup
+4. **Environment Variables**: Use env vars for sensitive information
+5. **Configuration Files**: Use config files for consistent settings
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Connection Issues**
+   - Check your internet connection
+   - Verify the webhook ID is correct
+   - Ensure the port is available
+
+2. **Authentication Problems**
+   - Clear auth data: `rm ~/.acme/auth-storage.json`
+   - Re-run initialization: `npx @acme/cli init`
+
+3. **Debug Mode**
+   - Enable debug logging: `acme listen --debug`
+   - Check the debug panel for detailed information
+
+## Support
+
+- [Documentation](https://docs.acme.sh)
+- [GitHub Issues](https://github.com/acme-sh/acme/issues)
+- [Discord Community](https://discord.gg/acme)

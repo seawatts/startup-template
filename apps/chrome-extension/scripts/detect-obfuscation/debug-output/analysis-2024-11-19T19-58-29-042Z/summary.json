@@ -1,0 +1,30 @@
+{
+  "packages": {
+    "moment": {
+      "fileCount": 2,
+      "files": ["changelog.ec1332e2.js", "changelog.ec1332e2.js"]
+    },
+    "rrweb": {
+      "fileCount": 2,
+      "files": ["changelog.ec1332e2.js", "changelog.ec1332e2.js"]
+    },
+    "webpack": {
+      "fileCount": 2,
+      "files": ["changelog.ec1332e2.js", "changelog.ec1332e2.js"]
+    },
+    "parcel": {
+      "fileCount": 6,
+      "files": [
+        "changelog.ec1332e2.js",
+        "changelog.ec1332e2.js",
+        "pdf.worker.min.5b13412d.js",
+        "pdf.worker.min.5b13412d.js",
+        "pdf.worker.min.5b13412d.js",
+        "pdf.worker.min.5b13412d.js"
+      ]
+    }
+  },
+  "totalFiles": 12,
+  "totalPackages": 4,
+  "totalSuspiciousFiles": 6
+}

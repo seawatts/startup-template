@@ -1,34 +1,30 @@
 {
   "dependencies": {
-    "@clerk/chrome-extension": "2.2.23",
-    "@clerk/nextjs": "6.12.12",
-    "@sentry/nextjs": "9.10.1",
-    "@t3-oss/env-core": "0.12.0",
-    "@t3-oss/env-nextjs": "0.12.0",
+    "@clerk/chrome-extension": "2.4.11",
+    "@clerk/nextjs": "6.21.0",
+    "@t3-oss/env-core": "0.13.6",
+    "@t3-oss/env-nextjs": "0.13.6",
     "@vercel/analytics": "1.5.0",
     "@vercel/speed-insights": "1.2.0",
     "nextjs-google-analytics": "2.3.7",
-    "posthog-js": "1.234.6",
-    "posthog-node": "4.11.1",
+    "posthog-js": "1.249.3",
+    "posthog-node": "4.18.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "zod": "3.24.2"
+    "zod": "3.25.51"
   },
   "devDependencies": {
     "@acme/tsconfig": "workspace:*",
-    "@types/aws-lambda": "8.10.148",
-    "@types/chrome": "0.0.313",
-    "@types/react": "19.1.0",
-    "@types/react-dom": "19.1.1",
-    "next": "15.2.4",
-    "typescript": "5.8.2"
+    "@types/aws-lambda": "8.10.149",
+    "@types/chrome": "0.0.326",
+    "@types/react": "19.1.6",
+    "@types/react-dom": "19.1.6",
+    "next": "15.3.3",
+    "typescript": "5.8.3"
   },
   "exports": {
     ".": "./src/index.ts",
-    "./*": [
-      "./src/*.tsx",
-      "./src/*.ts"
-    ]
+    "./*": ["./src/*.tsx", "./src/*.ts"]
   },
   "license": "MIT",
   "name": "@acme/analytics",

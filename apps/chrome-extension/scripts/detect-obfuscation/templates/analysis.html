@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Code Obfuscation Analysis</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script>
+		function renderSummary(data) {
+			document.getElementById('totalFiles').textContent = data.totalFiles;
+			document.getElementById('totalPackages').textContent = data.totalPackages;
+			document.getElementById('totalSuspicious').textContent = data.totalSuspiciousFiles;
+		}
+
+		function loadPackageDetails(packages) {
+			const packageList = document.getElementById('packageList');
+
+			for (const [packageName, details] of Object.entries(packages)) {
+				const packageDiv = document.createElement('div');
+				packageDiv.className = 'mb-8 p-4 bg-white rounded-lg shadow';
+
+				// Package header
+				packageDiv.innerHTML = `
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">${packageName}</h3>
+                        <span class="px-3 py-1 text-sm bg-blue-100 text-blue-800 rounded-full">
+                            ${details.fileCount} files
+                        </span>
+                    </div>
+                `;
+
+				// Display file details
+				for (const fileAnalysis of details.fileAnalyses) {
+					const fileDiv = document.createElement('div');
+					fileDiv.className = 'mb-4 p-3 bg-gray-50 rounded';
+
+					const matches = fileAnalysis.matches.map(match => `
+                        <div class="mb-2 p-2 bg-white rounded border-l-4 ${getPatternColor(match.patternName)}">
+                            <div class="flex justify-between text-sm">
+                                <span class="font-medium">${match.patternName}</span>
+                                <span class="text-gray-500">Line ${match.line}</span>
+                            </div>
+                            <pre class="mt-2 p-2 text-sm bg-gray-50 rounded overflow-x-auto">${escapeHtml(match.excerpt)}</pre>
+                            ${match.suggestion ? `
+                                <div class="mt-2 text-sm text-gray-600">
+                                    <span class="font-medium">Suggestion:</span> ${match.suggestion}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `).join('');
+
+					fileDiv.innerHTML = `
+                        <h4 class="font-medium mb-2">${fileAnalysis.fileName}</h4>
+                        ${matches}
+                    `;
+
+					packageDiv.appendChild(fileDiv);
+				}
+
+				packageList.appendChild(packageDiv);
+			}
+		}
+
+		function getPatternColor(patternName) {
+			const colors = {
+				blobFromBase64: 'border-red-500',
+				directBase64Decode: 'border-red-500',
+				encodedEval: 'border-red-500',
+				functionConstruction: 'border-orange-500',
+				hiddenEval: 'border-orange-500',
+				directEval: 'border-yellow-500',
+				hexStrings: 'border-yellow-500',
+				unicodeEscapes: 'border-yellow-500',
+				default: 'border-blue-500'
+			};
+			return colors[patternName] || colors.default;
+		}
+
+		function escapeHtml(unsafe) {
+			return unsafe
+				.replace(/&/g, "&amp;")
+				.replace(/</g, "&lt;")
+				.replace(/>/g, "&gt;")
+				.replace(/"/g, "&quot;")
+				.replace(/'/g, "&#039;");
+		}
+
+		// The analysis data will be inlined here by the debug output generator
+		const analysisData = null; // This will be replaced with actual data
+
+		// Initialize on page load
+		document.addEventListener('DOMContentLoaded', () => {
+			if (analysisData) {
+				renderSummary(analysisData);
+				loadPackageDetails(analysisData.packages);
+			} else {
+				document.getElementById('error').innerHTML = `
+					<div class="p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+						No analysis data found
+					</div>
+				`;
+			}
+		});
+	</script>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+	<div class="max-w-7xl mx-auto px-4 py-8">
+		<h1 class="text-3xl font-bold text-gray-900 mb-8">Code Obfuscation Analysis</h1>
+
+		<!-- Error message container -->
+		<div id="error" class="text-red-600 mb-4"></div>
+
+		<!-- Summary section -->
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+			<div class="bg-white p-6 rounded-lg shadow">
+				<h2 class="text-lg font-semibold text-gray-800 mb-2">Total Files</h2>
+				<p id="totalFiles" class="text-3xl font-bold text-blue-600">-</p>
+			</div>
+			<div class="bg-white p-6 rounded-lg shadow">
+				<h2 class="text-lg font-semibold text-gray-800 mb-2">Total Packages</h2>
+				<p id="totalPackages" class="text-3xl font-bold text-green-600">-</p>
+			</div>
+			<div class="bg-white p-6 rounded-lg shadow">
+				<h2 class="text-lg font-semibold text-gray-800 mb-2">Suspicious Files</h2>
+				<p id="totalSuspicious" class="text-3xl font-bold text-red-600">-</p>
+			</div>
+		</div>
+
+		<!-- Legend -->
+		<div class="mb-8 p-4 bg-white rounded-lg shadow">
+			<h2 class="text-lg font-semibold text-gray-800 mb-4">Risk Levels</h2>
+			<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+				<div class="flex items-center">
+					<div class="w-4 h-4 bg-red-500 rounded mr-2"></div>
+					<span>High Risk (Base64, Eval)</span>
+				</div>
+				<div class="flex items-center">
+					<div class="w-4 h-4 bg-orange-500 rounded mr-2"></div>
+					<span>Medium Risk (Function Construction)</span>
+				</div>
+				<div class="flex items-center">
+					<div class="w-4 h-4 bg-yellow-500 rounded mr-2"></div>
+					<span>Low Risk (Hex, Unicode)</span>
+				</div>
+			</div>
+		</div>
+
+		<!-- Package analysis results -->
+		<div id="packageList" class="space-y-6"></div>
+	</div>
+</body>
+
+</html>

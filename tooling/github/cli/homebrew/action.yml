@@ -1,0 +1,23 @@
+name: "Update Homebrew Formula"
+description: "Update Homebrew tap with new CLI version"
+
+inputs:
+  version:
+    description: "Version number for the release"
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - uses: ./tooling/github/setup
+
+    - name: Update Homebrew formula
+      uses: mislav/bump-homebrew-formula-action@v3
+      with:
+        formula-name: acme
+        formula-path: tooling/homebrew/acme.rb
+        homebrew-tap: acme-sh/homebrew-tap
+        download-url: https://github.com/acme-sh/acme/releases/download/v${{ inputs.version }}/acme-darwin-{arch}
+        tag-name: v${{ inputs.version }}
+      env:
+        COMMITTER_TOKEN: ${{ env.COMMITTER_TOKEN }}

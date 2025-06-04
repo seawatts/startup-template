@@ -1,0 +1,14 @@
+{
+  "extends": "@acme/tsconfig/base.json",
+  "compilerOptions": {
+    "lib": ["es2022", "dom", "dom.iterable"],
+    "jsx": "preserve",
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./src/*"]
+    },
+    "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json"
+  },
+  "include": [".", ".plasmo/index.d.ts", "sst-env.d.ts"],
+  "exclude": ["node_modules", "build", "assets", "scripts"]
+}

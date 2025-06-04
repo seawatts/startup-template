@@ -1,0 +1,101 @@
+{
+  "filePath": "/Users/seawatts/src/github.com/acme/mainsail/apps/chrome-extension/build/chrome-mv3-prod/tabs/changelog.ec1332e2.js",
+  "matches": [
+    {
+      "base64Content": "",
+      "detectedPackage": "moment, rrweb, webpack, parcel",
+      "excerpt": "                              'bytes32',\n                              null == s\n                                ? '0x0000000000000000000000000000000000000000000000000000000000000000'\n                                : o.keccak(this.encodeData(t, s, r, n)),\n                            ];",
+      "line": 59009,
+      "patternName": "suspiciousHex",
+      "suggestion": "Review for potential security concerns"
+    },
+    {
+      "base64Content": "",
+      "detectedPackage": "moment, rrweb, webpack, parcel",
+      "excerpt": "                  'object' == typeof globalThis\n                    ? (globalThis.regeneratorRuntime = t)\n                    : Function('r', 'regeneratorRuntime = r')(t);\n                }\n              },",
+      "line": 79585,
+      "patternName": "functionConstruction",
+      "suggestion": "Review for potential security concerns"
+    },
+    {
+      "base64Content": "",
+      "detectedPackage": "moment, rrweb, webpack, parcel",
+      "excerpt": "                                    variant: 'h2',\n                                    children:\n                                      '\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022',\n                                  }),\n                                (0, o.tZ)(g.a.Trigger, {",
+      "line": 104365,
+      "patternName": "unicodeEscapes",
+      "suggestion": "Review for potential security concerns"
+    },
+    {
+      "base64Content": "",
+      "detectedPackage": "moment, rrweb, webpack, parcel",
+      "excerpt": "              if ('object' == typeof globalThis) return globalThis;\n              try {\n                return this || Function('return this')();\n              } catch (e) {\n                if ('object' == typeof window) return window;",
+      "line": 131701,
+      "patternName": "functionConstruction",
+      "suggestion": "Review for potential security concerns"
+    },
+    {
+      "base64Content": "",
+      "detectedPackage": "moment, rrweb, webpack, parcel",
+      "excerpt": "          }\n          let e4 =\n              'KGZ1bmN0aW9uKCkgewogICJ1c2Ugc3RyaWN0IjsKICB2YXIgY2hhcnMgPSAiQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVphYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ejAxMjM0NTY3ODkrLyI7CiAgdmFyIGxvb2t1cCA9IHR5cGVvZiBVaW50OEFycmF5ID09PSAidW5kZWZpbmVkIiA/IFtdIDogbmV3IFVpbnQ4QXJyYXkoMjU2KTsKICBmb3IgKHZhciBpID0gMDsgaSA8IGNoYXJzLmxlbmd0aDsgaSsrKSB7CiAgICBsb29rdXBbY2hhcnMuY2hhckNvZGVBdChpKV0gPSBpOwogIH0KICB2YXIgZW5jb2RlID0gZnVuY3Rpb24oYXJyYXlidWZmZXIpIHsKICAgIHZhciBieXRlcyA9IG5ldyBVaW50OEFycmF5KGFycmF5YnVmZmVyKSwgaTIsIGxlbiA9IGJ5dGVzLmxlbmd0aCwgYmFzZTY0ID0gIiI7CiAgICBmb3IgKGkyID0gMDsgaTIgPCBsZW47IGkyICs9IDMpIHsKICAgICAgYmFzZTY0ICs9IGNoYXJzW2J5dGVzW2kyXSA+PiAyXTsKICAgICAgYmFzZTY0ICs9IGNoYXJzWyhieXRlc1tpMl0gJiAzKSA8PCA0IHwgYnl0ZXNbaTIgKyAxXSA+PiA0XTsKICAgICAgYmFzZTY0ICs9IGNoYXJzWyhieXRlc1tpMiArIDFdICYgMTUpIDw8IDIgfCBieXRlc1tpMiArIDJdID4+IDZdOwogICAgICBiYXNlNjQgKz0gY2hhcnNbYnl0ZXNbaTIgKyAyXSAmIDYzXTsKICAgIH0KICAgIGlmIChsZW4gJSAzID09PSAyKSB7CiAgICAgIGJhc2U2NCA9IGJhc2U2NC5zdWJzdHJpbmcoMCwgYmFzZTY0Lmxlbmd0aCAtIDEpICsgIj0iOwogICAgfSBlbHNlIGlmIChsZW4gJSAzID09PSAxKSB7CiAgICAgIGJhc2U2NCA9IGJhc2U2NC5zdWJzdHJpbmcoMCwgYmFzZTY0Lmxlbmd0aCAtIDIpICsgIj09IjsKICAgIH0KICAgIHJldHVybiBiYXNlNjQ7CiAgfTsKICBjb25zdCBsYXN0QmxvYk1hcCA9IC8qIEBfX1BVUkVfXyAqLyBuZXcgTWFwKCk7CiAgY29uc3QgdHJhbnNwYXJlbnRCbG9iTWFwID0gLyogQF9fUFVSRV9fICovIG5ldyBNYXAoKTsKICBhc3luYyBmdW5jdGlvbiBnZXRUcmFuc3BhcmVudEJsb2JGb3Iod2lkdGgsIGhlaWdodCwgZGF0YVVSTE9wdGlvbnMpIHsKICAgIGNvbnN0IGlkID0gYCR7d2lkdGh9LSR7aGVpZ2h0fWA7CiAgICBpZiAoIk9mZnNjcmVlbkNhbnZhcyIgaW4gZ2xvYmFsVGhpcykgewogICAgICBpZiAodHJhbnNwYXJlbnRCbG9iTWFwLmhhcyhpZCkpIHJldHVybiB0cmFuc3BhcmVudEJsb2JNYXAuZ2V0KGlkKTsKICAgICAgY29uc3Qgb2Zmc2NyZWVuID0gbmV3IE9mZnNjcmVlbkNhbnZhcyh3aWR0aCwgaGVpZ2h0KTsKICAgICAgb2Zmc2NyZWVuLmdldENvbnRleHQoIjJkIik7CiAgICAgIGNvbnN0IGJsb2IgPSBhd2FpdCBvZmZzY3JlZW4uY29udmVydFRvQmxvYihkYXRhVVJMT3B0aW9ucyk7CiAgICAgIGNvbnN0IGFycmF5QnVmZmVyID0gYXdhaXQgYmxvYi5hcnJheUJ1ZmZlcigpOwogICAgICBjb25zdCBiYXNlNjQgPSBlbmNvZGUoYXJyYXlCdWZmZXIpOwogICAgICB0cmFuc3BhcmVudEJsb2JNYXAuc2V0KGlkLCBiYXNlNjQpOwogICAgICByZXR1cm4gYmFzZTY0OwogICAgfSBlbHNlIHsKICAgICAgcmV0dXJuICIiOwogICAgfQogIH0KICBjb25zdCB3b3JrZXIgPSBzZWxmOwogIHdvcmtlci5vbm1lc3NhZ2UgPSBhc3luYyBmdW5jdGlvbihlKSB7CiAgICBpZiAoIk9mZnNjcmVlbkNhbnZhcyIgaW4gZ2xvYmFsVGhpcykgewogICAgICBjb25zdCB7IGlkLCBiaXRtYXAsIHdpZHRoLCBoZWlnaHQsIGRhdGFVUkxPcHRpb25zIH0gPSBlLmRhdGE7CiAgICAgIGNvbnN0IHRyYW5zcGFyZW50QmFzZTY0ID0gZ2V0VHJhbnNwYXJlbnRCbG9iRm9yKAogICAgICAgIHdpZHRoLAogICAgICAgIGhlaWdodCwKICAgICAgICBkYXRhVVJMT3B0aW9ucwogICAgICApOwogICAgICBjb25zdCBvZmZzY3JlZW4gPSBuZXcgT2Zmc2NyZWVuQ2FudmFzKHdpZHRoLCBoZWlnaHQpOwogICAgICBjb25zdCBjdHggPSBvZmZzY3JlZW4uZ2V0Q29udGV4dCgiMmQiKTsKICAgICAgY3R4LmRyYXdJbWFnZShiaXRtYXAsIDAsIDApOwogICAgICBiaXRtYXAuY2xvc2UoKTsKICAgICAgY29uc3QgYmxvYiA9IGF3YWl0IG9mZnNjcmVlbi5jb252ZXJ0VG9CbG9iKGRhdGFVUkxPcHRpb25zKTsKICAgICAgY29uc3QgdHlwZSA9IGJsb2IudHlwZTsKICAgICAgY29uc3QgYXJyYXlCdWZmZXIgPSBhd2FpdCBibG9iLmFycmF5QnVmZmVyKCk7CiAgICAgIGNvbnN0IGJhc2U2NCA9IGVuY29kZShhcnJheUJ1ZmZlcik7CiAgICAgIGlmICghbGFzdEJsb2JNYXAuaGFzKGlkKSAmJiBhd2FpdCB0cmFuc3BhcmVudEJhc2U2NCA9PT0gYmFzZTY0KSB7CiAgICAgICAgbGFzdEJsb2JNYXAuc2V0KGlkLCBiYXNlNjQpOwogICAgICAgIHJldHVybiB3b3JrZXIucG9zdE1lc3NhZ2UoeyBpZCB9KTsKICAgICAgfQogICAgICBpZiAobGFzdEJsb2JNYXAuZ2V0KGlkKSA9PT0gYmFzZTY0KSByZXR1cm4gd29ya2VyLnBvc3RNZXNzYWdlKHsgaWQgfSk7CiAgICAgIHdvcmtlci5wb3N0TWVzc2FnZSh7CiAgICAgICAgaWQsCiAgICAgICAgdHlwZSwKICAgICAgICBiYXNlNjQsCiAgICAgICAgd2lkdGgsCiAgICAgICAgaGVpZ2h0CiAgICAgIH0pOwogICAgICBsYXN0QmxvYk1hcC5zZXQoaWQsIGJhc2U2NCk7CiAgICB9IGVsc2UgewogICAgICByZXR1cm4gd29ya2VyLnBvc3RNZXNzYWdlKHsgaWQ6IGUuZGF0YS5pZCB9KTsKICAgIH0KICB9Owp9KSgpOwovLyMgc291cmNlTWFwcGluZ1VSTD1pbWFnZS1iaXRtYXAtZGF0YS11cmwtd29ya2VyLUlKcEM3Z19iLmpzLm1hcAo=',\n            e7 =\n              'undefined' != typeof window &&",
+      "line": 162139,
+      "patternName": "suspiciousBase64",
+      "suggestion": "Review for potential security concerns"
+    },
+    {
+      "base64Content": "",
+      "detectedPackage": "moment, rrweb, webpack, parcel",
+      "excerpt": "                Uint8Array.from(\n                  atob(\n                    'KGZ1bmN0aW9uKCkgewogICJ1c2Ugc3RyaWN0IjsKICB2YXIgY2hhcnMgPSAiQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVphYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ejAxMjM0NTY3ODkrLyI7CiAgdmFyIGxvb2t1cCA9IHR5cGVvZiBVaW50OEFycmF5ID09PSAidW5kZWZpbmVkIiA/IFtdIDogbmV3IFVpbnQ4QXJyYXkoMjU2KTsKICBmb3IgKHZhciBpID0gMDsgaSA8IGNoYXJzLmxlbmd0aDsgaSsrKSB7CiAgICBsb29rdXBbY2hhcnMuY2hhckNvZGVBdChpKV0gPSBpOwogIH0KICB2YXIgZW5jb2RlID0gZnVuY3Rpb24oYXJyYXlidWZmZXIpIHsKICAgIHZhciBieXRlcyA9IG5ldyBVaW50OEFycmF5KGFycmF5YnVmZmVyKSwgaTIsIGxlbiA9IGJ5dGVzLmxlbmd0aCwgYmFzZTY0ID0gIiI7CiAgICBmb3IgKGkyID0gMDsgaTIgPCBsZW47IGkyICs9IDMpIHsKICAgICAgYmFzZTY0ICs9IGNoYXJzW2J5dGVzW2kyXSA+PiAyXTsKICAgICAgYmFzZTY0ICs9IGNoYXJzWyhieXRlc1tpMl0gJiAzKSA8PCA0IHwgYnl0ZXNbaTIgKyAxXSA+PiA0XTsKICAgICAgYmFzZTY0ICs9IGNoYXJzWyhieXRlc1tpMiArIDFdICYgMTUpIDw8IDIgfCBieXRlc1tpMiArIDJdID4+IDZdOwogICAgICBiYXNlNjQgKz0gY2hhcnNbYnl0ZXNbaTIgKyAyXSAmIDYzXTsKICAgIH0KICAgIGlmIChsZW4gJSAzID09PSAyKSB7CiAgICAgIGJhc2U2NCA9IGJhc2U2NC5zdWJzdHJpbmcoMCwgYmFzZTY0Lmxlbmd0aCAtIDEpICsgIj0iOwogICAgfSBlbHNlIGlmIChsZW4gJSAzID09PSAxKSB7CiAgICAgIGJhc2U2NCA9IGJhc2U2NC5zdWJzdHJpbmcoMCwgYmFzZTY0Lmxlbmd0aCAtIDIpICsgIj09IjsKICAgIH0KICAgIHJldHVybiBiYXNlNjQ7CiAgfTsKICBjb25zdCBsYXN0QmxvYk1hcCA9IC8qIEBfX1BVUkVfXyAqLyBuZXcgTWFwKCk7CiAgY29uc3QgdHJhbnNwYXJlbnRCbG9iTWFwID0gLyogQF9fUFVSRV9fICovIG5ldyBNYXAoKTsKICBhc3luYyBmdW5jdGlvbiBnZXRUcmFuc3BhcmVudEJsb2JGb3Iod2lkdGgsIGhlaWdodCwgZGF0YVVSTE9wdGlvbnMpIHsKICAgIGNvbnN0IGlkID0gYCR7d2lkdGh9LSR7aGVpZ2h0fWA7CiAgICBpZiAoIk9mZnNjcmVlbkNhbnZhcyIgaW4gZ2xvYmFsVGhpcykgewogICAgICBpZiAodHJhbnNwYXJlbnRCbG9iTWFwLmhhcyhpZCkpCiAgICAgICAgcmV0dXJuIHRyYW5zcGFyZW50QmxvYk1hcC5nZXQoaWQpOwogICAgICBjb25zdCBvZmZzY3JlZW4gPSBuZXcgT2Zmc2NyZWVuQ2FudmFzKHdpZHRoLCBoZWlnaHQpOwogICAgICBvZmZzY3JlZW4uZ2V0Q29udGV4dCgiMmQiKTsKICAgICAgY29uc3QgYmxvYiA9IGF3YWl0IG9mZnNjcmVlbi5jb252ZXJ0VG9CbG9iKGRhdGFVUkxPcHRpb25zKTsKICAgICAgY29uc3QgYXJyYXlCdWZmZXIgPSBhd2FpdCBibG9iLmFycmF5QnVmZmVyKCk7CiAgICAgIGNvbnN0IGJhc2U2NCA9IGVuY29kZShhcnJheUJ1ZmZlcik7CiAgICAgIHRyYW5zcGFyZW50QmxvYk1hcC5zZXQoaWQsIGJhc2U2NCk7CiAgICAgIHJldHVybiBiYXNlNjQ7CiAgICB9IGVsc2UgewogICAgICByZXR1cm4gIiI7CiAgICB9CiAgfQogIGNvbnN0IHdvcmtlciA9IHNlbGY7CiAgd29ya2VyLm9ubWVzc2FnZSA9IGFzeW5jIGZ1bmN0aW9uKGUpIHsKICAgIGlmICgiT2Zmc2NyZWVuQ2FudmFzIiBpbiBnbG9iYWxUaGlzKSB7CiAgICAgIGNvbnN0IHsgaWQsIGJpdG1hcCwgd2lkdGgsIGhlaWdodCwgZGF0YVVSTE9wdGlvbnMgfSA9IGUuZGF0YTsKICAgICAgY29uc3QgdHJhbnNwYXJlbnRCYXNlNjQgPSBnZXRUcmFuc3BhcmVudEJsb2JGb3IoCiAgICAgICAgd2lkdGgsCiAgICAgICAgaGVpZ2h0LAogICAgICAgIGRhdGFVUkxPcHRpb25zCiAgICAgICk7CiAgICAgIGNvbnN0IG9mZnNjcmVlbiA9IG5ldyBPZmZzY3JlZW5DYW52YXMod2lkdGgsIGhlaWdodCk7CiAgICAgIGNvbnN0IGN0eCA9IG9mZnNjcmVlbi5nZXRDb250ZXh0KCIyZCIpOwogICAgICBjdHguZHJhd0ltYWdlKGJpdG1hcCwgMCwgMCk7CiAgICAgIGJpdG1hcC5jbG9zZSgpOwogICAgICBjb25zdCBibG9iID0gYXdhaXQgb2Zmc2NyZWVuLmNvbnZlcnRUb0Jsb2IoZGF0YVVSTE9wdGlvbnMpOwogICAgICBjb25zdCB0eXBlID0gYmxvYi50eXBlOwogICAgICBjb25zdCBhcnJheUJ1ZmZlciA9IGF3YWl0IGJsb2IuYXJyYXlCdWZmZXIoKTsKICAgICAgY29uc3QgYmFzZTY0ID0gZW5jb2RlKGFycmF5QnVmZmVyKTsKICAgICAgaWYgKCFsYXN0QmxvYk1hcC5oYXMoaWQpICYmIGF3YWl0IHRyYW5zcGFyZW50QmFzZTY0ID09PSBiYXNlNjQpIHsKICAgICAgICBsYXN0QmxvYk1hcC5zZXQoaWQsIGJhc2U2NCk7CiAgICAgICAgcmV0dXJuIHdvcmtlci5wb3N0TWVzc2FnZSh7IGlkIH0pOwogICAgICB9CiAgICAgIGlmIChsYXN0QmxvYk1hcC5nZXQoaWQpID09PSBiYXNlNjQpCiAgICAgICAgcmV0dXJuIHdvcmtlci5wb3N0TWVzc2FnZSh7IGlkIH0pOwogICAgICB3b3JrZXIucG9zdE1lc3NhZ2UoewogICAgICAgIGlkLAogICAgICAgIHR5cGUsCiAgICAgICAgYmFzZTY0LAogICAgICAgIHdpZHRoLAogICAgICAgIGhlaWdodAogICAgICB9KTsKICAgICAgbGFzdEJsb2JNYXAuc2V0KGlkLCBiYXNlNjQpOwogICAgfSBlbHNlIHsKICAgICAgcmV0dXJuIHdvcmtlci5wb3N0TWVzc2FnZSh7IGlkOiBlLmRhdGEuaWQgfSk7CiAgICB9CiAgfTsKfSkoKTsKLy8jIHNvdXJjZU1hcHBpbmdVUkw9aW1hZ2UtYml0bWFwLWRhdGEtdXJsLXdvcmtlci1CWjFyN1JKRC5qcy5tYXAK'\n                  ),\n                  (e) => e.charCodeAt(0)",
+      "line": 163553,
+      "patternName": "suspiciousBase64",
+      "suggestion": "Review for potential security concerns"
+    },
+    {
+      "base64Content": "",
+      "detectedPackage": "moment, rrweb, webpack, parcel",
+      "excerpt": "                    e.indexOf('(eval ') > -1 &&\n                      (e = e\n                        .replace(/eval code/g, 'eval')\n                        .replace(/(\\(eval at [^()]*)|(\\),.*$)/g, ''));\n                    let t = e.replace(/^\\s+/, '').replace(/\\(eval code/g, '('),",
+      "line": 163678,
+      "patternName": "encodedEval",
+      "suggestion": "Review for potential security concerns"
+    },
+    {
+      "base64Content": "",
+      "detectedPackage": "moment, rrweb, webpack, parcel",
+      "excerpt": "                      n = o.join(' ') || void 0,\n                      a =\n                        ['eval', '<anonymous>'].indexOf(i[0]) > -1\n                          ? void 0\n                          : i[0];",
+      "line": 163687,
+      "patternName": "encodedEval",
+      "suggestion": "Review for potential security concerns"
+    },
+    {
+      "base64Content": "",
+      "detectedPackage": "moment, rrweb, webpack, parcel",
+      "excerpt": "                    let r = nW.exec(e);\n                    if (r) {\n                      if (r[2] && 0 === r[2].indexOf('eval')) {\n                        let e = nK.exec(r[2]);\n                        e && ((r[2] = e[1]), (r[3] = e[2]), (r[4] = e[3]));",
+      "line": 168239,
+      "patternName": "encodedEval",
+      "suggestion": "Review for potential security concerns"
+    },
+    {
+      "base64Content": "",
+      "detectedPackage": "moment, rrweb, webpack, parcel",
+      "excerpt": "                        let e = n$.exec(t[3]);\n                        e &&\n                          ((t[1] = t[1] || 'eval'),\n                          (t[3] = e[1]),\n                          (t[4] = e[2]),",
+      "line": 168261,
+      "patternName": "encodedEval",
+      "suggestion": "Review for potential security concerns"
+    },
+    {
+      "base64Content": "",
+      "detectedPackage": "moment, rrweb, webpack, parcel",
+      "excerpt": "                let r = s.exec(e);\n                if (r) {\n                  let e = r[2] && 0 === r[2].indexOf('eval');\n                  if (e) {\n                    let e = l.exec(r[2]);",
+      "line": 184730,
+      "patternName": "encodedEval",
+      "suggestion": "Review for potential security concerns"
+    },
+    {
+      "base64Content": "",
+      "detectedPackage": "moment, rrweb, webpack, parcel",
+      "excerpt": "                    let e = d.exec(t[3]);\n                    e &&\n                      ((t[1] = t[1] || 'eval'),\n                      (t[3] = e[1]),\n                      (t[4] = e[2]),",
+      "line": 184752,
+      "patternName": "encodedEval",
+      "suggestion": "Review for potential security concerns"
+    }
+  ]
+}

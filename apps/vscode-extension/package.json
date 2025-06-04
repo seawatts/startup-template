@@ -1,0 +1,293 @@
+{
+  "activationEvents": [
+    "onStartupFinished",
+    "onUri:vscode",
+    "onUri:vscode-insiders",
+    "onUri:cursor",
+    "onUri:windsurf"
+  ],
+  "bugs": {
+    "url": "https://github.com/acme-sh/acme/issues"
+  },
+  "categories": ["Debuggers", "Testing", "Other"],
+  "contributes": {
+    "authentication": [
+      {
+        "id": "acme",
+        "label": "Acme"
+      }
+    ],
+    "commands": [
+      {
+        "category": "Acme",
+        "command": "acme.showWebhookEvents",
+        "title": "Show Webhook Events"
+      },
+      {
+        "category": "Acme",
+        "command": "acme.addWebhookEvent",
+        "title": "Add Webhook Event"
+      },
+      {
+        "command": "acme.replayEvent",
+        "icon": "$(play)",
+        "title": "Replay Event"
+      },
+      {
+        "command": "acme.viewEvent",
+        "icon": "$(eye)",
+        "title": "View Event"
+      },
+      {
+        "command": "acme.viewRequest",
+        "icon": "$(eye)",
+        "title": "View Request"
+      },
+      {
+        "command": "acme.replayRequest",
+        "icon": "$(play)",
+        "title": "Replay Request"
+      },
+      {
+        "command": "acme.copyEvent",
+        "icon": "$(copy)",
+        "title": "Copy Event"
+      },
+      {
+        "command": "acme.webhookEvents.refresh",
+        "icon": "$(refresh)",
+        "title": "Refresh"
+      },
+      {
+        "command": "acme.openRequestDetails",
+        "title": "Open Request Details"
+      },
+      {
+        "category": "Acme",
+        "command": "acme.quickPick",
+        "icon": "$(list-selection)",
+        "title": "Quick Pick Webhook Event"
+      },
+      {
+        "command": "acme.webhookEvents.filter",
+        "icon": "$(filter)",
+        "title": "Filter Webhook Events"
+      },
+      {
+        "category": "Acme",
+        "command": "acme.focusOutput",
+        "icon": "$(output)",
+        "title": "Focus Output"
+      },
+      {
+        "category": "Acme",
+        "command": "acme.clearOutput",
+        "icon": "$(clear-all)",
+        "title": "Clear Output"
+      },
+      {
+        "category": "Acme",
+        "command": "acme.toggleOutput",
+        "icon": "$(eye)",
+        "title": "Toggle Output"
+      },
+      {
+        "category": "Acme",
+        "command": "acme.openSettings",
+        "icon": "$(settings-gear)",
+        "title": "Open Settings"
+      },
+      {
+        "category": "Acme",
+        "command": "acme.toggleAutoShowOutput",
+        "icon": "$(eye)",
+        "title": "Toggle Auto-Show Output"
+      },
+      {
+        "category": "Acme",
+        "command": "acme.toggleAutoClearEvents",
+        "icon": "$(trash)",
+        "title": "Toggle Auto-Clear Events"
+      },
+      {
+        "category": "Acme",
+        "command": "acme.toggleRequestDetailsView",
+        "icon": "$(split-horizontal)",
+        "title": "Toggle Request Details View"
+      },
+      {
+        "category": "Acme",
+        "command": "acme.signIn",
+        "icon": "$(sign-in)",
+        "title": "Sign in to Acme"
+      },
+      {
+        "category": "Acme",
+        "command": "acme.signOut",
+        "icon": "$(sign-out)",
+        "title": "Sign out of Acme"
+      }
+    ],
+    "configuration": {
+      "properties": {
+        "acme.output.autoShow": {
+          "default": true,
+          "description": "Automatically show the output panel when new webhook events are received",
+          "type": "boolean"
+        },
+        "acme.output.maxLines": {
+          "default": 1000,
+          "description": "Maximum number of lines to keep in the output panel",
+          "type": "number"
+        },
+        "acme.requestDetails.defaultView": {
+          "default": "formatted",
+          "description": "Default view mode for request details",
+          "enum": ["raw", "formatted"],
+          "type": "string"
+        },
+        "acme.webhookEvents.autoClear": {
+          "default": false,
+          "description": "Automatically clear old webhook events when the maximum history is reached",
+          "type": "boolean"
+        },
+        "acme.webhookEvents.maxHistory": {
+          "default": 100,
+          "description": "Maximum number of webhook events to keep in history",
+          "type": "number"
+        }
+      },
+      "title": "Acme"
+    },
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "acme.copyEvent",
+          "group": "inline",
+          "when": "view == acme.webhookEvents && viewItem == webhookEvent"
+        },
+        {
+          "command": "acme.viewEvent",
+          "group": "inline",
+          "when": "view == acme.webhookEvents && viewItem == webhookEvent"
+        },
+        {
+          "command": "acme.replayEvent",
+          "group": "inline",
+          "when": "view == acme.webhookEvents && viewItem == webhookEvent"
+        },
+        {
+          "command": "acme.viewRequest",
+          "group": "inline",
+          "when": "view == acme.webhookEvents && viewItem == webhookRequest"
+        },
+        {
+          "command": "acme.replayRequest",
+          "group": "inline",
+          "when": "view == acme.webhookEvents && viewItem == webhookRequest"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "acme.quickPick",
+          "group": "navigation",
+          "when": "view == acme.webhookEvents"
+        },
+        {
+          "command": "acme.webhookEvents.filter",
+          "group": "navigation@1",
+          "when": "view == acme.webhookEvents"
+        }
+      ]
+    },
+    "views": {
+      "acme": [
+        {
+          "contextualTitle": "Webhook Events",
+          "id": "acme.webhookEvents",
+          "name": "Webhook Events"
+        },
+        {
+          "contextualTitle": "Settings",
+          "id": "acme.settings",
+          "name": "Settings"
+        },
+        {
+          "contextualTitle": "Request Details",
+          "id": "acme.requestDetails",
+          "name": "Request Details",
+          "visibility": "hidden"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "icon": "$(radio-tower)",
+          "id": "acme",
+          "title": "Acme"
+        }
+      ]
+    }
+  },
+  "dependencies": {
+    "@acme/api": "workspace:*",
+    "@acme/db": "workspace:*",
+    "@acme/id": "workspace:*",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "ws": "^8.16.0"
+  },
+  "description": "Webhook Development",
+  "devDependencies": {
+    "@acme/tsconfig": "workspace:*",
+    "@types/bun": "1.2.15",
+    "@types/glob": "^8.1.0",
+    "@types/node": "22.15.29",
+    "@types/react": "19.1.6",
+    "@types/react-dom": "19.1.6",
+    "@types/vscode": "1.96.0",
+    "@vitejs/plugin-react": "4.5.0",
+    "@vscode/test-cli": "0.0.11",
+    "@vscode/test-electron": "2.5.2",
+    "@vscode/vsce": "3.4.2",
+    "concurrently": "9.1.2",
+    "glob": "11.0.2",
+    "globals": "16.2.0",
+    "mocha": "11.5.0",
+    "typescript": "5.8.3",
+    "vite": "6.3.5"
+  },
+  "displayName": "Acme - Webhook Development",
+  "engines": {
+    "vscode": ">=1.96.0"
+  },
+  "homepage": "https://github.com/acme-sh/acme#readme",
+  "keywords": ["webhook", "development", "testing", "debugging"],
+  "main": "./dist/extension.js",
+  "name": "acme-vscode",
+  "private": true,
+  "publisher": "acme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/acme-sh/acme"
+  },
+  "scripts": {
+    "build": "bun run typecheck && bun run build:webview && bun run build:base --minify --production",
+    "build:base": "bun build ./src/extension.ts --outfile ./dist/extension.js --target node --bundle --external vscode --format cjs",
+    "build:debug": "bun run typecheck && bun run build:webview && bun run build:base --sourcemap=inline",
+    "build:webview": "vite build",
+    "clean": "rm -rf .turbo node_modules dist",
+    "dev": "concurrently \"bun run dev:webview\" \"bun run dev:extension\"",
+    "dev:extension": "NODE_ENV=development bun run build:base --watch --sourcemap=inline",
+    "dev:webview": "NODE_ENV=development vite build --config vite.dev.config.ts",
+    "package": "bun run typecheck && bun run build",
+    "pretest": "bun run build:base",
+    "test": "vscode-test",
+    "typecheck.skip": "tsc --noEmit --emitDeclarationOnly false",
+    "vsce": "bunx vsce package",
+    "vscode:prepublish": "bun run package"
+  },
+  "type": "commonjs",
+  "version": "0.0.1"
+}

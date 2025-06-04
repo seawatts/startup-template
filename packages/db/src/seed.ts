@@ -1,15 +1,15 @@
-import { seed } from 'drizzle-seed'
+import { seed } from 'drizzle-seed';
 
-import { createId } from '@acme/id'
+import { createId } from '@acme/id';
 
-import { db } from './client'
-import { Orgs, ShortUrl, Users } from './schema'
+import { db } from './client';
+import { Orgs, ShortUrl, Users } from './schema';
 
 // Reset all tables
 
-await db.delete(Users)
-await db.delete(Orgs)
-await db.delete(ShortUrl)
+await db.delete(Users);
+await db.delete(Orgs);
+await db.delete(ShortUrl);
 
 await seed(db, {
   Orgs,
@@ -45,6 +45,6 @@ await seed(db, {
     },
     count: 1,
   },
-}))
+}));
 
-process.exit(0)
+process.exit(0);

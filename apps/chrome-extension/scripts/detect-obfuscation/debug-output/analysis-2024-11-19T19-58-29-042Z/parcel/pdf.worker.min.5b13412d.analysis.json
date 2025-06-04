@@ -1,0 +1,101 @@
+{
+  "filePath": "/Users/seawatts/src/github.com/acme/mainsail/apps/chrome-extension/build/chrome-mv3-prod/pdf.worker.min.5b13412d.js",
+  "matches": [
+    {
+      "base64Content": "",
+      "detectedPackage": "parcel",
+      "excerpt": "                (function () {\n                  try {\n                    return Function(''), !0;\n                  } catch {\n                    return !1;",
+      "line": 306,
+      "patternName": "functionConstruction",
+      "suggestion": "Review for potential security concerns"
+    },
+    {
+      "base64Content": "",
+      "detectedPackage": "parcel",
+      "excerpt": "              E = -i.yMin || -Q;\n            return (\n              '\\x00\\x03\\x02$\\x01\\xf4\\x00\\x05\\x00\\x00\\x02\\x8a\\x02\\xbb\\x00\\x00\\x00\\x8c\\x02\\x8a\\x02\\xbb\\x00\\x00\\x01\\xdf\\x001\\x01\\x02\\x00\\x00\\x00\\x00\\x06' +\n              String.fromCharCode(A.fixedPitch ? 9 : 0) +\n              '\\x00\\x00\\x00\\x00\\x00\\x00' +",
+      "line": 24930,
+      "patternName": "hexStrings",
+      "suggestion": "Review for potential security concerns"
+    },
+    {
+      "base64Content": "",
+      "detectedPackage": "parcel",
+      "excerpt": "              '\\x00\\x03\\x02$\\x01\\xf4\\x00\\x05\\x00\\x00\\x02\\x8a\\x02\\xbb\\x00\\x00\\x00\\x8c\\x02\\x8a\\x02\\xbb\\x00\\x00\\x01\\xdf\\x001\\x01\\x02\\x00\\x00\\x00\\x00\\x06' +\n              String.fromCharCode(A.fixedPitch ? 9 : 0) +\n              '\\x00\\x00\\x00\\x00\\x00\\x00' +\n              L(a) +\n              L(s) +",
+      "line": 24932,
+      "patternName": "hexStrings",
+      "suggestion": "Review for potential security concerns"
+    },
+    {
+      "base64Content": "",
+      "detectedPackage": "parcel",
+      "excerpt": "              i7(c) +\n              i7(E) +\n              '\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00' +\n              i7(A.xHeight) +\n              i7(A.capHeight) +",
+      "line": 24946,
+      "patternName": "hexStrings",
+      "suggestion": "Review for potential security concerns"
+    },
+    {
+      "base64Content": "",
+      "detectedPackage": "parcel",
+      "excerpt": "              '\\x00\\x00\\x00\\x00' +\n              L(A.fixedPitch ? 1 : 0) +\n              '\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'\n            );\n          }",
+      "line": 24960,
+      "patternName": "hexStrings",
+      "suggestion": "Review for potential security concerns"
+    },
+    {
+      "base64Content": "",
+      "detectedPackage": "parcel",
+      "excerpt": "                h.addTable(\n                  'head',\n                  '\\x00\\x01\\x00\\x00\\x00\\x00\\x10\\x00\\x00\\x00\\x00\\x00_\\x0f<\\xf5\\x00\\x00' +\n                    i4(B) +\n                    \"\\x00\\x00\\x00\\x00\\x9e\\v~'\\x00\\x00\\x00\\x00\\x9e\\v~'\\x00\\x00\" +",
+      "line": 26423,
+      "patternName": "hexStrings",
+      "suggestion": "Review for potential security concerns"
+    },
+    {
+      "base64Content": "",
+      "detectedPackage": "parcel",
+      "excerpt": "                    i4(i.ascent) +\n                    i7(i.italicAngle ? 2 : 0) +\n                    '\\x00\\x11\\x00\\x00\\x00\\x00\\x00\\x00'\n                ),\n                h.addTable(",
+      "line": 26430,
+      "patternName": "hexStrings",
+      "suggestion": "Review for potential security concerns"
+    },
+    {
+      "base64Content": "",
+      "detectedPackage": "parcel",
+      "excerpt": "                    i4(i.ascent) +\n                    i4(i.descent) +\n                    '\\x00\\x00\\xff\\xff\\x00\\x00\\x00\\x00\\x00\\x00' +\n                    i4(i.capHeight) +\n                    i4(Math.tan(i.italicAngle) * i.xHeight) +",
+      "line": 26437,
+      "patternName": "hexStrings",
+      "suggestion": "Review for potential security concerns"
+    },
+    {
+      "base64Content": "",
+      "detectedPackage": "parcel",
+      "excerpt": "                    i4(i.capHeight) +\n                    i4(Math.tan(i.italicAngle) * i.xHeight) +\n                    '\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00' +\n                    i7(o)\n                ),",
+      "line": 26440,
+      "patternName": "hexStrings",
+      "suggestion": "Review for potential security concerns"
+    },
+    {
+      "base64Content": "",
+      "detectedPackage": "parcel",
+      "excerpt": "                let A = new sb().compile(n, s, g);\n                if (A)\n                  return Function('src', 'srcOffset', 'dest', 'destOffset', A);\n              }\n              p('Unable to compile PS function');",
+      "line": 29978,
+      "patternName": "functionConstruction",
+      "suggestion": "Review for potential security concerns"
+    },
+    {
+      "base64Content": "",
+      "detectedPackage": "parcel",
+      "excerpt": "                        X ||\n                          ((X =\n                            /([\\u00a0\\u00b5\\u037e\\u0eb3\\u2000-\\u200a\\u202f\\u2126\\ufb00-\\ufb04\\ufb06\\ufb20-\\ufb36\\ufb38-\\ufb3c\\ufb3e\\ufb40-\\ufb41\\ufb43-\\ufb44\\ufb46-\\ufba1\\ufba4-\\ufba9\\ufbae-\\ufbb1\\ufbd3-\\ufbdc\\ufbde-\\ufbe7\\ufbea-\\ufbf8\\ufbfc-\\ufbfd\\ufc00-\\ufc5d\\ufc64-\\ufcf1\\ufcf5-\\ufd3d\\ufd88\\ufdf4\\ufdfa-\\ufdfb\\ufe71\\ufe77\\ufe79\\ufe7b\\ufe7d]+)|(\\ufb05+)/gu),\n                          (V = new Map([['\\ufb05', '\\u017ft']]))),\n                        (i = t.replaceAll(X, (A, t, i) =>",
+      "line": 34793,
+      "patternName": "unicodeEscapes",
+      "suggestion": "Review for potential security concerns"
+    },
+    {
+      "base64Content": "",
+      "detectedPackage": "parcel",
+      "excerpt": "                  'string' == typeof A &&\n                  A.length > 0 &&\n                  '\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00' !==\n                    A\n                );",
+      "line": 55094,
+      "patternName": "hexStrings",
+      "suggestion": "Review for potential security concerns"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "files": [
+    {
+      "matchCount": 12,
+      "name": "changelog.ec1332e2.js",
+      "patterns": [
+        "suspiciousHex",
+        "functionConstruction",
+        "unicodeEscapes",
+        "suspiciousBase64",
+        "encodedEval"
+      ]
+    },
+    {
+      "matchCount": 12,
+      "name": "changelog.ec1332e2.js",
+      "patterns": [
+        "suspiciousHex",
+        "functionConstruction",
+        "unicodeEscapes",
+        "suspiciousBase64",
+        "encodedEval"
+      ]
+    }
+  ],
+  "isKnownPackage": false,
+  "name": "webpack"
+}

@@ -1,21 +1,21 @@
-'use client'
+'use client';
 
-import { useEffect } from 'react'
+import { useEffect } from 'react';
 
-import { Button } from '@acme/ui/button'
-import { H2, P } from '@acme/ui/custom/typography'
+import { Button } from '@acme/ui/button';
+import { H2, P } from '@acme/ui/custom/typography';
 
 export default function GlobalError({
   error,
   reset,
 }: {
-  error: Error & { digest?: string }
-  reset: () => void
+  error: Error & { digest?: string };
+  reset: () => void;
 }) {
   useEffect(() => {
     // Log the error to an error reporting service
-    console.error(error)
-  }, [error])
+    console.error(error);
+  }, [error]);
 
   return (
     <html lang="en">
@@ -36,5 +36,5 @@ export default function GlobalError({
         </div>
       </body>
     </html>
-  )
+  );
 }

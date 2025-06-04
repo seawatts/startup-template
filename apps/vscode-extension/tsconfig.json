@@ -1,0 +1,22 @@
+{
+  "extends": "@acme/tsconfig/react-library.json",
+  "compilerOptions": {
+    // "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json",
+    "noEmit": false,
+    // "composite": true,
+    // "declaration": true,
+    // "declarationDir": "dist",
+    "jsx": "react-jsx",
+    "outDir": "dist",
+    "rootDir": "src",
+    "module": "ESNext",
+    "types": ["node", "vscode"],
+    "skipLibCheck": true
+    // "baseUrl": ".",
+    // "paths": {
+    //   "~/*": ["src/*"]
+    // }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}

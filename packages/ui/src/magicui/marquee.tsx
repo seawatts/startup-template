@@ -1,18 +1,40 @@
-import { cn } from '@acme/ui/lib/utils'
+import { cn } from '@acme/ui/lib/utils';
+import type { ComponentPropsWithoutRef } from 'react';
 
-interface MarqueeProps {
-  className?: string
-  reverse?: boolean
-  pauseOnHover?: boolean
-  children?: React.ReactNode
-  vertical?: boolean
-  repeat?: number
-  [key: string]: unknown
+interface MarqueeProps extends ComponentPropsWithoutRef<'div'> {
+  /**
+   * Optional CSS class name to apply custom styles
+   */
+  className?: string;
+  /**
+   * Whether to reverse the animation direction
+   * @default false
+   */
+  reverse?: boolean;
+  /**
+   * Whether to pause the animation on hover
+   * @default false
+   */
+  pauseOnHover?: boolean;
+  /**
+   * Content to be displayed in the marquee
+   */
+  children: React.ReactNode;
+  /**
+   * Whether to animate vertically instead of horizontally
+   * @default false
+   */
+  vertical?: boolean;
+  /**
+   * Number of times to repeat the content
+   * @default 4
+   */
+  repeat?: number;
 }
 
 export function Marquee({
   className,
-  reverse,
+  reverse = false,
   pauseOnHover = false,
   children,
   vertical = false,
@@ -35,7 +57,8 @@ export function Marquee({
         .fill(0)
         .map((_, i) => (
           <div
-            key={`${i}-${repeat}`}
+            // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+            key={i}
             className={cn('flex shrink-0 justify-around [gap:var(--gap)]', {
               'animate-marquee flex-row': !vertical,
               'animate-marquee-vertical flex-col': vertical,
@@ -47,5 +70,5 @@ export function Marquee({
           </div>
         ))}
     </div>
-  )
+  );
 }

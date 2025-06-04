@@ -1,0 +1,100 @@
+{
+  "author": "Acme, Inc.",
+  "dependencies": {
+    "@acme/analytics": "workspace:*",
+    "@acme/api": "workspace:*",
+    "@acme/ui": "workspace:*",
+    "@clerk/chrome-extension": "2.4.11",
+    "@clerk/elements": "0.23.32",
+    "@plasmohq/messaging": "0.7.1",
+    "@plasmohq/storage": "1.15.0",
+    "@sentry/browser": "9.26.0",
+    "@t3-oss/env-core": "0.13.6",
+    "@tanstack/react-query": "5.80.5",
+    "@trpc/client": "11.2.0",
+    "@trpc/react": "9.27.4",
+    "@trpc/react-query": "11.2.0",
+    "@trpc/server": "11.2.0",
+    "class-variance-authority": "0.7.1",
+    "date-fns": "4.1.0",
+    "lodash-es": "4.17.21",
+    "pdfjs-dist": "5.3.31",
+    "plasmo": "0.90.5",
+    "pluralize": "8.0.0",
+    "posthog-js": "1.249.3",
+    "react": "19.1.0",
+    "react-audio-voice-recorder": "2.2.0",
+    "react-dom": "19.1.0",
+    "react-error-boundary": "6.0.0",
+    "react-pdf": "9.2.1",
+    "react-router-dom": "7.6.2",
+    "rooks": "8.0.1",
+    "swr": "2.3.3",
+    "tsx": "4.19.4",
+    "zod": "3.25.51",
+    "zustand": "5.0.5"
+  },
+  "description": "YC vibe-check: Use AI to auto-fill your application, get expert advice, and practice for interviews to secure funding",
+  "devDependencies": {
+    "@acme/tsconfig": "workspace:*",
+    "@thedutchcoder/postcss-rem-to-px": "0.0.2",
+    "@types/chrome": "0.0.326",
+    "@types/lodash-es": "4.17.12",
+    "@types/node": "22.15.29",
+    "@types/pluralize": "0.0.33",
+    "@types/react": "19.1.6",
+    "@types/react-dom": "19.1.6",
+    "autoprefixer": "10.4.21",
+    "concurrently": "9.1.2",
+    "cssnano": "7.0.7",
+    "eslint": "9.28.0",
+    "nodemon": "3.1.10",
+    "postcss": "8.5.4",
+    "postcss-focus-visible": "10.0.1",
+    "postcss-import": "16.1.0",
+    "prettier": "3.5.3",
+    "rimraf": "6.0.1",
+    "tailwindcss": "4.1.8",
+    "ts-node": "10.9.2",
+    "tsx": "4.19.4",
+    "typescript": "5.8.3"
+  },
+  "displayName": "YC vibe-check: apply with ai",
+  "manifest": {
+    "host_permissions": [
+      "https://apply.ycombinator.com/*",
+      "http://localhost/*",
+      "https://clerk.acme.ai/*",
+      "https://immortal-koi-31.clerk.accounts.dev/*",
+      "https://app.acme.ai/*",
+      "https://*.s3.us-west-2.amazonaws.com/*"
+    ],
+    "key": "$CRX_KEY",
+    "permissions": ["cookies", "storage"],
+    "web_accessible_resources": [
+      {
+        "extension_ids": ["$CRX_ID"],
+        "matches": ["<all_urls>"],
+        "resources": [
+          "tabs/welcome.html",
+          "tabs/account.html",
+          "tabs/changelog.html"
+        ]
+      }
+    ]
+  },
+  "name": "@acme/chrome-extension",
+  "private": true,
+  "scripts": {
+    "build": "plasmo build",
+    "clean": "git clean -xdf .vite .turbo node_modules .plasmo build",
+    "detect-obfuscation": "tsx ./scripts/detect-obfuscation/index.ts",
+    "dev": "concurrently \"nodemon --watch build/chrome-mv3-dev/_empty*.js --exec rimraf build/chrome-mv3-dev/_empty* \" \"plasmo dev\"",
+    "package": "plasmo package",
+    "postbuild": "rimraf build/chrome-mv3-prod/_empty*",
+    "test": "vitest",
+    "typecheck.skip": "tsc --noEmit"
+  },
+  "type": "module",
+  "version": "1.1.0"
+}

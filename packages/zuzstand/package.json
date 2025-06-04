@@ -1,0 +1,26 @@
+{
+  "name": "@acme/zustand",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf .turbo node_modules dist",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "zustand": "5.0.5"
+  },
+  "devDependencies": {
+    "@acme/tsconfig": "workspace:*",
+    "typescript": "5.8.3"
+  }
+}

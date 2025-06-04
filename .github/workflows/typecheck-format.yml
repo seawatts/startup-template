@@ -1,0 +1,54 @@
+name: Typecheck & Format
+
+on:
+  pull_request:
+    branches: ["*"]
+    paths:
+      - "apps/**"
+      - "packages/**"
+      - "tooling/**"
+      - "package.json"
+      - "bun.lockb"
+  push:
+    branches: ["main"]
+    paths:
+      - "apps/**"
+      - "packages/**"
+      - "tooling/**"
+      - "package.json"
+      - "bun.lockb"
+  merge_group:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+# You can leverage Vercel Remote Caching with Turbo to speed up your builds
+# @link https://turborepo.org/docs/core-concepts/remote-caching#remote-caching-on-vercel-builds
+env:
+  FORCE_COLOR: 3
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup
+        uses: ./tooling/github/setup
+
+      - name: Format
+        run: bun format
+
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup
+        uses: ./tooling/github/setup
+
+      - name: Typecheck
+        run: bun typecheck

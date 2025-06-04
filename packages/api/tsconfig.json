@@ -4,6 +4,7 @@
     "lib": ["dom", "dom.iterable", "ES2022"],
     "jsx": "preserve",
     "outDir": "dist",
+    "rootDir": "src",
     "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json"
   },
   "include": ["src"],

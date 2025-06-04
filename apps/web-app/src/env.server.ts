@@ -1,6 +1,6 @@
-import { createEnv } from '@t3-oss/env-nextjs'
-import { vercel } from '@t3-oss/env-nextjs/presets-zod'
-import { z } from 'zod'
+import { createEnv } from '@t3-oss/env-nextjs';
+import { vercel } from '@t3-oss/env-nextjs/presets-zod';
+import { z } from 'zod';
 
 export const env = createEnv({
   /**
@@ -20,11 +20,12 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(['development', 'production', 'test'])
       .default('development'),
-    OPENAI_API_KEY: z.string(),
+    OPENAI_API_KEY: z.string().optional(),
     POSTGRES_URL: z.string().url(),
     POSTHOG_KEY: z.string(),
+    STRIPE_SECRET_KEY: z.string().optional(),
   },
 
   skipValidation:
     !!process.env.CI || process.env.npm_lifecycle_event === 'lint',
-})
+});

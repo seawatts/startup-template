@@ -1,0 +1,129 @@
+import type { PlasmoCSConfig, PlasmoGetShadowHostId } from "plasmo";
+import { useEffect, useState } from "react";
+import { useStorage } from "@plasmohq/storage/hook";
+import logoIcon from "data-base64:~/../assets/icon.png";
+import cssText from "data-text:~/style.css";
+
+import { Button } from "@acme/ui/button";
+import { Icons } from "@acme/ui/icons";
+
+import { AdviceCard } from "~/components/advice-card/button";
+import { useFounderName } from "~/hooks/use-founder-name";
+import { useInputDetails } from "~/hooks/use-input-details";
+import { useInputUpdate } from "~/hooks/use-input-update";
+import { useAIStream } from "~/hooks/use-stream";
+import { CompanyDetails, companyDetailsDefault } from "~/storage";
+import { getExistingInputs } from "~/utils/get-existing-inputs";
+import { getInlineAnchorList } from "~/utils/get-inline-anchor-list";
+
+export const config: PlasmoCSConfig = {
+  matches: ["https://apply.ycombinator.com/app/edit/*"],
+};
+
+export const getStyle = () => {
+  const style = document.createElement("style");
+  style.textContent = cssText.replaceAll(":root", ":host(plasmo-csui)");
+  return style;
+};
+
+export { getInlineAnchorList };
+
+export const getShadowHostId: PlasmoGetShadowHostId = (host) =>
+  host?.element.getAttribute("data-custom-id") + `-pollax-iv`;
+
+const Content = ({ anchor }: { anchor: { element?: Element } }) => {
+  // const user = useUser();
+  const [companyDetails] = useStorage<CompanyDetails>(
+    "companyDetails",
+    companyDetailsDefault,
+  );
+  const [existingInputs, setExistingInputs] = useState<
+    { label: string; value: string }[]
+  >([]);
+  const [useIndividualInputsGenerate] = useStorage<boolean>(
+    "useIndividualInputsGenerate",
+    false,
+  );
+  const [useIndividualInputsEvaluate] = useStorage<boolean>(
+    "useIndividualInputsEvaluate",
+    false,
+  );
+
+  const { labelText, labelFor, inputElement } = useInputDetails(anchor.element);
+  const founderName = useFounderName();
+
+  const { isLoading, mutate, partialData } = useAIStream<{
+    response: string;
+    characterCount: number;
+  }>();
+
+  useEffect(() => {
+    const inputs = getExistingInputs();
+    setExistingInputs(inputs);
+  }, []);
+
+  if (!useIndividualInputsGenerate && !useIndividualInputsEvaluate) {
+    return null; // Don't render anything if both checkboxes are unchecked
+  }
+
+  return (
+    <div className="flex gap-2">
+      {useIndividualInputsEvaluate && (
+        <AdviceCard
+          content={labelText}
+          element={labelFor}
+          evaluationId=""
+          description={"Evaluating Answer"}
+          withDialog
+          dialogButtonText="Vibe-check"
+          disabled={inputElement?.value?.length === 0}
+        />
+      )}
+      {useIndividualInputsGenerate && (
+        <Button
+          onClick={async () => {
+            await mutate("/api/generate-application", {
+              userName: founderName,
+              companyDetails: JSON.stringify(companyDetails),
+              existingInputs: existingInputs,
+              prompt: labelText,
+              documentId: companyDetails.document?.id,
+              companyId: companyDetails.id,
+              // userId: user.user?.id,
+            });
+          }}
+          variant="default"
+          className="flex items-center"
+          disabled={
+            isLoading ||
+            !companyDetails ||
+            Object.keys(companyDetails).length === 0 ||
+            Object.values(companyDetails).every((value) => !value)
+          }
+        >
+          {!isLoading && (
+            <img
+              src={logoIcon}
+              alt="Acme"
+              className="mb-0.5 mr-2 size-5"
+            />
+          )}
+          {isLoading && <Icons.Spinner className="mb-0.5 mr-2" />}
+          Auto-fill
+        </Button>
+      )}
+    </div>
+  );
+};
+
+export default function ContentWithClerkProvider({
+  anchor,
+}: {
+  anchor: { element?: Element };
+}) {
+  return (
+    // <ClerkProviderSingleton>
+    <Content anchor={anchor} />
+    // </ClerkProviderSingleton>
+  );
+}
