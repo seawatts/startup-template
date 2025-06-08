@@ -12,7 +12,7 @@ const nextConfig = {
   eslint: { ignoreDuringBuilds: true },
   experimental: {
     scrollRestoration: true,
-    typedRoutes: true,
+    // typedRoutes: true,
     // dynamicIO: true,
     serverActions: {
       bodySizeLimit: '20mb',
@@ -41,9 +41,11 @@ const nextConfig = {
 };
 
 const withPlugins = [
-  MillionLint.next({
-    rsc: true,
-  }),
+  process.env.MILLION_LINT === 'true'
+    ? MillionLint.next({
+        rsc: true,
+      })
+    : null,
   withBaml(),
   process.env.WITH_BUNDLE_ANALYZER === 'true'
     ? withBundleAnalyzer({ enabled: true })

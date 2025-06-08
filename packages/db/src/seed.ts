@@ -3,17 +3,17 @@ import { seed } from 'drizzle-seed';
 import { createId } from '@acme/id';
 
 import { db } from './client';
-import { Orgs, ShortUrl, Users } from './schema';
+import { Orgs, ShortUrls, Users } from './schema';
 
 // Reset all tables
 
 await db.delete(Users);
 await db.delete(Orgs);
-await db.delete(ShortUrl);
+await db.delete(ShortUrls);
 
 await seed(db, {
   Orgs,
-  ShortUrl,
+  ShortUrls,
   Users,
 }).refine((funcs) => ({
   Maps: {

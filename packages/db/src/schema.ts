@@ -18,7 +18,7 @@ export const userRoleEnum = pgEnum('userRole', ['admin', 'superAdmin', 'user']);
 
 export const UserRoleType = z.enum(userRoleEnum.enumValues).Enum;
 
-export const Users = pgTable('user', {
+export const Users = pgTable('users', {
   avatarUrl: text('avatarUrl'),
   clerkId: text('clerkId').unique().notNull(),
   createdAt: timestamp('createdAt').defaultNow().notNull(),
@@ -39,6 +39,7 @@ export const Users = pgTable('user', {
 
 export const UsersRelations = relations(Users, ({ many }) => ({
   orgMembers: many(OrgMembers),
+  shortUrls: many(ShortUrls),
   authCodes: many(AuthCodes),
 }));
 
@@ -147,7 +148,7 @@ export const OrgMembersRelations = relations(OrgMembers, ({ one }) => ({
   }),
 }));
 
-export const ShortUrl = pgTable('shortUrl', {
+export const ShortUrls = pgTable('shortUrls', {
   id: varchar('id', { length: 128 })
     .$defaultFn(() => createId({ prefix: 's' }))
     .notNull()
@@ -166,7 +167,14 @@ export const ShortUrl = pgTable('shortUrl', {
     .references(() => Users.id, {
       onDelete: 'cascade',
     })
-    .notNull(),
+    .notNull()
+    .default(sql`auth.jwt()->>'sub'`),
+  orgId: varchar('orgId')
+    .references(() => Orgs.id, {
+      onDelete: 'cascade',
+    })
+    .notNull()
+    .default(sql`auth.jwt()->>'org_id'`),
 });
 
 export const AuthCodes = pgTable('authCodes', {

@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@acme/ai": "workspace:*",
     "@acme/analytics": "workspace:*",
     "@acme/api": "workspace:*",
     "@acme/db": "workspace:*",
@@ -64,7 +65,7 @@
   "scripts": {
     "build": "next build",
     "clean": "rm -rf .turbo node_modules dist .next",
-    "dev": "next dev --turbo",
+    "dev": "next dev",
     "postbuild": "next-sitemap --config next-sitemap.config.cjs",
     "start": "next start",
     "test": "bun test",
