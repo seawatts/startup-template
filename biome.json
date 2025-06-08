@@ -11,7 +11,8 @@
     "ignore": [
       "apps/chrome-extension/scripts/**",
       "apps/chrome-extension/src/pdf.worker.min.js",
-      "apps/chrome-extension/assets/pdf.worker.min.mjs"
+      "apps/chrome-extension/assets/pdf.worker.min.mjs",
+      "baml_client/**"
     ]
   },
   "formatter": {

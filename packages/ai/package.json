@@ -1,0 +1,31 @@
+{
+  "dependencies": {
+    "@boundaryml/baml": "0.89.0"
+  },
+  "devDependencies": {
+    "@acme/tsconfig": "workspace:*",
+    "typescript": "5.8.3"
+  },
+  "exports": {
+    "./*": {
+      "default": "./src/baml_client/*.ts",
+      "types": "./dist/baml_client/*.d.ts"
+    },
+    "./react/*": {
+      "default": "./src/baml_client/react/*.ts",
+      "types": "./dist/baml_client/react/*.d.ts"
+    }
+  },
+  "license": "MIT",
+  "name": "@acme/ai",
+  "private": true,
+  "scripts": {
+    "build": "bun generate && tsc",
+    "clean": "rm -rf .turbo node_modules dist",
+    "dev": "bun generate && tsc --watch",
+    "generate": "bunx @boundaryml/baml@latest generate --from ./src/baml_src",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "type": "module",
+  "version": "0.1.0"
+}

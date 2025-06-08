@@ -44,7 +44,7 @@ const withPlugins = [
   MillionLint.next({
     rsc: true,
   }),
-  withBaml,
+  withBaml(),
   process.env.WITH_BUNDLE_ANALYZER === 'true'
     ? withBundleAnalyzer({ enabled: true })
     : null,
