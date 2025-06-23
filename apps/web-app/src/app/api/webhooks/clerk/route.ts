@@ -1,26 +1,24 @@
+import { posthog } from '@acme/analytics/posthog/server';
 import type { WebhookEvent } from '@clerk/nextjs/server';
-import { eq } from 'drizzle-orm';
 import { headers } from 'next/headers';
-import { PostHog } from 'posthog-node';
 import { Webhook } from 'svix';
 
-import { db } from '@acme/db/client';
-import { Users } from '@acme/db/schema';
-
 import { env } from '~/env.server';
+import { handleOrganizationCreated } from './organization-created';
+import { handleOrganizationMembershipCreated } from './organization-membership-created';
+import { handleOrganizationMembershipUpdated } from './organization-membership-updated';
+import { handleOrganizationUpdated } from './organization-updated';
+import { handleSessionCreated } from './session-created';
+import { handleUserCreated } from './user-created';
+import { handleUserUpdated } from './user-updated';
 
 export async function POST(request: Request) {
-  const posthog = new PostHog(env.POSTHOG_KEY, {
-    flushAt: 1,
-    flushInterval: 0,
-    host: 'https://us.i.posthog.com',
-  });
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
   const CLERK_WEBHOOK_SECRET = env.CLERK_WEBHOOK_SECRET;
 
   if (!CLERK_WEBHOOK_SECRET) {
     return new Response(
-      'Please add WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local',
+      'Please add CLERK_WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local',
       { status: 400 },
     );
   }
@@ -66,123 +64,33 @@ export async function POST(request: Request) {
   const eventType = event.type;
   console.log(`Webhook with and ID of ${id} and type of ${eventType}`);
 
-  if (event.type === 'user.created') {
-    const email = event.data.email_addresses.find(
-      (email) => email.id === event.data.primary_email_address_id,
-    )?.email_address;
-
-    if (!email) {
-      return new Response(
-        `Email not found on user.created ${JSON.stringify(event.data)}`,
-        { status: 400 },
-      );
-    }
-
-    const [user] = await db
-      .insert(Users)
-      .values({
-        avatarUrl: event.data.image_url,
-        clerkId: event.data.id,
-        email,
-        firstName: event.data.first_name,
-        id: event.data.id,
-        lastName: event.data.last_name,
-      })
-      .onConflictDoUpdate({
-        set: {
-          avatarUrl: event.data.image_url,
-          clerkId: event.data.id,
-          email,
-          firstName: event.data.first_name,
-          lastName: event.data.last_name,
-        },
-        target: Users.email,
-      })
-      .returning({
-        id: Users.id,
-      });
-
-    if (!user) {
-      return new Response('User not found on user.created', { status: 400 });
-    }
-
-    posthog.capture({
-      distinctId: user.id,
-      event: 'create_user',
-      properties: {
-        email,
-        firstName: event.data.first_name,
-        lastName: event.data.last_name,
-      },
-    });
-  }
-
-  if (event.type === 'user.updated') {
-    const email = event.data.email_addresses.find(
-      (email) => email.id === event.data.primary_email_address_id,
-    )?.email_address;
-
-    const [user] = await db
-      .update(Users)
-      .set({
-        avatarUrl: event.data.image_url,
-        email,
-        firstName: event.data.first_name,
-        lastName: event.data.last_name,
-      })
-      .where(eq(Users.clerkId, event.data.id))
-      .returning({
-        email: Users.email,
-        id: Users.id,
-      });
-
-    if (!user) {
-      return new Response('User not found on user.update', { status: 400 });
-    }
-
-    posthog.capture({
-      distinctId: user.id,
-      event: 'update_user',
-      properties: {
-        email: user.email,
-      },
-    });
-  }
-
-  if (event.type === 'session.created') {
-    const existingUser = await db.query.Users.findFirst({
-      where: eq(Users.clerkId, event.data.user_id),
-    });
-
-    if (!existingUser) {
-      console.log('User not found on session.created', event.data.user_id);
-      return new Response('', { status: 200 });
-    }
-
-    const [user] = await db
-      .update(Users)
-      .set({
-        lastLoggedInAt: new Date(),
-      })
-      .where(eq(Users.clerkId, event.data.user_id))
-      .returning({
-        email: Users.email,
-        id: Users.id,
-      });
-
-    if (!user) {
-      return new Response('User not found on session.created', { status: 400 });
-    }
-
-    posthog.capture({
-      distinctId: user.id,
-      event: 'login',
-      properties: {
-        email: user.email,
-      },
-    });
+  let response: Response | undefined;
+  switch (event.type) {
+    case 'user.created':
+      response = await handleUserCreated(event);
+      break;
+    case 'user.updated':
+      response = await handleUserUpdated(event);
+      break;
+    case 'session.created':
+      response = await handleSessionCreated(event);
+      break;
+    case 'organization.created':
+      response = await handleOrganizationCreated(event);
+      break;
+    case 'organization.updated':
+      response = await handleOrganizationUpdated(event);
+      break;
+    case 'organizationMembership.created':
+      response = await handleOrganizationMembershipCreated(event);
+      break;
+    case 'organizationMembership.updated':
+      response = await handleOrganizationMembershipUpdated(event);
+      break;
+    default:
+      response = undefined;
   }
 
   await posthog.shutdown();
-  return new Response('', { status: 200 });
+  return response ?? new Response('', { status: 200 });
 }
