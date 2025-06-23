@@ -8,20 +8,19 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": [
-      "apps/chrome-extension/scripts/**",
-      "apps/chrome-extension/src/pdf.worker.min.js",
-      "apps/chrome-extension/assets/pdf.worker.min.mjs",
-      "baml_client/**"
+    "includes": [
+      "**",
+      "!**/apps/chrome-extension/scripts/**",
+      "!**/apps/chrome-extension/src/pdf.worker.min.js",
+      "!**/apps/chrome-extension/assets/pdf.worker.min.mjs",
+      "!**/baml_client/**"
     ]
   },
   "formatter": {
     "enabled": true,
     "indentStyle": "space"
   },
-  "organizeImports": {
-    "enabled": true
-  },
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "linter": {
     "enabled": true,
     "rules": {
@@ -32,12 +31,7 @@
         "useExhaustiveDependencies": "warn",
         "useHookAtTopLevel": "error"
       },
-      "nursery": {
-        "noCommonJs": "error",
-        "noNestedTernary": "off",
-        "useAtIndex": "error",
-        "useCollapsedIf": "error"
-      },
+      "nursery": {},
       "style": {
         "noNegationElse": "off",
         "useNodejsImportProtocol": "error",
@@ -47,7 +41,21 @@
             "requireAscii": true,
             "filenameCases": ["kebab-case"]
           }
-        }
+        },
+        "noParameterAssign": "error",
+        "useAsConstAssertion": "error",
+        "useDefaultParameterLast": "error",
+        "useEnumInitializers": "error",
+        "useSelfClosingElements": "error",
+        "useSingleVarDeclarator": "error",
+        "noUnusedTemplateLiteral": "error",
+        "useNumberNamespace": "error",
+        "noInferrableTypes": "error",
+        "noUselessElse": "error",
+        "noCommonJs": "error",
+        "noNestedTernary": "off",
+        "useAtIndex": "error",
+        "useCollapsedIf": "error"
       },
       "suspicious": {
         "noExplicitAny": "error"

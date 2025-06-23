@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@boundaryml/baml": "0.89.0"
+    "@boundaryml/baml": "0.90.2"
   },
   "devDependencies": {
     "@acme/tsconfig": "workspace:*",
