@@ -51,3 +51,6 @@ dist/
 
 # turbo
 .turbo
+
+apps/cli/bin
+apps/cli/certificates
