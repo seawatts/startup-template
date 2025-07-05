@@ -15,6 +15,7 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   changeset:
+    if: false # Skip this workflow
     name: Changeset NPM Release
     runs-on: ubuntu-latest
     steps:
