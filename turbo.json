@@ -110,7 +110,6 @@
       "passThroughEnv": ["DATABASE_URL", "POSTGRES_URL"]
     },
     "typecheck": {
-      "dependsOn": ["^build"],
       "outputs": ["node_modules/.cache/tsbuildinfo.json"]
     },
     "ui-add": {

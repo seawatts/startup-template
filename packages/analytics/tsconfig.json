@@ -1,9 +1,7 @@
 {
   "extends": "@acme/tsconfig/react-library.json",
   "compilerOptions": {
-    "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json",
-    "outDir": "dist",
-    "rootDir": "."
+    "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json"
   },
   "include": ["."],
   "exclude": ["node_modules"]
