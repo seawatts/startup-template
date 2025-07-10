@@ -7,8 +7,8 @@ import { withNativeWind } from 'nativewind/metro';
 export default withTurborepoManagedCache(
   withMonorepoPaths(
     withNativeWind(getDefaultConfig(__dirname), {
-      input: './src/styles.css',
       configPath: './tailwind.config.ts',
+      input: './src/styles.css',
     }),
   ),
 );

@@ -96,15 +96,15 @@ export function ScriptForm({ children }: ScriptFormProps) {
 
   return (
     <form
+      className="flex h-full flex-col gap-4"
       onSubmit={(event) => {
         setHasFetched(false);
         setGeneration(null);
         handleSubmit(event);
       }}
-      className="flex h-full flex-col gap-4"
     >
       <Entitled entitlement="video_script">
-        <ScriptDisplay script={generation} isPending={isPending} />
+        <ScriptDisplay isPending={isPending} script={generation} />
       </Entitled>
       <NotEntitled entitlement="video_script">
         <Alert>

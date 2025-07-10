@@ -27,7 +27,7 @@ export function UploadPitchDeckDialog({
   const portalElement = useChromePortal();
 
   return (
-    <AlertDialog open={isOpen} onOpenChange={onClose}>
+    <AlertDialog onOpenChange={onClose} open={isOpen}>
       <AlertDialogContent portalContainer={portalElement}>
         <AlertDialogHeader>
           <AlertDialogTitle>Upload Pitch Deck</AlertDialogTitle>
@@ -40,11 +40,11 @@ export function UploadPitchDeckDialog({
         <UploadPitchDeckForm onSuccess={onClose}>
           {({ isPending }) => (
             <AlertDialogFooter>
-              <Button variant="outline" onClick={onClose} type="button">
+              <Button onClick={onClose} type="button" variant="outline">
                 Cancel
               </Button>
               <Entitled entitlement="pitch_deck_upload">
-                <Button type="submit" disabled={isPending}>
+                <Button disabled={isPending} type="submit">
                   {isPending && <Icons.Spinner className="mr-2" />}
                   {isPending ? 'Uploading...' : 'Upload'}
                 </Button>

@@ -41,89 +41,89 @@ export function useRoutes() {
   return useMemo(() => {
     const authenticatedRoutes: AppRoute[] = [
       {
-        path: '/logout',
         component: LogoutPage,
-        label: 'Logout',
         hotkey: 'l',
+        label: 'Logout',
+        path: '/logout',
       },
       {
-        path: '/listen',
         component: () => null,
         label: 'Listen for Changes',
+        path: '/listen',
       },
     ];
 
     const debugRoute: AppRoute = {
-      path: '/debug',
       component: DebugPage,
-      label: 'Debug Info',
       hotkey: 'd',
+      label: 'Debug Info',
+      path: '/debug',
     };
 
     const unauthenticatedRoutes: AppRoute[] = [
       {
-        path: '/login',
         component: LoginLayout,
-        label: 'Login',
         hotkey: 'l',
+        label: 'Login',
+        path: '/login',
       },
     ];
 
     const commonRoutes: AppRoute[] = [
       {
-        path: '/',
         component: MenuLayout,
         label: 'Menu',
+        path: '/',
         showInMenu: false,
       },
       {
-        path: '/init',
         component: () => null,
         label: 'Initialize Project',
+        path: '/init',
       },
       {
-        path: '/hotkeys',
         component: HotkeysPage,
-        label: 'Hotkeys',
-        showInMenu: false,
         hotkey: '?',
+        label: 'Hotkeys',
+        path: '/hotkeys',
+        showInMenu: false,
       },
       {
-        path: '/help',
         component: () => null,
-        label: 'Help',
         hotkey: 'h',
+        label: 'Help',
+        path: '/help',
       },
       {
-        path: '/report-issue',
         component: () => null,
-        label: 'Report Issue',
         hotkey: 'i',
+        label: 'Report Issue',
+        path: '/report-issue',
         url: 'https://github.com/acme-sh/acme/issues/new?template=bug_report.yml',
       },
       {
-        path: '/docs',
         component: () => null,
-        label: 'Docs',
         hotkey: 'd',
+        label: 'Docs',
+        path: '/docs',
         url: 'https://docs.acme.sh',
       },
       {
-        path: '/quit',
         component: QuitPage,
-        label: 'Quit',
         hotkey: 'q',
+        label: 'Quit',
+        path: '/quit',
       },
       {
-        path: '/unauthorized',
         component: UnauthorizedPage,
         label: 'Unauthorized',
+        path: '/unauthorized',
         showInMenu: false,
       },
       {
-        path: '/not-found',
         component: NotFoundPage,
         label: 'Not Found',
+        path: '/not-found',
         showInMenu: false,
       },
     ];

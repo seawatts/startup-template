@@ -35,7 +35,7 @@ export function ShareLinkDialog({ isOpen, onClose }: ShareLinkDialogProps) {
 
   if (isDesktop()) {
     return (
-      <Dialog open={isOpen} onOpenChange={onClose}>
+      <Dialog onOpenChange={onClose} open={isOpen}>
         <DialogContent portalContainer={portalElement}>
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
@@ -45,12 +45,12 @@ export function ShareLinkDialog({ isOpen, onClose }: ShareLinkDialogProps) {
             {({ isPending, hasShareLink }) => (
               <div className="flex justify-between">
                 <div>
-                  <Button variant="outline" asChild>
+                  <Button asChild variant="outline">
                     <a
-                      href={getShareLink.data?.uniqueLink}
-                      target="_blank"
                       className="flex items-center gap-2"
+                      href={getShareLink.data?.uniqueLink}
                       rel="noreferrer"
+                      target="_blank"
                     >
                       View Feedback
                       <Icons.ExternalLink />
@@ -60,23 +60,23 @@ export function ShareLinkDialog({ isOpen, onClose }: ShareLinkDialogProps) {
 
                 <div className="flex gap-2">
                   <Button
-                    variant="outline"
                     onClick={(event) => {
                       event.preventDefault();
                       event.stopPropagation();
                       onClose();
                     }}
+                    variant="outline"
                   >
                     Close
                   </Button>
                   {!hasShareLink && (
-                    <Button type="submit" disabled={isPending}>
+                    <Button disabled={isPending} type="submit">
                       {isPending && <Icons.Spinner className="mr-2" />}
                       {isPending ? 'Creating...' : 'Create'}
                     </Button>
                   )}
                   {hasShareLink && (
-                    <Button type="submit" disabled={isPending}>
+                    <Button disabled={isPending} type="submit">
                       {isPending && <Icons.Spinner className="mr-2" />}
                       {isPending ? 'Updating...' : 'Update'}
                     </Button>

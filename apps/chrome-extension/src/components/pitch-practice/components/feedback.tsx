@@ -8,6 +8,6 @@ export function Feedback({ content }: FeedbackProps) {
   if (!content) return null;
 
   return (
-    <Markdown content={content} className="text-sm text-muted-foreground" />
+    <Markdown className="text-sm text-muted-foreground" content={content} />
   );
 }

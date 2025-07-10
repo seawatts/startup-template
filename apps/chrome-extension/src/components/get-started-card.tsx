@@ -22,7 +22,7 @@ export function GetStartedCard() {
         <CardContent className="flex flex-grow flex-col">
           <div className="mt-auto" />
 
-          <Button className="w-full" asChild>
+          <Button asChild className="w-full">
             <a href="https://apply.ycombinator.com/app/edit">
               Finish Application
             </a>

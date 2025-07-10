@@ -58,8 +58,8 @@ export function ProjectDropdownMenu() {
               </SidebarMenuButton>
             </DropdownMenuTrigger>
             <DropdownMenuContent
-              className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
               align="start"
+              className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
               side={isMobile ? 'bottom' : 'right'}
               sideOffset={4}
             >
@@ -82,8 +82,8 @@ export function ProjectDropdownMenu() {
                 </DropdownMenuItem>
               ))} */}
               <DropdownMenuItem
-                onClick={() => setNewProjectDialogOpen(true)}
                 className="gap-2 p-2"
+                onClick={() => setNewProjectDialogOpen(true)}
               >
                 <div className="flex size-6 items-center justify-center rounded-md border bg-background">
                   <Icons.Plus className="size-4" />

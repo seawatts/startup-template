@@ -68,10 +68,10 @@ export function FeatureWaitlistButton({
   return (
     <Button
       // onClick={handleJoinWaitlist}
-      type="button"
       className={className}
-      variant="outline"
       disabled={isPending || isSubscribed}
+      type="button"
+      variant="outline"
     >
       {isSubscribed && (
         <>
@@ -84,7 +84,7 @@ export function FeatureWaitlistButton({
           {isPending ? (
             <Icons.Spinner className="mr-2" />
           ) : (
-            <img src={logoIcon} alt="Acme" className="mb-0.5 mr-2 size-5" />
+            <img alt="Acme" className="mb-0.5 mr-2 size-5" src={logoIcon} />
           )}
           {isPending ? 'Joining...' : children || 'Join Waitlist'}
         </>

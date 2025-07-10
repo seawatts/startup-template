@@ -85,8 +85,8 @@ export class RequestDetailsWebviewProvider
             // If we have request data, send it to the webview
             if (this._currentRequestData) {
               webviewView.webview.postMessage({
-                type: 'requestData',
                 data: this._currentRequestData,
+                type: 'requestData',
               });
             }
             break;
@@ -128,8 +128,8 @@ export class RequestDetailsWebviewProvider
     this._currentRequestData = data;
     if (this._view) {
       this._view.webview.postMessage({
-        type: 'requestData',
         data: this._currentRequestData,
+        type: 'requestData',
       });
     }
   }

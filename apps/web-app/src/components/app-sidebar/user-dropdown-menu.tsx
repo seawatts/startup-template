@@ -49,8 +49,8 @@ export function UserDropdownMenu() {
         </SidebarMenuButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        side="top"
         className="w-(--radix-popper-anchor-width)"
+        side="top"
       >
         <DropdownMenuItem
           className="cursor-default"
@@ -73,19 +73,19 @@ export function UserDropdownMenu() {
         </DropdownMenuItem>
         <div className="px-2 py-1.5">
           <ToggleGroup
+            className="w-full"
+            onValueChange={(value) => value && setTheme(value)}
             type="single"
             value={theme}
-            onValueChange={(value) => value && setTheme(value)}
-            className="w-full"
             variant="outline"
           >
-            <ToggleGroupItem value="light" aria-label="Light theme">
+            <ToggleGroupItem aria-label="Light theme" value="light">
               <SunIcon className="size-4" />
             </ToggleGroupItem>
-            <ToggleGroupItem value="dark" aria-label="Dark theme">
+            <ToggleGroupItem aria-label="Dark theme" value="dark">
               <MoonIcon className="size-4" />
             </ToggleGroupItem>
-            <ToggleGroupItem value="system" aria-label="System theme">
+            <ToggleGroupItem aria-label="System theme" value="system">
               <Laptop className="size-4" />
             </ToggleGroupItem>
           </ToggleGroup>

@@ -44,9 +44,9 @@ function WelcomePage() {
               <div className="flex justify-between">
                 <div className="flex items-center gap-2">
                   <img
-                    src={ycCfLogo}
-                    className="h-16 w-auto"
                     alt="YC vibe-check"
+                    className="h-16 w-auto"
+                    src={ycCfLogo}
                   />
                   <div className="flex flex-col gap-2">
                     <span>Welcome to YC vibe-check - apply with ai</span>
@@ -87,8 +87,8 @@ function WelcomePage() {
                     <Button asChild>
                       <a
                         href={`${env.PLASMO_PUBLIC_API_URL}/chrome-extension/sign-in?redirect_url=${globalThis.location.href}`}
-                        target="_blank"
                         rel="noreferrer"
+                        target="_blank"
                       >
                         <Icons.Plus className="mr-2" />
                         Create Account
@@ -135,8 +135,8 @@ function WelcomePage() {
                     <Button asChild>
                       <a
                         href="https://apply.ycombinator.com"
-                        target="_blank"
                         rel="noopener noreferrer"
+                        target="_blank"
                       >
                         <Icons.Plus className="mr-2" />
                         New YC App
@@ -145,8 +145,8 @@ function WelcomePage() {
                     <Button asChild variant="outline">
                       <a
                         href="https://apply.ycombinator.com/app/edit"
-                        target="_blank"
                         rel="noopener noreferrer"
+                        target="_blank"
                       >
                         <Icons.Pencil className="mr-2" />
                         Edit Existing YC App
@@ -169,7 +169,7 @@ function WelcomePage() {
                         </div>
                       ) : (
                         currentFeatures.map((feature) => (
-                          <li key={feature} className="flex items-center gap-2">
+                          <li className="flex items-center gap-2" key={feature}>
                             <span>{feature.emoji}</span>
                             <span className="font-semibold">
                               {feature.name}:
@@ -193,8 +193,8 @@ function WelcomePage() {
                       ) : (
                         comingSoonFeatures.map((feature) => (
                           <li
-                            key={feature.name}
                             className="flex items-center gap-2"
+                            key={feature.name}
                           >
                             <span>{feature.emoji}</span>
                             <span className="font-semibold">
@@ -207,12 +207,12 @@ function WelcomePage() {
                     </ul>
                     <div className="mt-4 flex gap-2">
                       <FeatureWaitlistButton
-                        featureName="coming-soon"
                         element="welcome-page"
+                        featureName="coming-soon"
                       />
                       <SubmitFeedbackButton
-                        type="feature-request"
                         element="welcome-page"
+                        type="feature-request"
                       >
                         Suggest a Feature
                       </SubmitFeedbackButton>
@@ -294,15 +294,15 @@ function WelcomePage() {
               <li>
                 View our{' '}
                 <a
-                  href="https://acme.ai/terms"
                   className="text-muted-foreground underline underline-offset-4"
+                  href="https://acme.ai/terms"
                 >
                   terms of service
                 </a>{' '}
                 and{' '}
                 <a
-                  href="https://acme.ai/privacy"
                   className="text-muted-foreground underline underline-offset-4"
+                  href="https://acme.ai/privacy"
                 >
                   privacy policy
                 </a>
@@ -310,8 +310,8 @@ function WelcomePage() {
               <li>
                 To delete your account email us at{' '}
                 <a
-                  href="mailto:vibes@acme.ai"
                   className="text-muted-foreground underline underline-offset-4"
+                  href="mailto:vibes@acme.ai"
                 >
                   vibes@acme.ai
                 </a>
@@ -326,12 +326,12 @@ function WelcomePage() {
               updates, new features, and improvements.
             </p>
             <Button
-              variant="outline"
               onClick={() => {
                 chrome.tabs.create({
                   url: './tabs/changelog.html',
                 });
               }}
+              variant="outline"
             >
               View Changelog
             </Button>

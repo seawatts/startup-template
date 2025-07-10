@@ -125,24 +125,24 @@ export function CompanyForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
       <div className="flex flex-col gap-y-4 px-4 lg:px-0">
         <div className="flex flex-col gap-2">
           <Label htmlFor="companyName">Company Name</Label>
           <Input
             id="companyName"
+            onChange={(event) => setCompanyName(event.target.value)}
             placeholder="Enter your company name"
             value={companyName}
-            onChange={(event) => setCompanyName(event.target.value)}
           />
         </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor="companyDescription">Summary</Label>
           <Textarea
             id="companyDescription"
+            onChange={(event) => setCompanyDescription(event.target.value)}
             placeholder="Enter a short description of your company"
             value={companyDescription}
-            onChange={(event) => setCompanyDescription(event.target.value)}
           />
         </div>
         {/* <div className="flex flex-col gap-2">

@@ -27,24 +27,24 @@
 }
 
 .section-title {
-  font-weight: bold;
   margin-bottom: 10px;
-  color: var(--vscode-editor-foreground);
   font-size: 1.1em;
+  font-weight: bold;
+  color: var(--vscode-editor-foreground);
 }
 
 pre {
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  background-color: var(--vscode-editor-background);
   padding: 10px;
-  border-radius: 4px;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  background-color: var(--vscode-editor-background);
   border: 1px solid var(--vscode-panel-border);
+  border-radius: 4px;
 }
 
 .key {
-  color: var(--vscode-textLink-foreground);
   font-weight: 500;
+  color: var(--vscode-textLink-foreground);
 }
 
 .value {
@@ -54,24 +54,24 @@ pre {
 .status {
   display: inline-block;
   padding: 2px 6px;
-  border-radius: 3px;
   font-size: 0.9em;
   font-weight: 500;
+  border-radius: 3px;
 }
 
 .status-200 {
-  background-color: var(--vscode-testing-iconPassed);
   color: var(--vscode-editor-background);
+  background-color: var(--vscode-testing-iconPassed);
 }
 
 .status-4xx {
-  background-color: var(--vscode-testing-iconFailed);
   color: var(--vscode-editor-background);
+  background-color: var(--vscode-testing-iconFailed);
 }
 
 .status-5xx {
-  background-color: var(--vscode-testing-iconFailed);
   color: var(--vscode-editor-background);
+  background-color: var(--vscode-testing-iconFailed);
 }
 
 /* Main view styles */
@@ -80,25 +80,25 @@ pre {
 }
 
 .card {
+  padding: 20px;
+  margin-top: 20px;
   background-color: var(--vscode-editor-background);
   border: 1px solid var(--vscode-panel-border);
   border-radius: 4px;
-  padding: 20px;
-  margin-top: 20px;
 }
 
 .card ul {
-  list-style: none;
   padding: 0;
   margin: 0;
+  list-style: none;
 }
 
 button {
-  border-radius: 2px;
-  border: 1px solid transparent;
   padding: 4px 8px;
   font-size: 12px;
   cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 2px;
   transition: background-color 0.2s;
 }
 button:hover {
@@ -111,8 +111,8 @@ button:focus-visible {
 }
 
 .card button {
-  background-color: var(--vscode-button-background);
   color: var(--vscode-button-foreground);
+  background-color: var(--vscode-button-background);
 }
 
 .card button:focus {
@@ -124,10 +124,10 @@ button:focus-visible {
 }
 
 .card code {
-  background-color: var(--vscode-textBlockQuote-background);
   padding: 2px 4px;
-  border-radius: 2px;
   font-family: var(--vscode-editor-font-family);
+  background-color: var(--vscode-textBlockQuote-background);
+  border-radius: 2px;
 }
 
 a {
@@ -140,28 +140,28 @@ a:hover {
 }
 
 body {
-  margin: 0;
   display: flex;
   min-width: 320px;
   min-height: 100vh;
+  margin: 0;
   background-color: var(--vscode-sideBar-background);
 }
 
 h1 {
-  font-size: 1.8em;
-  line-height: 1.1;
-  font-weight: 600;
   margin-bottom: 1em;
+  font-size: 1.8em;
+  font-weight: 600;
+  line-height: 1.1;
   color: var(--vscode-editor-foreground);
 }
 
 input,
 textarea,
 select {
-  background-color: var(--vscode-input-background);
-  color: var(--vscode-input-foreground);
-  border: 1px solid var(--vscode-input-border);
   padding: 0.5em;
+  color: var(--vscode-input-foreground);
+  background-color: var(--vscode-input-background);
+  border: 1px solid var(--vscode-input-border);
   border-radius: 2px;
 }
 

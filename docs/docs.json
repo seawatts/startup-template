@@ -1,25 +1,28 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Acme",
-  "description": "Acme is a simple, secure, and reliable webhook service that allows you to create and manage webhooks for your applications.",
-  "colors": {
-    "primary": "#009689",
-    "light": "#009689",
-    "dark": "#009689"
-  },
-  "favicon": "/logo/favicon.png",
-  "icons": {
-    "library": "lucide"
-  },
-  "fonts": {
-    "family": "Geist",
-    "weight": 400,
-    "source": "https://fonts.gstatic.com/s/geist/v3/gyByhwUxId8gMEwcGFWNOITd.woff2",
-    "format": "woff2"
-  },
   "banner": {
     "content": "Acme is currently in beta."
+  },
+  "colors": {
+    "dark": "#009689",
+    "light": "#009689",
+    "primary": "#009689"
+  },
+  "description": "Acme is a simple, secure, and reliable webhook service that allows you to create and manage webhooks for your applications.",
+  "favicon": "/logo/favicon.png",
+  "fonts": {
+    "family": "Geist",
+    "format": "woff2",
+    "source": "https://fonts.gstatic.com/s/geist/v3/gyByhwUxId8gMEwcGFWNOITd.woff2",
+    "weight": 400
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/acme-sh/acme"
+    }
+  },
+  "icons": {
+    "library": "lucide"
   },
   "integrations": {
     "posthog": {
@@ -27,49 +30,29 @@
       "apiKey": "phc_KaX5gqla4Oco74fZowSXJ4nfoDG4TqhXRyIHr3TExcG"
     }
   },
-  "navigation": {
-    "tabs": [
+  "logo": {
+    "dark": "/logo/logo-dark.svg",
+    "light": "/logo/logo-light.svg"
+  },
+  "name": "Acme",
+  "navbar": {
+    "links": [
       {
-        "tab": "Guides",
-        "groups": [
-          {
-            "group": "Get Started",
-            "pages": [
-              "introduction",
-              "quickstart",
-              "configuration",
-              "providers"
-            ]
-          },
-          {
-            "group": "Reference",
-            "pages": ["cli", "architecture", "essentials/data-model"]
-          },
-          {
-            "group": "Development",
-            "pages": ["contributing"]
-          }
-        ]
+        "href": "mailto:chris.watts.t@gmail.com",
+        "label": "Support"
       },
       {
-        "tab": "API Reference",
-        "groups": [
-          {
-            "group": "API Documentation",
-            "pages": ["api-reference/introduction"]
-          },
-          {
-            "group": "Endpoint Examples",
-            "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
-            ]
-          }
-        ]
+        "href": "https://acme.sh/app",
+        "label": "Dashboard"
       }
     ],
+    "primary": {
+      "href": "https://acme.sh/app/webhooks/create?utm_source=docs",
+      "label": "Create Webhook URL",
+      "type": "button"
+    }
+  },
+  "navigation": {
     "global": {
       "anchors": [
         {
@@ -88,32 +71,49 @@
           "icon": "discord"
         }
       ]
-    }
-  },
-  "logo": {
-    "light": "/logo/logo-light.svg",
-    "dark": "/logo/logo-dark.svg"
-  },
-  "navbar": {
-    "links": [
+    },
+    "tabs": [
       {
-        "label": "Support",
-        "href": "mailto:chris.watts.t@gmail.com"
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart",
+              "configuration",
+              "providers"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": ["cli", "architecture", "essentials/data-model"]
+          },
+          {
+            "group": "Development",
+            "pages": ["contributing"]
+          }
+        ],
+        "tab": "Guides"
       },
       {
-        "label": "Dashboard",
-        "href": "https://acme.sh/app"
+        "groups": [
+          {
+            "group": "API Documentation",
+            "pages": ["api-reference/introduction"]
+          },
+          {
+            "group": "Endpoint Examples",
+            "pages": [
+              "api-reference/endpoint/get",
+              "api-reference/endpoint/create",
+              "api-reference/endpoint/delete",
+              "api-reference/endpoint/webhook"
+            ]
+          }
+        ],
+        "tab": "API Reference"
       }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Create Webhook URL",
-      "href": "https://acme.sh/app/webhooks/create?utm_source=docs"
-    }
+    ]
   },
-  "footer": {
-    "socials": {
-      "github": "https://github.com/acme-sh/acme"
-    }
-  }
+  "theme": "mint"
 }

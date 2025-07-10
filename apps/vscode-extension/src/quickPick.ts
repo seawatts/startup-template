@@ -26,21 +26,21 @@ export class WebhookEventQuickPick {
     if (this.authStore) {
       if (this.authStore.isValidatingSession) {
         items.push({
-          label: '$(sync~spin) Validating Session',
           description: 'Please wait while we validate your session',
           detail: 'Your session is being validated...',
+          label: '$(sync~spin) Validating Session',
         });
       } else if (this.authStore.isSignedIn) {
         items.push({
-          label: '$(sign-out) Sign Out',
           description: 'Sign out of your Acme account',
           detail: `Currently signed in as ${this.authStore.user?.email ?? 'User'}`,
+          label: '$(sign-out) Sign Out',
         });
       } else {
         items.push({
-          label: '$(sign-in) Sign In',
           description: 'Sign in to your Acme account',
           detail: 'Sign in to access your webhook events',
+          label: '$(sign-in) Sign In',
         });
       }
     }
@@ -49,30 +49,30 @@ export class WebhookEventQuickPick {
     if (this.authStore?.isSignedIn) {
       items.push(
         {
-          label: '$(add) Add New Webhook Event',
           description: 'Create a new webhook event',
           detail: 'Add a new webhook event to the list',
+          label: '$(add) Add New Webhook Event',
         },
         {
-          label: '$(refresh) Refresh Events',
           description: 'Refresh the webhook events list',
           detail: 'Update the list of webhook events',
+          label: '$(refresh) Refresh Events',
         },
       );
     }
 
     // Add settings item
     items.push({
-      label: '$(settings) Configure Settings',
       description: 'Open settings panel',
       detail: 'Configure Acme extension settings',
+      label: '$(settings) Configure Settings',
     });
 
     const selected = await vscode.window.showQuickPick(items, {
-      placeHolder: 'Select an action',
-      title: 'Acme Quick Actions',
       matchOnDescription: true,
       matchOnDetail: true,
+      placeHolder: 'Select an action',
+      title: 'Acme Quick Actions',
     });
 
     if (selected) {

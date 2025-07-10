@@ -65,10 +65,10 @@ export function Camera({ showCamera, onToggleCamera }: CameraProps) {
   return (
     <div className="flex flex-col items-center justify-center gap-2">
       <Button
-        type="button"
         onClick={handleButtonClick}
-        variant="outline"
         size="sm"
+        type="button"
+        variant="outline"
       >
         {showCamera ? 'Hide Camera' : 'Show Camera'}
       </Button>
@@ -84,18 +84,18 @@ export function Camera({ showCamera, onToggleCamera }: CameraProps) {
         <div className="flex w-full flex-col gap-2">
           <div className="relative aspect-video">
             <video
-              ref={videoRef}
               autoPlay
-              playsInline
-              muted
               className="absolute inset-0 h-full w-full rounded-md object-cover"
+              muted
+              playsInline
+              ref={videoRef}
             />
           </div>
           <div className="relative" style={{ paddingTop: '56.21%' }}>
             <img
-              src={interviewImage}
               alt="Interview"
               className="absolute inset-0 h-full w-full rounded-md object-contain"
+              src={interviewImage}
             />
           </div>
         </div>

@@ -1,12 +1,12 @@
 {
-  "extends": "@acme/tsconfig/react-library.json",
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "ES2022"],
     "jsx": "preserve",
+    "lib": ["dom", "dom.iterable", "ES2022"],
     "outDir": "dist",
     "rootDir": "src",
     "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json"
   },
-  "include": ["src"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "extends": "@acme/tsconfig/react-library.json",
+  "include": ["src"]
 }

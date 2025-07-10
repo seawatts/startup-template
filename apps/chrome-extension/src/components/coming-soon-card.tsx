@@ -54,14 +54,14 @@ export function ComingSoonCard() {
         ) : null} */}
         <div className="flex flex-col gap-2">
           <FeatureWaitlistButton
-            featureName="coming-soon"
-            element="coming-soon-card"
             className="w-full"
+            element="coming-soon-card"
+            featureName="coming-soon"
           />
           <SubmitFeedbackButton
-            type="feature-request"
-            element="coming-soon-card"
             className="w-full"
+            element="coming-soon-card"
+            type="feature-request"
           >
             Suggest a Feature
           </SubmitFeedbackButton>

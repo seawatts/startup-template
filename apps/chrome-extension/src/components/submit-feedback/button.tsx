@@ -35,20 +35,20 @@ export function SubmitFeedbackButton({
   return (
     <>
       <Button
+        className={className}
         onClick={() => setIsDialogOpen(true)}
         type="button"
-        className={className}
         variant="outline"
       >
-        <img src={logoIcon} alt="Acme" className="mb-0.5 mr-2 size-5" />
+        <img alt="Acme" className="mb-0.5 mr-2 size-5" src={logoIcon} />
         {children || buttonText}
       </Button>
       <SignedIn>
         <SubmitFeedbackDialog
+          element={element}
           isOpen={isDialogOpen}
           onClose={() => setIsDialogOpen(false)}
           type={type}
-          element={element}
         />
       </SignedIn>
     </>

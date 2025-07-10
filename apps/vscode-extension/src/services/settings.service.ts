@@ -45,12 +45,12 @@ export class SettingsService {
         autoShow: config.get('output.autoShow') ?? true,
         maxLines: config.get('output.maxLines') ?? 1000,
       },
-      webhookEvents: {
-        maxHistory: config.get('webhookEvents.maxHistory') ?? 100,
-        autoClear: config.get('webhookEvents.autoClear') ?? false,
-      },
       requestDetails: {
         defaultView: config.get('requestDetails.defaultView') ?? 'formatted',
+      },
+      webhookEvents: {
+        autoClear: config.get('webhookEvents.autoClear') ?? false,
+        maxHistory: config.get('webhookEvents.maxHistory') ?? 100,
       },
     };
   }

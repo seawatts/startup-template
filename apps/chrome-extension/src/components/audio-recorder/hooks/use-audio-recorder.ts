@@ -154,6 +154,7 @@ export function useAudioRecorder({
   return {
     analyzerNode,
     audioContext,
+    cleanupMediaRecorder,
     isAudioEnabled,
     isPaused,
     isRecording,
@@ -163,6 +164,5 @@ export function useAudioRecorder({
     startRecording,
     stopRecording,
     togglePauseResume,
-    cleanupMediaRecorder,
   };
 }

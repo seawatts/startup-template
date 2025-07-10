@@ -7,10 +7,10 @@ import { RollingFileDestination } from '@acme/logger/destinations/rolling-file';
 const logDir = join(homedir(), '.acme');
 defaultLogger.addDestination(
   new RollingFileDestination({
-    filepath: join(logDir, 'acme.log'),
     createDirectory: true,
-    maxSize: 10 * 1024 * 1024, // 10MB
+    filepath: join(logDir, 'acme.log'),
     maxFiles: 5,
+    maxSize: 10 * 1024 * 1024, // 10MB
     rotationInterval: 60 * 60 * 1000, // 1 hour
   }),
 );
@@ -34,18 +34,18 @@ async function main() {
     capture({
       event: 'cli_loaded',
       properties: {
+        command: args.command,
         debug: args.verbose,
         version: args.version,
-        command: args.command,
       },
     });
 
     setupProcessHandlers();
 
     log('Starting CLI', {
+      command: args.command,
       debug: args.verbose,
       version: args.version,
-      command: args.command,
     });
 
     const renderInstance = render(<Layout />, {

@@ -141,9 +141,9 @@ export function ToneSelector({
           <SelectContent portalContainer={portalElement}>
             {tones?.map((tone) => (
               <SelectItem
+                disabled={!isEntitled.isEntitled}
                 key={tone.lookupKey}
                 value={tone.lookupKey}
-                disabled={!isEntitled.isEntitled}
               >
                 {tone.displayName}
               </SelectItem>
@@ -157,10 +157,10 @@ export function ToneSelector({
           <Label htmlFor="tone">Custom Tone Description</Label>
           <Textarea
             id="tone"
-            value={customTone}
             onChange={(event) => handleCustomToneChange(event.target.value)}
             placeholder="Describe your desired tone of voice"
             required
+            value={customTone}
           />
         </div>
       )}

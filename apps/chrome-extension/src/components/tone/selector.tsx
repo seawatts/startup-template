@@ -99,9 +99,9 @@ export function ToneSelector({ className }: { className?: string }) {
       <div className={cn('flex flex-col gap-2', className)}>
         <Label htmlFor="tone-of-voice">Tone of Voice</Label>
         <Select
+          disabled={isLoading || isLoadingTones}
           onValueChange={handleToneChange}
           value={selectedTone}
-          disabled={isLoading || isLoadingTones}
         >
           <SelectTrigger className="w-full">
             {isLoading || isLoadingTones ? (
@@ -116,9 +116,9 @@ export function ToneSelector({ className }: { className?: string }) {
           <SelectContent portalContainer={portalElement}>
             {tones?.map((tone) => (
               <SelectItem
+                disabled={!isEntitled.isEntitled}
                 key={tone.lookupKey}
                 value={tone.lookupKey}
-                disabled={!isEntitled.isEntitled}
               >
                 {tone.displayName}
               </SelectItem>
@@ -131,12 +131,12 @@ export function ToneSelector({ className }: { className?: string }) {
         <div className="flex flex-col gap-2">
           <Label htmlFor="tone">Custom Tone Description</Label>
           <Textarea
+            disabled={isLoading}
             id="tone"
-            value={customTone}
             onChange={handleCustomToneChange}
             placeholder="Describe your desired tone of voice"
             required
-            disabled={isLoading}
+            value={customTone}
           />
         </div>
       )}

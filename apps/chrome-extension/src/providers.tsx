@@ -16,9 +16,9 @@ export function Providers({ children }: PropsWithChildren) {
   return (
     <ErrorBoundary>
       <ClerkProvider
+        polling
         publishableKey={env.PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY}
         syncSessionWithTab
-        polling
       >
         <ProvidersWithUser>{children}</ProvidersWithUser>
       </ClerkProvider>

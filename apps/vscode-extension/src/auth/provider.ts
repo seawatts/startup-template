@@ -24,7 +24,7 @@ export class AcmeAuthProvider implements AuthenticationProvider {
   ) {
     // Listen for auth store changes and emit session changes
     this.authStore.onDidChangeAuth(() => {
-      this._onDidChangeSessions.fire({ added: [], removed: [], changed: [] });
+      this._onDidChangeSessions.fire({ added: [], changed: [], removed: [] });
     });
   }
 
@@ -68,12 +68,12 @@ export class AcmeAuthProvider implements AuthenticationProvider {
     }
 
     return {
-      id: this.authStore.sessionId ?? '',
       accessToken: this.authStore.authToken ?? '',
       account: {
         id: this.authStore.user?.id ?? '',
         label: this.authStore.user?.email ?? '',
       },
+      id: this.authStore.sessionId ?? '',
       scopes: AcmeAuthProvider.SCOPES,
     };
   }
@@ -112,19 +112,19 @@ export class AcmeAuthProvider implements AuthenticationProvider {
       this.authStore.setUser(user);
 
       const newSession: vscode.AuthenticationSession = {
-        id: sessionId,
         accessToken: authToken,
         account: {
           id: user.id,
           label: user.email ?? '',
         },
+        id: sessionId,
         scopes: AcmeAuthProvider.SCOPES,
       };
 
       this._onDidChangeSessions.fire({
         added: [newSession],
-        removed: [],
         changed: [],
+        removed: [],
       });
 
       return newSession;
@@ -142,15 +142,15 @@ export class AcmeAuthProvider implements AuthenticationProvider {
     if (session) {
       this._onDidChangeSessions.fire({
         added: [],
-        removed: [session],
         changed: [],
+        removed: [session],
       });
     }
   }
 
   private async startAuthServer(port: number, csrfToken: string) {
     const server = new AuthServer();
-    await server.start({ port, csrfToken });
+    await server.start({ csrfToken, port });
     return server;
   }
 }

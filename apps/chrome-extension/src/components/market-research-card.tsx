@@ -27,8 +27,8 @@ export function MarketResearchCard() {
           Coming Soon
         </Button> */}
         <FeatureWaitlistButton
-          featureName="market-research"
           element="market-research-card"
+          featureName="market-research"
         />
       </CardContent>
     </Card>

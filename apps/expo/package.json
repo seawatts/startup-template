@@ -1,27 +1,14 @@
 {
-  "name": "@acme/expo",
-  "version": "0.1.0",
-  "private": true,
-  "main": "expo-router/entry",
-  "scripts": {
-    "clean": "git clean -xdf .expo .turbo node_modules dist",
-    "dev": "expo start",
-    "dev:android": "expo start --android",
-    "dev:ios": "expo start --ios",
-    "android": "expo run:android",
-    "ios": "expo run:ios",
-    "typecheck": "tsc --noEmit"
-  },
   "dependencies": {
     "@acme/api": "workspace:*",
     "@bacons/text-decoder": "0.0.0",
     "@expo/metro-config": "0.20.17",
     "@shopify/flash-list": "1.8.3",
-    "@tanstack/react-query": "5.81.5",
+    "@tanstack/react-query": "5.82.0",
     "@trpc/client": "11.4.3",
     "@trpc/react-query": "11.4.3",
     "@trpc/server": "11.4.3",
-    "expo": "53.0.17",
+    "expo": "53.0.19",
     "expo-constants": "17.1.7",
     "expo-dev-client": "5.2.4",
     "expo-linking": "7.1.7",
@@ -48,5 +35,18 @@
     "@types/react": "19.1.8",
     "tailwindcss": "4.1.11",
     "typescript": "5.8.3"
-  }
+  },
+  "main": "expo-router/entry",
+  "name": "@acme/expo",
+  "private": true,
+  "scripts": {
+    "android": "expo run:android",
+    "clean": "git clean -xdf .expo .turbo node_modules dist",
+    "dev:android": "expo start --android",
+    "dev:ios": "expo start --ios",
+    "dev.skip": "expo start",
+    "ios": "expo run:ios",
+    "typecheck.skip": "tsc --noEmit"
+  },
+  "version": "0.1.0"
 }

@@ -83,9 +83,9 @@ async function analyzeFile(filePath) {
             const match = line.match(
               /atob\s*\(\s*["'`]([A-Za-z0-9+/=]+)["'`]\s*\)/,
             );
-            if (match && match[1]) {
+            if (match?.[1]) {
               try {
-                base64Content = atob(match[1].toString()).slice(0, 100) + '...';
+                base64Content = `${atob(match[1].toString()).slice(0, 100)}...`;
               } catch {
                 base64Content = 'Invalid base64 content';
               }
@@ -140,7 +140,7 @@ if (parentPort) {
       parentPort?.postMessage(analysis);
       console.log(`Worker completed analysis for: ${path.basename(file)}`);
     } catch (error) {
-      console.error(`Worker error analyzing file:`, error);
+      console.error('Worker error analyzing file:', error);
       // Send null to indicate analysis failed
       parentPort?.postMessage(null);
     }

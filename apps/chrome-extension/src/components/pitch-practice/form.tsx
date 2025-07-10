@@ -68,11 +68,11 @@ export function PitchPracticeForm({
 
   return (
     <form
+      className="flex h-full flex-col gap-4"
       onSubmit={(e) => {
         e.preventDefault();
         handleSubmit(state.answer);
       }}
-      className="flex h-full flex-col gap-4"
     >
       <Entitled entitlement="pitch_practice">
         {question && (
@@ -85,29 +85,29 @@ export function PitchPracticeForm({
             </div>
 
             <MemoizedCamera
-              showCamera={state.showCamera}
               onToggleCamera={handleCameraToggle}
+              showCamera={state.showCamera}
             />
 
             {!!audio && <Label htmlFor="answer">Your answer</Label>}
             {!state.isAudioMode && !!audio && (
               <AnswerInput
-                value={state.answer}
+                isPending={state.isPending}
+                isPlayingPrompt={state.isPlayingPrompt}
                 onChange={(value) =>
                   dispatch({ payload: value, type: 'SET_ANSWER' })
                 }
                 onMicrophoneClick={handlePlay}
                 onSubmit={() => handleSubmit(state.answer)}
-                isPlayingPrompt={state.isPlayingPrompt}
-                isPending={state.isPending}
+                value={state.answer}
               />
             )}
 
             {state.isAudioMode && (
               <AudioRecorderContainer
-                onComplete={handleAudioComplete}
-                onCancel={() => dispatch({ type: 'END_AUDIO_MODE' })}
                 maxRecordingTimeSeconds={120}
+                onCancel={() => dispatch({ type: 'END_AUDIO_MODE' })}
+                onComplete={handleAudioComplete}
                 warningRecordingTimeSeconds={60}
               />
             )}

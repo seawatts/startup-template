@@ -72,18 +72,18 @@ export function SubmitFeedbackForm(props: {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
       <div className="flex flex-col gap-y-4 px-4 lg:px-0">
-        <Label htmlFor="feedback" className="sr-only" aria-hidden>
+        <Label aria-hidden className="sr-only" htmlFor="feedback">
           {label}
         </Label>
         <Textarea
+          disabled={submitFeedback.isPending}
           id="feedback"
           name="feedback"
-          value={feedback}
           onChange={(event) => setFeedback(event.target.value)}
-          disabled={submitFeedback.isPending}
           placeholder={placeholder}
+          value={feedback}
         />
       </div>
 

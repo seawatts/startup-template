@@ -21,7 +21,6 @@ export interface SidebarSection {
 // Example usage with default sections
 export const defaultSections = {
   monitoring: {
-    label: 'Monitor',
     items: [
       {
         icon: Logs,
@@ -30,37 +29,9 @@ export const defaultSections = {
         url: '/${orgId}/${projectId}/${envName}/function-calls',
       },
     ],
-  },
-  projectSettings: {
-    label: 'Settings',
-    items: [
-      {
-        icon: KeyRound,
-        title: 'API Keys',
-        // biome-ignore lint/suspicious/noTemplateCurlyInString: These are URL template placeholders
-        url: '/${orgId}/${projectId}/${envName}/settings/api-keys',
-      },
-    ],
-  },
-  orgSettings: {
-    label: 'Organization',
-    items: [
-      {
-        icon: Users,
-        title: 'Team Members',
-        // biome-ignore lint/suspicious/noTemplateCurlyInString: These are URL template placeholders
-        url: '/${orgId}/settings/members',
-      },
-      {
-        icon: CreditCard,
-        title: 'Billing',
-        // biome-ignore lint/suspicious/noTemplateCurlyInString: These are URL template placeholders
-        url: '/${orgId}/settings/billing',
-      },
-    ],
+    label: 'Monitor',
   },
   onboarding: {
-    label: 'Onboarding',
     items: [
       {
         icon: Sparkles,
@@ -99,5 +70,34 @@ export const defaultSections = {
         url: '/${orgId}/onboarding/billing',
       },
     ],
+    label: 'Onboarding',
+  },
+  orgSettings: {
+    items: [
+      {
+        icon: Users,
+        title: 'Team Members',
+        // biome-ignore lint/suspicious/noTemplateCurlyInString: These are URL template placeholders
+        url: '/${orgId}/settings/members',
+      },
+      {
+        icon: CreditCard,
+        title: 'Billing',
+        // biome-ignore lint/suspicious/noTemplateCurlyInString: These are URL template placeholders
+        url: '/${orgId}/settings/billing',
+      },
+    ],
+    label: 'Organization',
+  },
+  projectSettings: {
+    items: [
+      {
+        icon: KeyRound,
+        title: 'API Keys',
+        // biome-ignore lint/suspicious/noTemplateCurlyInString: These are URL template placeholders
+        url: '/${orgId}/${projectId}/${envName}/settings/api-keys',
+      },
+    ],
+    label: 'Settings',
   },
 };

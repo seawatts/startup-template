@@ -13,7 +13,7 @@ export function PitchPracticeButton() {
         className="flex w-full items-center"
         onClick={() => setIsDialogOpen(true)}
       >
-        <img src={logoIcon} alt="Acme" className="mb-0.5 mr-2 size-5" />
+        <img alt="Acme" className="mb-0.5 mr-2 size-5" src={logoIcon} />
         Pitch Practice
       </Button>
       <PitchPracticeDialog

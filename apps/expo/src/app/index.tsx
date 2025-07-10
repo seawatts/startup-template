@@ -52,9 +52,9 @@ function CreateUser() {
     <View className="mt-4 flex gap-2">
       <TextInput
         className="items-center rounded-md border border-input bg-background px-3 text-lg leading-[1.25] text-foreground"
-        value={firstName}
         onChangeText={setFirstName}
         placeholder="Name"
+        value={firstName}
       />
       {error?.data?.zodError?.fieldErrors.title && (
         <Text className="mb-2 text-destructive">
@@ -65,10 +65,10 @@ function CreateUser() {
         className="flex items-center rounded bg-primary p-2"
         onPress={() => {
           mutate({
-            firstName,
-            email: 'test@test.com',
-            lastName: 'test',
             clerkId: 'test',
+            email: 'test@test.com',
+            firstName,
+            lastName: 'test',
 
             online: true,
           });
@@ -104,8 +104,8 @@ export default function Index() {
         </Text>
 
         <Pressable
-          onPress={() => void utils.user.all.invalidate()}
           className="flex items-center rounded-lg bg-primary p-2"
+          onPress={() => void utils.user.all.invalidate()}
         >
           <Text className="text-foreground"> Refresh posts</Text>
         </Pressable>
@@ -122,8 +122,8 @@ export default function Index() {
           ItemSeparatorComponent={() => <View className="h-2" />}
           renderItem={(p) => (
             <UserCard
-              user={p.item}
               onDelete={() => deleteUserMutation.mutate(p.item.id)}
+              user={p.item}
             />
           )}
         />

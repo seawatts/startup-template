@@ -47,8 +47,8 @@ export class NetworkMonitor {
 
     if (this.status !== previousStatus) {
       console.log('Network status changed:', {
-        previous: previousStatus,
         current: this.status,
+        previous: previousStatus,
       });
       this.notifyCallbacks();
     }

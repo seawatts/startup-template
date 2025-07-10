@@ -29,24 +29,24 @@ export const createAuthCode = action.action(async () => {
   const [dbUser] = await db
     .insert(Users)
     .values({
-      id: user.userId,
+      avatarUrl: clerkUser.imageUrl ?? null,
       clerkId: user.userId,
       email: clerkUser.emailAddresses[0]?.emailAddress ?? '',
       firstName: clerkUser.firstName ?? null,
-      lastName: clerkUser.lastName ?? null,
-      avatarUrl: clerkUser.imageUrl ?? null,
+      id: user.userId,
       lastLoggedInAt: new Date(),
+      lastName: clerkUser.lastName ?? null,
     })
     .onConflictDoUpdate({
-      target: Users.clerkId,
       set: {
+        avatarUrl: clerkUser.imageUrl ?? null,
         email: clerkUser.emailAddresses[0]?.emailAddress ?? '',
         firstName: clerkUser.firstName ?? null,
-        lastName: clerkUser.lastName ?? null,
-        avatarUrl: clerkUser.imageUrl ?? null,
         lastLoggedInAt: new Date(),
+        lastName: clerkUser.lastName ?? null,
         updatedAt: new Date(),
       },
+      target: Users.clerkId,
     })
     .returning();
 
@@ -64,16 +64,16 @@ export const createAuthCode = action.action(async () => {
     .insert(Orgs)
     .values({
       clerkOrgId: user.orgId,
-      name: clerkOrg.name,
       createdByUserId: user.userId,
       id: user.orgId,
+      name: clerkOrg.name,
     })
     .onConflictDoUpdate({
-      target: Orgs.clerkOrgId,
       set: {
         name: clerkOrg.name,
         updatedAt: new Date(),
       },
+      target: Orgs.clerkOrgId,
     })
     .returning();
 
@@ -85,16 +85,16 @@ export const createAuthCode = action.action(async () => {
   const [orgMember] = await db
     .insert(OrgMembers)
     .values({
-      userId: user.userId,
       orgId: org.id,
       role: 'admin',
+      userId: user.userId,
     })
     .onConflictDoUpdate({
-      target: [OrgMembers.userId, OrgMembers.orgId],
       set: {
         role: 'admin',
         updatedAt: new Date(),
       },
+      target: [OrgMembers.userId, OrgMembers.orgId],
     })
     .returning();
 
@@ -115,8 +115,8 @@ export const createAuthCode = action.action(async () => {
 
   if (existingAuthCode) {
     return {
-      isNew: false,
       authCode: existingAuthCode,
+      isNew: false,
     };
   }
 
@@ -125,9 +125,9 @@ export const createAuthCode = action.action(async () => {
   const [authCode] = await db
     .insert(AuthCodes)
     .values({
-      userId: user.userId,
       orgId: user.orgId,
       sessionId: user.sessionId,
+      userId: user.userId,
     })
     .returning();
 
@@ -136,16 +136,16 @@ export const createAuthCode = action.action(async () => {
   }
 
   return {
-    isNew: true,
     authCode,
+    isNew: true,
   };
 });
 
 export const upsertOrg = action
   .schema(
     z.object({
-      name: z.string().min(1),
       clerkOrgId: z.string().optional(),
+      name: z.string().min(1),
     }),
   )
   .action(async ({ parsedInput }) => {
@@ -176,17 +176,17 @@ export const upsertOrg = action
       const [org] = await db
         .insert(Orgs)
         .values({
-          id: clerkOrg.id,
-          createdByUserId: user.userId,
           clerkOrgId: clerkOrg.id,
+          createdByUserId: user.userId,
+          id: clerkOrg.id,
           name,
         })
         .onConflictDoUpdate({
-          target: Orgs.clerkOrgId,
           set: {
             name,
             updatedAt: new Date(),
           },
+          target: Orgs.clerkOrgId,
         })
         .returning();
 
@@ -198,15 +198,15 @@ export const upsertOrg = action
       await db
         .insert(OrgMembers)
         .values({
-          userId: user.userId,
           orgId: org.id,
           role: 'admin',
+          userId: user.userId,
         })
         .onConflictDoUpdate({
-          target: [OrgMembers.userId, OrgMembers.orgId],
           set: {
             updatedAt: new Date(),
           },
+          target: [OrgMembers.userId, OrgMembers.orgId],
         });
 
       return {
@@ -217,8 +217,8 @@ export const upsertOrg = action
 
     // Create new org if no clerkOrgId provided
     const clerkOrg = await client.organizations.createOrganization({
-      name,
       createdBy: user.userId,
+      name,
     });
 
     if (!clerkOrg) {
@@ -229,9 +229,9 @@ export const upsertOrg = action
     const [org] = await db
       .insert(Orgs)
       .values({
-        id: clerkOrg.id,
-        createdByUserId: user.userId,
         clerkOrgId: clerkOrg.id,
+        createdByUserId: user.userId,
+        id: clerkOrg.id,
         name,
       })
       .returning();
@@ -244,9 +244,9 @@ export const upsertOrg = action
 
     // Create org membership for the user
     await db.insert(OrgMembers).values({
-      userId: user.userId,
       orgId: org.id,
       role: 'admin',
+      userId: user.userId,
     });
 
     return {

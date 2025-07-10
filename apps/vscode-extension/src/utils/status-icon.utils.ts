@@ -5,10 +5,10 @@ export function getStatusIconPath(
   context: vscode.ExtensionContext,
 ) {
   const iconPath = (filename: string) => ({
+    dark: vscode.Uri.file(context.asAbsolutePath(`src/public/${filename}.svg`)),
     light: vscode.Uri.file(
       context.asAbsolutePath(`src/public/${filename}.svg`),
     ),
-    dark: vscode.Uri.file(context.asAbsolutePath(`src/public/${filename}.svg`)),
   });
 
   if (status === 200) {

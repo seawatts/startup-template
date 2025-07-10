@@ -17,8 +17,8 @@ export function CompetitorsCard() {
       </CardHeader>
       <CardContent>
         <FeatureWaitlistButton
-          featureName="competitors"
           element="competitors-card"
+          featureName="competitors"
         />
       </CardContent>
     </Card>

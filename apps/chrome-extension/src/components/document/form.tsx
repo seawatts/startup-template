@@ -75,9 +75,9 @@ export function UploadPitchDeckForm() {
                       </span>
                     </span>
                     <Button
-                      variant="ghost"
-                      size="sm"
                       onClick={handleRemoveDocument}
+                      size="sm"
+                      variant="ghost"
                     >
                       <Icons.X />
                       <span className="sr-only">Remove document</span>
@@ -96,11 +96,11 @@ export function UploadPitchDeckForm() {
             <>
               <Label htmlFor="files">Pitch Deck (PDF only)</Label>
               <Input
+                accept=".pdf"
                 id="files"
                 name="files"
-                type="file"
-                accept=".pdf"
                 onChange={handleFileChange}
+                type="file"
               />
               <p className="text-sm text-muted-foreground">
                 Tip: Make sure your pitch deck includes key information such as
@@ -117,7 +117,7 @@ export function UploadPitchDeckForm() {
               <Icons.Spinner />
               <Label>{processInfo.progressLabel}</Label>
             </div>
-            <Progress value={processInfo.progress} className="w-full" />
+            <Progress className="w-full" value={processInfo.progress} />
           </div>
         )}
       </div>

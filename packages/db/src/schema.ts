@@ -36,9 +36,9 @@ export const Users = pgTable('users', {
 });
 
 export const UsersRelations = relations(Users, ({ many }) => ({
+  authCodes: many(AuthCodes),
   orgMembers: many(OrgMembers),
   shortUrls: many(ShortUrls),
-  authCodes: many(AuthCodes),
 }));
 
 export type UserType = typeof Users.$inferSelect;
@@ -51,7 +51,6 @@ export const CreateUserSchema = createInsertSchema(Users).omit({
 
 export const Orgs = pgTable('orgs', {
   clerkOrgId: text('clerkOrgId').unique().notNull(),
-  name: text('name').notNull(),
   createdAt: timestamp('createdAt', {
     mode: 'date',
     withTimezone: true,
@@ -65,6 +64,7 @@ export const Orgs = pgTable('orgs', {
     .$defaultFn(() => createId({ prefix: 'org' }))
     .notNull()
     .primaryKey(),
+  name: text('name').notNull(),
   updatedAt: timestamp('updatedAt', {
     mode: 'date',
     withTimezone: true,
@@ -81,12 +81,12 @@ export const updateOrgSchema = createInsertSchema(Orgs, {}).omit({
 });
 
 export const OrgsRelations = relations(Orgs, ({ one, many }) => ({
+  authCodes: many(AuthCodes),
   createdByUser: one(Users, {
     fields: [Orgs.createdByUserId],
     references: [Users.id],
   }),
   orgMembers: many(OrgMembers),
-  authCodes: many(AuthCodes),
 }));
 
 // Company Members Table
@@ -97,12 +97,6 @@ export const OrgMembers = pgTable(
       mode: 'date',
       withTimezone: true,
     }).defaultNow(),
-    userId: varchar('userId')
-      .references(() => Users.id, {
-        onDelete: 'cascade',
-      })
-      .notNull()
-      .default(sql`auth.jwt()->>'sub'`),
     id: varchar('id', { length: 128 })
       .$defaultFn(() => createId({ prefix: 'member' }))
       .notNull()
@@ -118,6 +112,12 @@ export const OrgMembers = pgTable(
       mode: 'date',
       withTimezone: true,
     }).$onUpdateFn(() => new Date()),
+    userId: varchar('userId')
+      .references(() => Users.id, {
+        onDelete: 'cascade',
+      })
+      .notNull()
+      .default(sql`auth.jwt()->>'sub'`),
   },
   (table) => [
     // Add unique constraint for userId and orgId combination using the simpler syntax
@@ -131,63 +131,69 @@ export type OrgMembersType = typeof OrgMembers.$inferSelect & {
 };
 
 export const OrgMembersRelations = relations(OrgMembers, ({ one }) => ({
-  user: one(Users, {
-    fields: [OrgMembers.userId],
-    references: [Users.id],
-  }),
   org: one(Orgs, {
     fields: [OrgMembers.orgId],
     references: [Orgs.id],
   }),
+  user: one(Users, {
+    fields: [OrgMembers.userId],
+    references: [Users.id],
+  }),
 }));
 
 export const ShortUrls = pgTable('shortUrls', {
-  id: varchar('id', { length: 128 })
-    .$defaultFn(() => createId({ prefix: 's' }))
-    .notNull()
-    .primaryKey(),
+  code: text('code').notNull().unique(),
   createdAt: timestamp('createdAt', {
     mode: 'date',
     withTimezone: true,
   }).defaultNow(),
-  updatedAt: timestamp('updatedAt', {
-    mode: 'date',
-    withTimezone: true,
-  }).$onUpdateFn(() => new Date()),
-  code: text('code').notNull().unique(),
-  redirectUrl: text('redirectUrl').notNull(),
-  userId: varchar('userId')
-    .references(() => Users.id, {
-      onDelete: 'cascade',
-    })
+  id: varchar('id', { length: 128 })
+    .$defaultFn(() => createId({ prefix: 's' }))
     .notNull()
-    .default(sql`auth.jwt()->>'sub'`),
+    .primaryKey(),
   orgId: varchar('orgId')
     .references(() => Orgs.id, {
       onDelete: 'cascade',
     })
     .notNull()
     .default(sql`auth.jwt()->>'org_id'`),
+  redirectUrl: text('redirectUrl').notNull(),
+  updatedAt: timestamp('updatedAt', {
+    mode: 'date',
+    withTimezone: true,
+  }).$onUpdateFn(() => new Date()),
+  userId: varchar('userId')
+    .references(() => Users.id, {
+      onDelete: 'cascade',
+    })
+    .notNull()
+    .default(sql`auth.jwt()->>'sub'`),
 });
 
 export const AuthCodes = pgTable('authCodes', {
-  id: varchar('id', { length: 128 })
-    .$defaultFn(() => createId({ prefix: 'ac' }))
-    .notNull()
-    .primaryKey(),
-  expiresAt: timestamp('expiresAt', {
-    mode: 'date',
-    withTimezone: true,
-  })
-    .$defaultFn(() => new Date(Date.now() + 1000 * 60 * 30)) // 30 minutes
-    .notNull(),
-  sessionId: text('sessionId').notNull(),
   createdAt: timestamp('createdAt', {
     mode: 'date',
     withTimezone: true,
   })
     .notNull()
     .defaultNow(),
+  expiresAt: timestamp('expiresAt', {
+    mode: 'date',
+    withTimezone: true,
+  })
+    .$defaultFn(() => new Date(Date.now() + 1000 * 60 * 30)) // 30 minutes
+    .notNull(),
+  id: varchar('id', { length: 128 })
+    .$defaultFn(() => createId({ prefix: 'ac' }))
+    .notNull()
+    .primaryKey(),
+  orgId: varchar('orgId')
+    .references(() => Orgs.id, {
+      onDelete: 'cascade',
+    })
+    .notNull()
+    .default(sql`auth.jwt()->>'org_id'`),
+  sessionId: text('sessionId').notNull(),
   updatedAt: timestamp('updatedAt', {
     mode: 'date',
     withTimezone: true,
@@ -202,23 +208,17 @@ export const AuthCodes = pgTable('authCodes', {
     })
     .notNull()
     .default(sql`auth.jwt()->>'sub'`),
-  orgId: varchar('orgId')
-    .references(() => Orgs.id, {
-      onDelete: 'cascade',
-    })
-    .notNull()
-    .default(sql`auth.jwt()->>'org_id'`),
 });
 
 export type AuthCodeType = typeof AuthCodes.$inferSelect;
 
 export const AuthCodesRelations = relations(AuthCodes, ({ one }) => ({
-  user: one(Users, {
-    fields: [AuthCodes.userId],
-    references: [Users.id],
-  }),
   org: one(Orgs, {
     fields: [AuthCodes.orgId],
     references: [Orgs.id],
+  }),
+  user: one(Users, {
+    fields: [AuthCodes.userId],
+    references: [Users.id],
   }),
 }));

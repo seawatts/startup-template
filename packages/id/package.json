@@ -1,17 +1,4 @@
 {
-  "name": "@acme/id",
-  "private": true,
-  "version": "0.1.0",
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts"
-  },
-  "license": "MIT",
-  "scripts": {
-    "dev": "tsc --watch",
-    "clean": "git clean -xdf .turbo node_modules dist",
-    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
-  },
   "dependencies": {
     "@paralleldrive/cuid2": "2.2.2",
     "ulid": "3.0.1"
@@ -19,5 +6,18 @@
   "devDependencies": {
     "@acme/tsconfig": "workspace:*",
     "typescript": "5.8.3"
-  }
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "license": "MIT",
+  "name": "@acme/id",
+  "private": true,
+  "scripts": {
+    "clean": "git clean -xdf .turbo node_modules dist",
+    "dev": "tsc --watch",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "type": "module",
+  "version": "0.1.0"
 }

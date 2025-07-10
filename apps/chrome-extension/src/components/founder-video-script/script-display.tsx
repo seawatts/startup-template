@@ -22,8 +22,8 @@ function ScriptLines({ lines }: { lines: ScriptLine[] }) {
     <div className="flex flex-col gap-4">
       {lines.map((line) => (
         <div
-          key={line.line}
           className="flex flex-col gap-2 rounded-md border p-4"
+          key={line.line}
         >
           <div className="flex items-center justify-between">
             <p className="text-sm font-medium text-muted-foreground">
@@ -61,15 +61,15 @@ export function ScriptDisplay({ script, isPending }: ScriptDisplayProps) {
           Speaking Time: {totalTime?.toFixed(0) ?? 'N/A'}s
         </p>
       </div>
-      <Tabs defaultValue="script" className="w-full">
+      <Tabs className="w-full" defaultValue="script">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="script" className="flex items-center gap-2">
+          <TabsTrigger className="flex items-center gap-2" value="script">
             {isPending && (script?.bulletPoints?.length ?? 0) === 0 && (
               <Icons.Spinner />
             )}
             Script
           </TabsTrigger>
-          <TabsTrigger value="bulletPoints" className="flex items-center gap-2">
+          <TabsTrigger className="flex items-center gap-2" value="bulletPoints">
             {isPending && (script?.bulletPoints?.length ?? 0) > 0 && (
               <Icons.Spinner />
             )}

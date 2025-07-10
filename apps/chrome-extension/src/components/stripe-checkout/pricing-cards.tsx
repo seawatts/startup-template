@@ -192,7 +192,7 @@ export function PricingCards() {
     if (plan.lookupKey === 'FREE_ONE_OFF') {
       return (
         <NotPaying>
-          <Button className="w-full" variant={plan.buttonVariant} asChild>
+          <Button asChild className="w-full" variant={plan.buttonVariant}>
             <span>{plan.buttonText}</span>
           </Button>
         </NotPaying>
@@ -214,11 +214,11 @@ export function PricingCards() {
         plan.lookupKey === 'UNICORN_UPGRADE_FROM_ACCELERATE_ONE_OFF')
     ) {
       return (
-        <Button className="w-full" variant={plan.buttonVariant} asChild>
+        <Button asChild className="w-full" variant={plan.buttonVariant}>
           <a
             href={checkoutSession.data?.[plan.lookupKey] ?? '#'}
-            target="_blank"
             rel="noreferrer"
+            target="_blank"
           >
             Upgrade to Unicorn
           </a>
@@ -228,11 +228,11 @@ export function PricingCards() {
 
     return (
       <NotPaying>
-        <Button className="w-full" variant={plan.buttonVariant} asChild>
+        <Button asChild className="w-full" variant={plan.buttonVariant}>
           <a
             href={checkoutSession.data?.[plan.lookupKey] ?? '#'}
-            target="_blank"
             rel="noreferrer"
+            target="_blank"
           >
             {plan.buttonText}
           </a>
@@ -252,7 +252,7 @@ export function PricingCards() {
   return (
     <div className="grid gap-6 md:grid-cols-3">
       {filteredPricingPlans.map((plan) => (
-        <Card key={plan.lookupKey} className="flex flex-col">
+        <Card className="flex flex-col" key={plan.lookupKey}>
           <CardHeader>
             <CardTitle>{plan.displayName}</CardTitle>
             <CardDescription>{plan.description}</CardDescription>
@@ -260,17 +260,17 @@ export function PricingCards() {
           <CardContent className="flex-grow">
             <div className="mb-4">
               <PriceDisplay
-                plan={plan}
                 accelerateDiscountPercentage={accelerateDiscountPercentage}
-                unicornDiscountPercentage={unicornDiscountPercentage}
                 currentPlan={currentPlan}
+                plan={plan}
+                unicornDiscountPercentage={unicornDiscountPercentage}
               />
             </div>
             <ul className="space-y-2">
               {plan.features.map((feature, index) => (
                 <li
-                  key={`${plan.lookupKey}-${feature.name}-${index}`}
                   className="flex items-center"
+                  key={`${plan.lookupKey}-${feature.name}-${index}`}
                 >
                   {feature.included ? (
                     <Icons.CheckCircle2

@@ -81,9 +81,9 @@ export function AudioRecorder({
   return (
     <div className="flex flex-col gap-4">
       <RecordingControls
-        onCancel={onCancel}
-        maxRecordingTimeSeconds={maxRecordingTimeSeconds}
         isGeneratingText={isGeneratingText}
+        maxRecordingTimeSeconds={maxRecordingTimeSeconds}
+        onCancel={onCancel}
       />
       <Alerts
         maxRecordingTimeSeconds={maxRecordingTimeSeconds}

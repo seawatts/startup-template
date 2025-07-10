@@ -36,7 +36,7 @@ export function SubmitFeedbackCard({
       <CardContent className="flex flex-grow flex-col">
         <div className="flex-grow">{children}</div>
         <div className="mt-auto">
-          <SubmitFeedbackButton type={type} element={element} />
+          <SubmitFeedbackButton element={element} type={type} />
         </div>
       </CardContent>
     </Card>

@@ -77,11 +77,11 @@ export async function handleVideoUpload(
 
     // Create documents
     await createVideoDocuments(signedUrl, fileName, fetchResult.hash, {
+      application,
       company,
       createAnswer,
       createDocuments,
       label,
-      application,
     });
   } catch (error) {
     console.error('Error handling video:', error);

@@ -24,7 +24,7 @@ export function Menu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon">
+        <Button size="icon" variant="outline">
           <Icons.Menu />
         </Button>
       </DropdownMenuTrigger>

@@ -47,8 +47,8 @@ export function Marquee({
       className={cn(
         'group flex overflow-hidden p-2 [--duration:40s] [--gap:1rem] [gap:var(--gap)]',
         {
-          'flex-row': !vertical,
           'flex-col': vertical,
+          'flex-row': !vertical,
         },
         className,
       )}
@@ -57,14 +57,14 @@ export function Marquee({
         .fill(0)
         .map((_, i) => (
           <div
-            // biome-ignore lint/suspicious/noArrayIndexKey: index is stable for marquee animation
-            key={i}
             className={cn('flex shrink-0 justify-around [gap:var(--gap)]', {
+              '[animation-direction:reverse]': reverse,
               'animate-marquee flex-row': !vertical,
               'animate-marquee-vertical flex-col': vertical,
               'group-hover:[animation-play-state:paused]': pauseOnHover,
-              '[animation-direction:reverse]': reverse,
             })}
+            // biome-ignore lint/suspicious/noArrayIndexKey: index is stable for marquee animation
+            key={i}
           >
             {children}
           </div>

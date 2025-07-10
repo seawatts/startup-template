@@ -23,7 +23,7 @@ export function GenerateApplicationDialog({
   const portalElement = useChromePortal();
 
   return (
-    <AlertDialog open={isOpen} onOpenChange={onClose}>
+    <AlertDialog onOpenChange={onClose} open={isOpen}>
       <AlertDialogContent portalContainer={portalElement}>
         <AlertDialogHeader>
           <AlertDialogTitle>Auto-fill Application</AlertDialogTitle>
@@ -35,10 +35,10 @@ export function GenerateApplicationDialog({
         <GenerateApplicationForm onSuccess={onClose}>
           {({ isPending }) => (
             <AlertDialogFooter>
-              <Button variant="outline" onClick={onClose} type="button">
+              <Button onClick={onClose} type="button" variant="outline">
                 Cancel
               </Button>
-              <Button type="submit" disabled={isPending}>
+              <Button disabled={isPending} type="submit">
                 {isPending ? 'Filling...' : 'Auto-fill'}
               </Button>
             </AlertDialogFooter>

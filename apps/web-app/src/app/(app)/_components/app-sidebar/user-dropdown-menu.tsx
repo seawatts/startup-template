@@ -59,8 +59,8 @@ export function UserDropdownMenu() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <SidebarMenuButton
-                size="lg"
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                size="lg"
               >
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                   <Icons.User className="size-4" />
@@ -78,8 +78,8 @@ export function UserDropdownMenu() {
               </SidebarMenuButton>
             </DropdownMenuTrigger>
             <DropdownMenuContent
-              className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
               align="start"
+              className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
               side={isMobile ? 'bottom' : 'right'}
               sideOffset={4}
             >
@@ -94,19 +94,19 @@ export function UserDropdownMenu() {
               </div>
               <div className="px-2 py-1.5">
                 <ToggleGroup
+                  className="w-full"
+                  onValueChange={(value) => value && setTheme(value)}
                   type="single"
                   value={theme}
-                  onValueChange={(value) => value && setTheme(value)}
-                  className="w-full"
                   variant="outline"
                 >
-                  <ToggleGroupItem value="light" aria-label="Light theme">
+                  <ToggleGroupItem aria-label="Light theme" value="light">
                     <SunIcon className="size-4" />
                   </ToggleGroupItem>
-                  <ToggleGroupItem value="dark" aria-label="Dark theme">
+                  <ToggleGroupItem aria-label="Dark theme" value="dark">
                     <MoonIcon className="size-4" />
                   </ToggleGroupItem>
-                  <ToggleGroupItem value="system" aria-label="System theme">
+                  <ToggleGroupItem aria-label="System theme" value="system">
                     <Laptop className="size-4" />
                   </ToggleGroupItem>
                 </ToggleGroup>
@@ -133,8 +133,8 @@ export function UserDropdownMenu() {
                   </DropdownMenuItem>
                 ))} */}
               <DropdownMenuItem
-                onClick={() => setNewOrgDialogOpen(true)}
                 className="gap-2 p-2"
+                onClick={() => setNewOrgDialogOpen(true)}
               >
                 <div className="flex size-6 items-center justify-center rounded-md border bg-background">
                   <Plus className="size-4" />
@@ -166,8 +166,8 @@ export function UserDropdownMenu() {
         </SidebarMenuItem>
       </SidebarMenu>
       <NewOrgDialog
-        open={newOrgDialogOpen}
         onOpenChange={setNewOrgDialogOpen}
+        open={newOrgDialogOpen}
       />
     </>
   );

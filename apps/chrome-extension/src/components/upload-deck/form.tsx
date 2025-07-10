@@ -68,7 +68,7 @@ export function UploadPitchDeckForm({
   );
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-4">
+    <form className="flex flex-col gap-4" onSubmit={onSubmit}>
       <div className="flex flex-col gap-y-2">
         <div className="text-sm">
           <p className="text-muted-foreground">
@@ -135,7 +135,7 @@ export function UploadPitchDeckForm({
           ) : (
             <>
               <Label htmlFor="files">Pitch Deck (PDF only, optional)</Label>
-              <Input id="files" name="files" type="file" accept=".pdf" />
+              <Input accept=".pdf" id="files" name="files" type="file" />
               <p className="text-sm text-muted-foreground">
                 Tip: Make sure your pitch deck includes key information such as
                 your problem statement, solution, market size, business model,
@@ -149,7 +149,7 @@ export function UploadPitchDeckForm({
       {processInfo.isGenerating && (
         <div className="flex flex-col gap-2 px-4 lg:px-0">
           <Label>{processInfo.progressLabel}</Label>
-          <Progress value={processInfo.progress} className="w-full" />
+          <Progress className="w-full" value={processInfo.progress} />
         </div>
       )}
 

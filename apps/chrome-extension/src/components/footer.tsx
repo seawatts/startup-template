@@ -65,8 +65,8 @@ export function Footer() {
                   {nav.items.map((item) => (
                     <li key={item.name}>
                       <a
-                        href={item.href}
                         className="text-sm text-muted-foreground hover:text-foreground"
+                        href={item.href}
                       >
                         {item.name}
                       </a>
@@ -81,11 +81,11 @@ export function Footer() {
           <div className="flex items-center space-x-4">
             {footerSocials.map((social) => (
               <a
-                key={social.name}
-                href={social.href}
                 className="text-muted-foreground hover:text-foreground"
-                target="_blank"
+                href={social.href}
+                key={social.name}
                 rel="noopener noreferrer"
+                target="_blank"
               >
                 {social.icon}
                 <span className="sr-only">{social.name}</span>

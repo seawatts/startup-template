@@ -113,7 +113,7 @@ export function createChannel<T extends TableName>(
     )
     .subscribe(
       (status: keyof typeof REALTIME_SUBSCRIBE_STATES, error?: Error) => {
-        console.log('Channel status changed:', { status, error });
+        console.log('Channel status changed:', { error, status });
         let newStatus: SubscriptionStatus;
         switch (status) {
           case 'SUBSCRIBED':

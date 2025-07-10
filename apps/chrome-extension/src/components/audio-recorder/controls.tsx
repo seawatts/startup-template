@@ -20,7 +20,7 @@ export function RecordingControls({
 
   return (
     <div className="flex items-center gap-2 rounded-md border bg-white px-2 py-0.5">
-      <Button onClick={onCancel} variant="outline" size="sm">
+      <Button onClick={onCancel} size="sm" variant="outline">
         <Icons.X />
       </Button>
       <div className="flex h-10 flex-grow items-center overflow-hidden">
@@ -38,10 +38,10 @@ export function RecordingControls({
         </div>
       </div>
       <Button
-        onClick={stopRecording}
-        variant="outline"
-        size="sm"
         disabled={isGeneratingText}
+        onClick={stopRecording}
+        size="sm"
+        variant="outline"
       >
         {isGeneratingText ? (
           <Icons.Spinner />

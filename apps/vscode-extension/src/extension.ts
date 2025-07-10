@@ -34,9 +34,9 @@ export async function activate(context: vscode.ExtensionContext) {
 
   // Add VS Code output destination to default logger
   const outputDestination = new VSCodeOutputDestination({
+    autoShow: settingsService.getSettings().output.autoShow,
     name: 'Acme',
     vscode,
-    autoShow: settingsService.getSettings().output.autoShow,
   });
   defaultLogger.addDestination(outputDestination);
 

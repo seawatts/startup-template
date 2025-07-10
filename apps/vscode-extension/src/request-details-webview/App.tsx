@@ -134,116 +134,116 @@ function MainView() {
       {/* Filter Bar with Popout */}
       <div
         style={{
-          display: 'flex',
           alignItems: 'center',
           background: 'var(--vscode-input-background)',
           border: '1px solid var(--vscode-input-border)',
           borderRadius: 2,
-          padding: '0.25rem 0.5rem',
-          marginBottom: '1rem',
+          display: 'flex',
           gap: '0.5rem',
+          marginBottom: '1rem',
+          padding: '0.25rem 0.5rem',
           position: 'relative',
         }}
       >
         <input
-          type="text"
-          placeholder="Filter..."
-          value={filter}
           onChange={(e) => setFilter(e.target.value)}
+          placeholder="Filter..."
           style={{
-            flex: 1,
             background: 'transparent',
             border: 'none',
-            outline: 'none',
             color: 'var(--vscode-input-foreground)',
+            flex: 1,
             fontSize: '1em',
+            outline: 'none',
           }}
+          type="text"
+          value={filter}
         />
         <button
-          ref={buttonRef}
-          type="button"
           aria-label="Show filter menu"
+          onClick={() => setMenuOpen((open) => !open)}
+          ref={buttonRef}
           style={{
+            alignItems: 'center',
             background: 'none',
             border: 'none',
-            padding: 4,
+            color: 'var(--vscode-input-foreground)',
             cursor: 'pointer',
             display: 'flex',
-            alignItems: 'center',
-            color: 'var(--vscode-input-foreground)',
+            padding: 4,
           }}
-          onClick={() => setMenuOpen((open) => !open)}
+          type="button"
         >
           <Icons.ListFilter size="sm" variant="muted" />
         </button>
         {menuOpen && (
           <div
+            aria-label="Filter options"
             ref={menuRef}
-            tabIndex={-1}
+            role="menu"
             style={{
-              position: 'absolute',
-              top: '110%',
-              right: 0,
-              minWidth: 180,
               background: 'var(--vscode-menu-background)',
-              color: 'var(--vscode-menu-foreground)',
               border: '1px solid var(--vscode-menu-border)',
               borderRadius: 4,
               boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-              zIndex: 10,
+              color: 'var(--vscode-menu-foreground)',
+              minWidth: 180,
               padding: '0.25rem 0',
+              position: 'absolute',
+              right: 0,
+              top: '110%',
+              zIndex: 10,
             }}
-            role="menu"
-            aria-label="Filter options"
+            tabIndex={-1}
           >
             <button
-              type="button"
+              onClick={() => setMenuOpen(false)}
+              role="menuitem"
               style={{
-                width: '100%',
                 background: 'none',
                 border: 'none',
-                textAlign: 'left',
-                padding: '0.5rem 1rem',
                 color: 'inherit',
                 cursor: 'pointer',
                 fontSize: '1em',
+                padding: '0.5rem 1rem',
+                textAlign: 'left',
+                width: '100%',
               }}
-              role="menuitem"
-              onClick={() => setMenuOpen(false)}
+              type="button"
             >
               Featured
             </button>
             <button
-              type="button"
+              onClick={() => setMenuOpen(false)}
+              role="menuitem"
               style={{
-                width: '100%',
                 background: 'none',
                 border: 'none',
-                textAlign: 'left',
-                padding: '0.5rem 1rem',
                 color: 'inherit',
                 cursor: 'pointer',
                 fontSize: '1em',
+                padding: '0.5rem 1rem',
+                textAlign: 'left',
+                width: '100%',
               }}
-              role="menuitem"
-              onClick={() => setMenuOpen(false)}
+              type="button"
             >
               Most Popular
             </button>
             <button
-              type="button"
+              onClick={() => setMenuOpen(false)}
+              role="menuitem"
               style={{
-                width: '100%',
                 background: 'none',
                 border: 'none',
-                textAlign: 'left',
-                padding: '0.5rem 1rem',
                 color: 'inherit',
                 cursor: 'pointer',
                 fontSize: '1em',
+                padding: '0.5rem 1rem',
+                textAlign: 'left',
+                width: '100%',
               }}
-              role="menuitem"
-              onClick={() => setMenuOpen(false)}
+              type="button"
             >
               Recently Published
             </button>
@@ -255,7 +255,7 @@ function MainView() {
       <div className="content">
         <p>Welcome to the Acme VS Code extension!</p>
         <div className="card">
-          <button type="button" onClick={() => setCount((count) => count + 1)}>
+          <button onClick={() => setCount((count) => count + 1)} type="button">
             Count is {count}
           </button>
           <p>

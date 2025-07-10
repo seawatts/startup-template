@@ -10,17 +10,6 @@ const isDevBuild =
 
 // Environment variables to inject at build time
 const envDefines = {
-  'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
-  'process.env.NEXT_PUBLIC_CLI_VERSION': JSON.stringify(pkg.version),
-  'process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY': JSON.stringify(
-    process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || '',
-  ),
-  'process.env.NEXT_PUBLIC_POSTHOG_KEY': JSON.stringify(
-    process.env.NEXT_PUBLIC_POSTHOG_KEY || '',
-  ),
-  'process.env.NEXT_PUBLIC_POSTHOG_HOST': JSON.stringify(
-    process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
-  ),
   'process.env.NEXT_PUBLIC_API_URL': JSON.stringify(
     process.env.NEXT_PUBLIC_API_URL || 'https://api.acme.sh',
   ),
@@ -30,39 +19,30 @@ const envDefines = {
   'process.env.NEXT_PUBLIC_APP_TYPE': JSON.stringify(
     process.env.NEXT_PUBLIC_APP_TYPE || 'cli',
   ),
-  'process.env.NEXT_PUBLIC_SUPABASE_URL': JSON.stringify(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+  'process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY': JSON.stringify(
+    process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || '',
+  ),
+  'process.env.NEXT_PUBLIC_CLI_VERSION': JSON.stringify(pkg.version),
+  'process.env.NEXT_PUBLIC_POSTHOG_HOST': JSON.stringify(
+    process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
+  ),
+  'process.env.NEXT_PUBLIC_POSTHOG_KEY': JSON.stringify(
+    process.env.NEXT_PUBLIC_POSTHOG_KEY || '',
   ),
   'process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY': JSON.stringify(
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
   ),
+  'process.env.NEXT_PUBLIC_SUPABASE_URL': JSON.stringify(
+    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+  ),
+  'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
 };
 
 export default defineConfig({
-  entry: ['src/cli.tsx'],
-  outDir: 'bin',
-  format: ['esm'],
-  platform: 'node',
-  target: 'node18',
-  tsconfig: 'tsconfig.json',
-  minify: !isDevBuild,
-  sourcemap: 'inline',
   bundle: true,
-  splitting: false,
-  treeshake: true,
   clean: true, // We handle cleaning in the npm script
-  external: [
-    'keytar', // Native module
-    'posthog-js',
-  ],
-  noExternal: [
-    '@acme/api',
-    '@acme/db',
-    '@acme/id',
-    '@acme/logger',
-    '@acme/zustand',
-  ],
   define: envDefines,
+  entry: ['src/cli.tsx'],
   esbuildOptions(options) {
     // Add shebang for executable
     // options.banner = {
@@ -79,8 +59,8 @@ export default defineConfig({
       name: 'ignore-react-devtools',
       setup(build) {
         build.onResolve({ filter: /^react-devtools-core$/ }, () => ({
-          path: 'react-devtools-core',
           namespace: 'ignore-devtools',
+          path: 'react-devtools-core',
         }));
         build.onLoad({ filter: /.*/, namespace: 'ignore-devtools' }, () => ({
           contents: 'export default {};',
@@ -89,6 +69,19 @@ export default defineConfig({
       },
     });
   },
+  external: [
+    'keytar', // Native module
+    'posthog-js',
+  ],
+  format: ['esm'],
+  minify: !isDevBuild,
+  noExternal: [
+    '@acme/api',
+    '@acme/db',
+    '@acme/id',
+    '@acme/logger',
+    '@acme/zustand',
+  ],
   onSuccess: async () => {
     // Make the output file executable
     const outFile = './bin/cli.js';
@@ -109,4 +102,11 @@ export default defineConfig({
       console.log(`✅ Build complete: ${outFile}`);
     }
   },
+  outDir: 'bin',
+  platform: 'node',
+  sourcemap: 'inline',
+  splitting: false,
+  target: 'node18',
+  treeshake: true,
+  tsconfig: 'tsconfig.json',
 });

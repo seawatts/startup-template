@@ -23,9 +23,9 @@ function IndexPopup() {
                 <div className="flex justify-between">
                   <div className="flex items-center gap-2">
                     <img
-                      src={ycCfLogo}
-                      className="h-12 w-auto"
                       alt="YC vibe-check"
+                      className="h-12 w-auto"
+                      src={ycCfLogo}
                     />
                     <div className="flex flex-col">
                       <span className="text-lg font-semibold">
@@ -42,47 +42,47 @@ function IndexPopup() {
           </Card>
           <div className="grid grid-cols-1 gap-2">
             <Button
-              variant="outline"
               onClick={() =>
                 chrome.tabs.create({
                   url: './tabs/welcome.html',
                 })
               }
+              variant="outline"
             >
               Tutorial
             </Button>
             <Button
-              variant="outline"
               onClick={() =>
                 chrome.tabs.create({
                   url: './tabs/changelog.html',
                 })
               }
+              variant="outline"
             >
               Changelog
             </Button>
             <SignedIn>
               <Button
-                variant="outline"
                 onClick={() =>
                   chrome.tabs.create({
                     url: './tabs/account.html',
                   })
                 }
+                variant="outline"
               >
                 <Icons.User className="mr-2 h-4 w-4" />
                 Account
               </Button>
-              <Button variant="outline" asChild>
+              <Button asChild variant="outline">
                 <SignOutButton />
               </Button>
             </SignedIn>
             <SignedOut>
-              <Button variant="outline" asChild>
+              <Button asChild variant="outline">
                 <a
                   href={`${env.PLASMO_PUBLIC_API_URL}/chrome-extension/sign-in?redirect_url=https://apply.ycombinator.com`}
-                  target="_blank"
                   rel="noreferrer"
+                  target="_blank"
                 >
                   {/* <Icons.LogIn className="mr-2 h-4 w-4" /> */}
                   Sign In
@@ -92,8 +92,8 @@ function IndexPopup() {
             <Button asChild variant="outline">
               <a
                 href="https://apply.ycombinator.com"
-                target="_blank"
                 rel="noopener noreferrer"
+                target="_blank"
               >
                 <Icons.Plus className="mr-2" />
                 New YC App
@@ -102,8 +102,8 @@ function IndexPopup() {
             <Button asChild variant="outline">
               <a
                 href="https://apply.ycombinator.com/app/edit"
-                target="_blank"
                 rel="noopener noreferrer"
+                target="_blank"
               >
                 <Icons.Pencil className="mr-2" />
                 Open YC App

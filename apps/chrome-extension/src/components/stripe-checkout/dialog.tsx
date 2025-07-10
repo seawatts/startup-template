@@ -35,8 +35,8 @@ export function StripeCheckoutDialog(props: StripeCheckoutDialogProps) {
   return (
     <DialogComponent
       isOpen={props.isOpen}
-      portalElement={portalElement}
       onClose={props.onClose}
+      portalElement={portalElement}
     />
   );
 }
@@ -47,7 +47,7 @@ function DesktopDialog({
   portalElement,
 }: StripeCheckoutDialogComponentProps) {
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog onOpenChange={onClose} open={isOpen}>
       <DialogContent className="max-w-5xl" portalContainer={portalElement}>
         <DialogHeader>
           <DialogTitle>Pick Your Vibe</DialogTitle>
@@ -68,7 +68,7 @@ function MobileDrawer({
   portalElement,
 }: StripeCheckoutDialogComponentProps) {
   return (
-    <Drawer open={isOpen} onOpenChange={onClose}>
+    <Drawer onOpenChange={onClose} open={isOpen}>
       <DrawerContent className="max-h-[90vh]" portalContainer={portalElement}>
         <DrawerHeader>
           <DrawerTitle>Pick Your Vibe</DrawerTitle>

@@ -46,5 +46,5 @@ export function AudioCanvas() {
     };
   }, [analyzerNode, isRecording]);
 
-  return <canvas ref={canvasRef} className="h-[46px] w-full" />;
+  return <canvas className="h-[46px] w-full" ref={canvasRef} />;
 }

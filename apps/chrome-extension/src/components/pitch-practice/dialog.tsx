@@ -53,24 +53,24 @@ export function PitchPracticeDialog({
         : 'Start';
 
   return (
-    <AlertDialog open={isOpen} onOpenChange={onClose}>
+    <AlertDialog onOpenChange={onClose} open={isOpen}>
       <AlertDialogContent portalContainer={portalElement}>
         <DialogContent question={question} />
 
-        <PitchPracticeForm question={question} audio={audio}>
+        <PitchPracticeForm audio={audio} question={question}>
           {() => (
             <AlertDialogFooter className="flex w-full sm:justify-between">
               <div className="flex-1" />
               <div className="self flex items-center justify-end gap-2">
-                <Button variant="outline" onClick={onClose} type="button">
+                <Button onClick={onClose} type="button" variant="outline">
                   Close
                 </Button>
 
                 <Entitled entitlement="pitch_practice">
                   <Button
-                    type="button"
-                    onClick={handleQuestionClick}
                     disabled={isQuestionLoading || isAudioLoading}
+                    onClick={handleQuestionClick}
+                    type="button"
                   >
                     {(isQuestionLoading || isAudioLoading) && (
                       <Icons.Spinner className="mr-2" />

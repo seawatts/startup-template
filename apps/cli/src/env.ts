@@ -9,43 +9,23 @@ const isDevelopment =
 const shouldSkipValidation = !!process.env.CI || isHelpMode || isDevelopment;
 
 export const env = createEnv({
-  clientPrefix: 'NEXT_PUBLIC_',
-  runtimeEnv: {
-    ...process.env,
-    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
-      process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
-    NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
-    NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
-    NEXT_PUBLIC_APP_ENV: process.env.NEXT_PUBLIC_APP_ENV,
-    NEXT_PUBLIC_APP_TYPE: process.env.NEXT_PUBLIC_APP_TYPE,
-    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    NEXT_PUBLIC_CLI_VERSION: process.env.NEXT_PUBLIC_CLI_VERSION,
-  },
-  server: {
-    NODE_ENV: z
-      .enum(['development', 'production', 'test'])
-      .default('development'),
-  },
   client: {
-    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().optional().default(''),
-    NEXT_PUBLIC_POSTHOG_KEY: z.string().optional().default(''),
-    NEXT_PUBLIC_POSTHOG_HOST: z
-      .string()
-      .optional()
-      .default('https://app.posthog.com'),
     NEXT_PUBLIC_API_URL: z.string().optional().default('https://api.acme.sh'),
     NEXT_PUBLIC_APP_ENV: z
       .enum(['development', 'production'])
       .default('development'),
     NEXT_PUBLIC_APP_TYPE: z.enum(['cli', 'nextjs']).default('cli'),
-    NEXT_PUBLIC_SUPABASE_URL: z.string().optional().default(''),
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().optional().default(''),
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().optional().default(''),
     NEXT_PUBLIC_CLI_VERSION: z.string().optional().default(''),
+    NEXT_PUBLIC_POSTHOG_HOST: z
+      .string()
+      .optional()
+      .default('https://app.posthog.com'),
+    NEXT_PUBLIC_POSTHOG_KEY: z.string().optional().default(''),
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().optional().default(''),
+    NEXT_PUBLIC_SUPABASE_URL: z.string().optional().default(''),
   },
-
-  skipValidation: shouldSkipValidation,
+  clientPrefix: 'NEXT_PUBLIC_',
   onValidationError: (issues) => {
     const errorMessage = issues
       .map((issue) => {
@@ -70,4 +50,24 @@ export const env = createEnv({
 
     throw new Error(`Invalid environment variables: ${errorMessage}`);
   },
+  runtimeEnv: {
+    ...process.env,
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+    NEXT_PUBLIC_APP_ENV: process.env.NEXT_PUBLIC_APP_ENV,
+    NEXT_PUBLIC_APP_TYPE: process.env.NEXT_PUBLIC_APP_TYPE,
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
+      process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+    NEXT_PUBLIC_CLI_VERSION: process.env.NEXT_PUBLIC_CLI_VERSION,
+    NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+    NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+  },
+  server: {
+    NODE_ENV: z
+      .enum(['development', 'production', 'test'])
+      .default('development'),
+  },
+
+  skipValidation: shouldSkipValidation,
 });

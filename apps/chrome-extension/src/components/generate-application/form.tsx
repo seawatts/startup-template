@@ -48,11 +48,11 @@ export function GenerateApplicationForm({
   );
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-4">
+    <form className="flex flex-col gap-4" onSubmit={onSubmit}>
       {processInfo.isGenerating && (
         <div className="flex flex-col gap-2 px-4 lg:px-0">
           <Label>{processInfo.progressLabel}</Label>
-          <Progress value={processInfo.progress} className="w-full" />
+          <Progress className="w-full" value={processInfo.progress} />
         </div>
       )}
 

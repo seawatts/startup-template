@@ -5,9 +5,9 @@ import { type ClientConfig, createDefaultLinks } from './config';
 export const createClient = (config?: ClientConfig) => {
   return createTRPCClient<AppRouter>({
     links: createDefaultLinks({
-      sourceHeader: config?.sourceHeader ?? 'cli-client',
       authToken: config?.authToken,
       sessionCookie: config?.sessionCookie,
+      sourceHeader: config?.sourceHeader ?? 'cli-client',
     }),
   });
 };

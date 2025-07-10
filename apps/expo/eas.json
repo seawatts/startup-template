@@ -1,22 +1,19 @@
 {
-  "cli": {
-    "version": ">= 4.1.2"
-  },
   "build": {
     "base": {
-      "node": "18.16.1",
       "ios": {
         "resourceClass": "m-medium"
-      }
+      },
+      "node": "18.16.1"
     },
     "development": {
-      "extends": "base",
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "extends": "base"
     },
     "preview": {
-      "extends": "base",
       "distribution": "internal",
+      "extends": "base",
       "ios": {
         "simulator": true
       }
@@ -24,6 +21,9 @@
     "production": {
       "extends": "base"
     }
+  },
+  "cli": {
+    "version": ">= 4.1.2"
   },
   "submit": {
     "production": {}

@@ -48,8 +48,8 @@ function AppContent() {
     capture({
       event: 'dimensions_changed',
       properties: {
-        width: dimensions.width,
         height: dimensions.height,
+        width: dimensions.width,
       },
     });
   }, [dimensions]);
@@ -59,10 +59,10 @@ function AppContent() {
       <Box flexDirection="column" padding={1}>
         <Box marginBottom={1}>
           <Ascii
+            color="gray"
+            font="ANSI Shadow"
             text="Acme"
             width={dimensions.width}
-            font="ANSI Shadow"
-            color="gray"
           />
         </Box>
         <Text>Validating session...</Text>
@@ -83,10 +83,10 @@ function AppContent() {
 
   return (
     <Box
-      padding={1}
       flexDirection="column"
-      // HACK to fix flickering https://github.com/vadimdemedes/ink/issues/450#issuecomment-1836274483
       minHeight={dimensions.height}
+      // HACK to fix flickering https://github.com/vadimdemedes/ink/issues/450#issuecomment-1836274483
+      padding={1}
     >
       <SignedIn>
         <Text>You are not authorized to use this webhook.</Text>

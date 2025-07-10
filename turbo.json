@@ -1,21 +1,45 @@
 {
   "$schema": "https://turborepo.org/schema.json",
+  "globalEnv": ["NODE_ENV"],
   "globalPassThroughEnv": [
-    "NODE_ENV",
     "CI",
     "VERCEL",
     "VERCEL_ENV",
     "VERCEL_URL",
     "npm_lifecycle_event",
     "TURBO_TOKEN",
-    "TURBO_TEAM"
+    "TURBO_TEAM",
+    "NPM_TOKEN",
+    "VERCEL_TOKEN"
   ],
   "tasks": {
+    "@acme/web-app#build": {
+      "env": [
+        "NEXT_PUBLIC_*",
+        "CLERK_*",
+        "SUPABASE_*",
+        "POSTGRES_*",
+        "POSTHOG_*",
+        "OPENAI_API_KEY",
+        "STRIPE_*",
+        "RESEND_*"
+      ]
+    },
     "//#clean": {
       "cache": false
     },
     "build": {
       "dependsOn": ["^build"],
+      "env": [
+        "NEXT_PUBLIC_*",
+        "CLERK_*",
+        "SUPABASE_*",
+        "POSTGRES_*",
+        "POSTHOG_*",
+        "OPENAI_API_KEY",
+        "STRIPE_*",
+        "RESEND_*"
+      ],
       "outputs": [
         ".next/**",
         "!.next/cache/**",
@@ -24,92 +48,60 @@
         ".output/**",
         ".vercel/output/**",
         "dist/**"
-      ],
-      "env": [
-        "NEXT_PUBLIC_*",
-        "DATABASE_URL",
-        "POSTGRES_URL",
-        "CLERK_SECRET_KEY",
-        "POSTHOG_KEY",
-        "OPENAI_API_KEY",
-        "STRIPE_SECRET_KEY"
-      ],
-      "passThroughEnv": ["NPM_TOKEN"]
-    },
-    "@acme/web-app#build": {
-      "env": [
-        "NEXT_PUBLIC_*",
-        "CLERK_SECRET_KEY",
-        "CLERK_WEBHOOK_SECRET",
-        "POSTGRES_URL",
-        "POSTHOG_KEY",
-        "OPENAI_API_KEY",
-        "STRIPE_*"
       ]
-    },
-    "@acme/cli#build": {
-      "env": ["NEXT_PUBLIC_*"],
-      "passThroughEnv": ["APPLE_*", "MACOS_*", "NPM_TOKEN"]
-    },
-    "@acme/db#build": {
-      "env": [
-        "DATABASE_URL",
-        "POSTGRES_*",
-        "NEXT_PUBLIC_SUPABASE_*",
-        "SUPABASE_PROJECT_ID"
-      ],
-      "passThroughEnv": ["SUPABASE_SERVICE_ROLE_KEY", "SUPABASE_JWT_SECRET"]
     },
     "clean": {
       "cache": false
     },
     "dev": {
       "cache": false,
-      "persistent": true,
-      "env": ["PORT"],
-      "passThroughEnv": [
-        "DATABASE_URL",
-        "POSTGRES_*",
+      "env": [
+        "PORT",
+        "NEXT_PUBLIC_*",
         "CLERK_*",
         "SUPABASE_*",
-        "NEXT_PUBLIC_*",
-        "OPENAI_API_KEY",
+        "POSTGRES_*",
         "POSTHOG_*",
+        "OPENAI_API_KEY",
         "STRIPE_*",
-        "KV_*",
-        "REDIS_URL"
-      ]
+        "RESEND_*"
+      ],
+      "persistent": true
     },
     "format": {
       "dependsOn": ["^build"]
     },
+    "format:ci": {
+      "cache": false,
+      "dependsOn": ["^build"]
+    },
     "gen-migration": {
       "cache": false,
-      "interactive": true,
-      "env": ["DATABASE_URL", "POSTGRES_URL"]
+      "env": ["DATABASE_*", "POSTGRES_*"],
+      "interactive": true
     },
     "migrate": {
       "cache": false,
-      "interactive": true,
-      "env": ["DATABASE_URL", "POSTGRES_URL"]
+      "env": ["DATABASE_*", "POSTGRES_*"],
+      "interactive": true
     },
     "push": {
       "cache": false,
-      "interactive": true,
-      "env": ["DATABASE_URL", "POSTGRES_URL"]
+      "env": ["DATABASE_*", "POSTGRES_*"],
+      "interactive": true
     },
     "seed": {
       "cache": false,
-      "interactive": true,
-      "env": ["DATABASE_URL", "POSTGRES_URL"],
-      "passThroughEnv": ["CLERK_*", "SUPABASE_*"]
+      "env": ["DATABASE_*", "POSTGRES_*", "SUPABASE_*"],
+      "interactive": true
     },
     "studio": {
       "cache": false,
-      "persistent": true,
-      "passThroughEnv": ["DATABASE_URL", "POSTGRES_URL"]
+      "env": ["DATABASE_*", "POSTGRES_*"],
+      "persistent": true
     },
     "typecheck": {
+      "dependsOn": ["^build"],
       "outputs": ["node_modules/.cache/tsbuildinfo.json"]
     },
     "ui-add": {

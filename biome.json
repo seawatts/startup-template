@@ -1,77 +1,94 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "vcs": {
-    "enabled": true,
-    "clientKind": "git",
-    "useIgnoreFile": true,
-    "defaultBranch": "main"
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on",
+        "useSortedAttributes": "on",
+        "useSortedKeys": "on",
+        "useSortedProperties": "on"
+      }
+    }
   },
   "files": {
     "ignoreUnknown": false,
     "includes": [
+      "!dist/**",
       "**",
-      "!**/apps/chrome-extension/scripts/**",
-      "!**/apps/chrome-extension/src/pdf.worker.min.js",
-      "!**/apps/chrome-extension/assets/pdf.worker.min.mjs",
-      "!**/baml_client/**"
+      "!**/dist/**",
+      "!node_modules/**",
+      "!**/node_modules/**",
+      "!baml_client/**",
+      "!biome.json",
+      "!**/debug-output/**",
+      "!**/*.min.*"
     ]
   },
   "formatter": {
     "enabled": true,
     "indentStyle": "space"
   },
-  "assist": { "actions": { "source": { "organizeImports": "on" } } },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "semicolons": "always",
+      "trailingCommas": "all"
+    },
+    "globals": ["React"]
+  },
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "a11y": {
+        "noStaticElementInteractions": "off"
+      },
       "correctness": {
+        "noInvalidUseBeforeDeclaration": "off",
         "noUnusedImports": "error",
         "noUnusedVariables": "warn",
         "useExhaustiveDependencies": "warn",
         "useHookAtTopLevel": "error"
       },
       "nursery": {
+        "noNestedComponentDefinitions": "off",
         "useIndexOf": "error",
-        "useUniqueElementIds": "off",
-        "noNestedComponentDefinitions": "off"
+        "useUniqueElementIds": "off"
       },
+      "recommended": true,
       "style": {
+        "noCommonJs": "error",
+        "noInferrableTypes": "error",
         "noNegationElse": "off",
-        "useNodejsImportProtocol": "error",
+        "noNestedTernary": "off",
+        "noParameterAssign": "error",
+        "noUnusedTemplateLiteral": "error",
+        "noUselessElse": "error",
+        "useAsConstAssertion": "error",
+        "useAtIndex": "error",
+        "useCollapsedIf": "error",
+        "useDefaultParameterLast": "error",
+        "useEnumInitializers": "error",
         "useFilenamingConvention": {
           "level": "error",
           "options": {
-            "requireAscii": true,
-            "filenameCases": ["kebab-case"]
+            "filenameCases": ["kebab-case"],
+            "requireAscii": true
           }
         },
-        "noParameterAssign": "error",
-        "useAsConstAssertion": "error",
-        "useDefaultParameterLast": "error",
-        "useEnumInitializers": "error",
-        "useSelfClosingElements": "error",
-        "useSingleVarDeclarator": "error",
-        "noUnusedTemplateLiteral": "error",
+        "useNodejsImportProtocol": "error",
         "useNumberNamespace": "error",
-        "noInferrableTypes": "error",
-        "noUselessElse": "error",
-        "noCommonJs": "error",
-        "noNestedTernary": "off",
-        "useAtIndex": "error",
-        "useCollapsedIf": "error"
+        "useSelfClosingElements": "error",
+        "useSingleVarDeclarator": "error"
       },
       "suspicious": {
         "noExplicitAny": "error"
       }
     }
   },
-  "javascript": {
-    "formatter": {
-      "quoteStyle": "single",
-      "trailingCommas": "all",
-      "semicolons": "always"
-    },
-    "globals": ["React"]
+  "vcs": {
+    "clientKind": "git",
+    "defaultBranch": "main",
+    "enabled": true,
+    "useIgnoreFile": true
   }
 }

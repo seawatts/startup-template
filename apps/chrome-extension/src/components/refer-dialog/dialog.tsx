@@ -35,15 +35,15 @@ export function ReferDialog({ isOpen, onClose }: ReferDialogProps) {
 
   const footerContent = ({ isPending }: { isPending: boolean }) => (
     <div className="flex w-full justify-between">
-      <CopyButton text={referralLink} variant="outline" size="default">
+      <CopyButton size="default" text={referralLink} variant="outline">
         Copy Referral Link
       </CopyButton>
 
       <div className="flex gap-2">
-        <Button variant="outline" onClick={onClose}>
+        <Button onClick={onClose} variant="outline">
           Cancel
         </Button>
-        <Button type="submit" disabled={isPending}>
+        <Button disabled={isPending} type="submit">
           {isPending && <Icons.Spinner className="mr-2 h-4 w-4" />}
           {isPending ? 'Sending...' : 'Send Referral'}
         </Button>
@@ -53,7 +53,7 @@ export function ReferDialog({ isOpen, onClose }: ReferDialogProps) {
 
   if (isDesktop()) {
     return (
-      <Dialog open={isOpen} onOpenChange={onClose}>
+      <Dialog onOpenChange={onClose} open={isOpen}>
         <DialogContent portalContainer={portalElement}>
           <DialogHeader>
             <DialogTitle>Refer to YC vibe-check 💜</DialogTitle>
@@ -75,7 +75,7 @@ export function ReferDialog({ isOpen, onClose }: ReferDialogProps) {
   }
 
   return (
-    <Drawer open={isOpen} onOpenChange={onClose}>
+    <Drawer onOpenChange={onClose} open={isOpen}>
       <DrawerContent portalContainer={portalElement}>
         <DrawerHeader>
           <DrawerTitle>Refer to YC vibe-check 💜</DrawerTitle>

@@ -74,9 +74,9 @@ function AccountPage() {
               <div className="flex justify-between">
                 <div className="flex items-center gap-2">
                   <img
-                    src={ycCfLogo}
-                    className="h-16 w-auto"
                     alt="YC vibe-check"
+                    className="h-16 w-auto"
+                    src={ycCfLogo}
                   />
                   <div className="flex flex-col gap-2">
                     <span>YC vibe-check - Account</span>
@@ -94,23 +94,23 @@ function AccountPage() {
           <CardContent className="flex justify-between">
             <div className="flex flex-wrap gap-2">
               <Button
-                variant="outline"
                 onClick={() => {
                   chrome.tabs.create({
                     url: './tabs/welcome.html',
                   });
                 }}
+                variant="outline"
               >
                 <Icons.Bookmark className="mr-2" />
                 Tutorial
               </Button>
               <Button
-                variant="outline"
                 onClick={() => {
                   chrome.tabs.create({
                     url: './tabs/changelog.html',
                   });
                 }}
+                variant="outline"
               >
                 <Icons.Bell className="mr-2" />
                 Changelog
@@ -118,8 +118,8 @@ function AccountPage() {
               <Button asChild variant="outline">
                 <a
                   href="https://apply.ycombinator.com"
-                  target="_blank"
                   rel="noopener noreferrer"
+                  target="_blank"
                 >
                   <Icons.Plus className="mr-2" />
                   New YC App
@@ -128,8 +128,8 @@ function AccountPage() {
               <Button asChild variant="outline">
                 <a
                   href="https://apply.ycombinator.com/app/edit"
-                  target="_blank"
                   rel="noopener noreferrer"
+                  target="_blank"
                 >
                   <Icons.Pencil className="mr-2" />
                   Open YC App

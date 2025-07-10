@@ -49,7 +49,7 @@ export function ScriptDialog({ isOpen, onClose }: ScriptDialogProps) {
   const portalElement = useChromePortal();
 
   return (
-    <AlertDialog open={isOpen} onOpenChange={onClose}>
+    <AlertDialog onOpenChange={onClose} open={isOpen}>
       <AlertDialogContent portalContainer={portalElement}>
         <AlertDialogHeader>
           <AlertDialogTitle>Founder Video Script</AlertDialogTitle>
@@ -58,10 +58,10 @@ export function ScriptDialog({ isOpen, onClose }: ScriptDialogProps) {
               Remember, this is just a starting point. Follow the official
               guidelines at{' '}
               <a
-                href="https://www.ycombinator.com/video"
-                target="_blank"
-                rel="noopener noreferrer"
                 className="text-primary underline-offset-4 hover:underline"
+                href="https://www.ycombinator.com/video"
+                rel="noopener noreferrer"
+                target="_blank"
               >
                 YC's video instructions
               </a>
@@ -82,11 +82,11 @@ export function ScriptDialog({ isOpen, onClose }: ScriptDialogProps) {
               <AlertDialogFooter className="flex w-full sm:justify-between">
                 <Entitled entitlement="video_script">
                   <CopyButton
-                    text={markdownScript}
                     className="flex items-center gap-2"
-                    size="default"
-                    variant={'outline'}
                     disabled={isPending}
+                    size="default"
+                    text={markdownScript}
+                    variant={'outline'}
                   >
                     Copy as Markdown
                   </CopyButton>
@@ -95,11 +95,11 @@ export function ScriptDialog({ isOpen, onClose }: ScriptDialogProps) {
                   <div />
                 </NotEntitled>
                 <div className="self flex items-center justify-end gap-2">
-                  <Button variant="outline" onClick={onClose} type="button">
+                  <Button onClick={onClose} type="button" variant="outline">
                     Close
                   </Button>
                   <Entitled entitlement="video_script">
-                    <Button type="submit" disabled={isPending}>
+                    <Button disabled={isPending} type="submit">
                       {isPending ? 'Generating...' : 'Generate Script'}
                     </Button>
                   </Entitled>

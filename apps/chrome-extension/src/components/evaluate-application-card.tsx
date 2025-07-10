@@ -36,8 +36,8 @@ export function EvaluateApplicationCard() {
           Vibe-check
         </Button> */}
         <FeatureWaitlistButton
-          featureName="evaluate-application"
           element="evaluate-application-card"
+          featureName="evaluate-application"
         />
         {/* <div className="flex items-center space-x-2">
           <Checkbox

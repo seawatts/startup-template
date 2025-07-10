@@ -144,15 +144,15 @@ export function ShareLinkForm(props: {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
       <div className="flex flex-col gap-y-4 px-4 lg:px-0">
         <div className="space-y-2">
           <Label htmlFor="privacy-level">Privacy Level</Label>
           <Select
-            value={privacyLevel}
             onValueChange={(value) =>
               setPrivacyLevel(value as unknown as typeof privacyLevel)
             }
+            value={privacyLevel}
           >
             <SelectTrigger id="privacy-level">
               <SelectValue placeholder="Select privacy level" />
@@ -162,13 +162,13 @@ export function ShareLinkForm(props: {
               <SelectItem value="privateWithPasscode">
                 Private with Passcode
               </SelectItem>
-              <SelectItem value="collectEmailAndVerify" disabled>
+              <SelectItem disabled value="collectEmailAndVerify">
                 Collect Email and Verify (Coming Soon)
               </SelectItem>
-              <SelectItem value="collectEmailNoVerification" disabled>
+              <SelectItem disabled value="collectEmailNoVerification">
                 Collect Email (No Verification) (Coming Soon)
               </SelectItem>
-              <SelectItem value="limitToSpecificEmails" disabled>
+              <SelectItem disabled value="limitToSpecificEmails">
                 Limit to Specific Emails (Coming Soon)
               </SelectItem>
             </SelectContent>
@@ -179,26 +179,26 @@ export function ShareLinkForm(props: {
           <div className="space-y-2">
             <Label>Specific Emails</Label>
             {specificEmails.map((email, index) => (
-              <div key={email} className="flex items-center gap-2">
+              <div className="flex items-center gap-2" key={email}>
                 <Input
-                  type="email"
-                  value={email}
+                  className="flex-grow"
                   onChange={(event) => updateEmail(index, event.target.value)}
                   placeholder="Enter email"
-                  className="flex-grow"
                   required
+                  type="email"
+                  value={email}
                 />
                 <Button
+                  onClick={() => removeEmailField(index)}
+                  size="sm"
                   type="button"
                   variant="ghost"
-                  size="sm"
-                  onClick={() => removeEmailField(index)}
                 >
                   <Icons.X />
                 </Button>
               </div>
             ))}
-            <Button type="button" variant="outline" onClick={addEmailField}>
+            <Button onClick={addEmailField} type="button" variant="outline">
               Add Another Email
             </Button>
           </div>
@@ -211,12 +211,12 @@ export function ShareLinkForm(props: {
               <span className="text-xs text-muted-foreground">(Optional)</span>
             </Label>
             <Input
+              disabled={upsertShareLink.isPending}
               id="passcode"
               name="passcode"
-              value={passcode}
               onChange={(event) => setPasscode(event.target.value)}
-              disabled={upsertShareLink.isPending}
               placeholder="Enter a passcode"
+              value={passcode}
             />
           </div>
         )}
@@ -227,10 +227,10 @@ export function ShareLinkForm(props: {
           <Label htmlFor="share-link">Share Link</Label>
           <div className="flex items-center gap-2">
             <Input
-              id="share-link"
-              value={getShareLink.data.uniqueLink}
-              readOnly
               className="flex-grow"
+              id="share-link"
+              readOnly
+              value={getShareLink.data.uniqueLink}
             />
             <CopyButton text={getShareLink.data.uniqueLink}>
               Copy Link

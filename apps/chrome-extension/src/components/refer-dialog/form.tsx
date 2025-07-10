@@ -34,24 +34,24 @@ export function ReferForm(props: {
   const emailLabel = pluralize('Founder Email', emails.length);
 
   return (
-    <form onSubmit={() => {}} className="flex flex-col gap-4">
+    <form className="flex flex-col gap-4" onSubmit={() => {}}>
       <div className="flex flex-col gap-y-4 px-4 lg:px-0">
         <Label htmlFor="email-0">{emailLabel}</Label>
         {emails.map((email, index) => (
-          <div key={email} className="flex items-center gap-2">
+          <div className="flex items-center gap-2" key={email}>
             <Input
               id={`email-${index}`}
               name={`email-${index}`}
+              onChange={(e) => handleEmailChange(index, e.target.value)}
               type="email"
               value={email}
-              onChange={(e) => handleEmailChange(index, e.target.value)}
             />
             {index > 0 && (
               <Button
+                onClick={() => removeEmailInput(index)}
+                size="icon"
                 type="button"
                 variant="ghost"
-                size="icon"
-                onClick={() => removeEmailInput(index)}
               >
                 <Icons.X />
               </Button>
@@ -59,11 +59,11 @@ export function ReferForm(props: {
           </div>
         ))}
         <Button
-          type="button"
-          variant="ghost"
-          size="sm"
           className="flex gap-2 self-start"
           onClick={addEmailInput}
+          size="sm"
+          type="button"
+          variant="ghost"
         >
           <Icons.Plus />
           Add Another Email

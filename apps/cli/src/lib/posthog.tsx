@@ -14,10 +14,10 @@ const isProduction = nodeEnv === 'production';
 // Initialize PostHog only if we have a valid API key
 const posthog = env.NEXT_PUBLIC_POSTHOG_KEY
   ? new PostHog(env.NEXT_PUBLIC_POSTHOG_KEY, {
-      host: env.NEXT_PUBLIC_POSTHOG_HOST,
-      flushAt: 1, // Flush immediately
       defaultOptIn: true,
+      flushAt: 1, // Flush immediately
       flushInterval: 0, // Don't wait to flush
+      host: env.NEXT_PUBLIC_POSTHOG_HOST,
     })
   : null;
 
@@ -114,16 +114,16 @@ export function PostHogIdentifyUser() {
       posthog.identify({
         distinctId: userId,
         properties: {
+          $pathname: path,
           email,
           version,
-          $pathname: path,
         },
       });
 
       if (sessionId) {
         posthog.alias({
-          distinctId: userId,
           alias: sessionId,
+          distinctId: userId,
         });
       }
     }

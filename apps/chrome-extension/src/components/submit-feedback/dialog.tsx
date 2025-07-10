@@ -47,19 +47,19 @@ export function SubmitFeedbackDialog({
 
   if (isDesktop()) {
     return (
-      <Dialog open={isOpen} onOpenChange={onClose}>
+      <Dialog onOpenChange={onClose} open={isOpen}>
         <DialogContent portalContainer={portalElement}>
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
             <DialogDescription>{description}</DialogDescription>
           </DialogHeader>
-          <SubmitFeedbackForm type={type} element={element} onSuccess={onClose}>
+          <SubmitFeedbackForm element={element} onSuccess={onClose} type={type}>
             {({ isPending }) => (
               <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={onClose}>
+                <Button onClick={onClose} variant="outline">
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isPending}>
+                <Button disabled={isPending} type="submit">
                   {isPending && <Icons.Spinner className="mr-2" />}
                   {isPending ? 'Submitting...' : 'Submit'}
                 </Button>
@@ -72,19 +72,19 @@ export function SubmitFeedbackDialog({
   }
 
   return (
-    <Drawer open={isOpen} onOpenChange={onClose}>
+    <Drawer onOpenChange={onClose} open={isOpen}>
       <DrawerContent portalContainer={portalElement}>
         <DrawerHeader>
           <DrawerTitle>{title}</DrawerTitle>
           <DrawerDescription>{description}</DrawerDescription>
         </DrawerHeader>
-        <SubmitFeedbackForm type={type} element={element} onSuccess={onClose}>
+        <SubmitFeedbackForm element={element} onSuccess={onClose} type={type}>
           {({ isPending }) => (
             <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={onClose}>
+              <Button onClick={onClose} variant="outline">
                 Cancel
               </Button>
-              <Button type="submit" disabled={isPending}>
+              <Button disabled={isPending} type="submit">
                 {isPending && <Icons.Spinner className="mr-2" />}
                 {isPending ? 'Submitting...' : 'Submit'}
               </Button>

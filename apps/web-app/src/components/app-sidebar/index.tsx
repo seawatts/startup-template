@@ -59,11 +59,11 @@ export function AppSidebar({
 
   return (
     <Sidebar
-      collapsible="icon"
-      variant={hasSecondarySidebar ? undefined : 'inset'}
       className={cn({
         'mt-2 pb-4 pr-4 ml-2': hasSecondarySidebar, // NOTE: This is a hack to get the sidebar to fit the design.
       })}
+      collapsible="icon"
+      variant={hasSecondarySidebar ? undefined : 'inset'}
     >
       <SidebarHeader className="flex-row items-gap-1">
         <SidebarTrigger className="h-8 w-8" />
@@ -130,10 +130,10 @@ export function AppSidebar({
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <a
-                href="https://docs.acme.com"
-                target="_blank"
                 className="flex items-center justify-between"
+                href="https://docs.acme.com"
                 rel="noreferrer"
+                target="_blank"
               >
                 <span className="flex items-center gap-2">
                   <BookOpen className="size-4" />
@@ -146,10 +146,10 @@ export function AppSidebar({
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <a
-                href="https://docs.acme.com/ref/overview"
-                target="_blank"
                 className="flex items-center justify-between"
+                href="https://docs.acme.com/ref/overview"
                 rel="noreferrer"
+                target="_blank"
               >
                 <span className="flex items-center gap-2">
                   <Code className="size-4 shrink-0" />
@@ -162,10 +162,10 @@ export function AppSidebar({
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <a
-                href="https://discord.gg/BTNBeXGuaS"
-                target="_blank"
                 className="flex items-center justify-between"
+                href="https://discord.gg/BTNBeXGuaS"
                 rel="noreferrer"
+                target="_blank"
               >
                 <span className="flex items-center gap-2">
                   <Icons.Discord className="size-4" />
@@ -178,10 +178,10 @@ export function AppSidebar({
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <a
-                href="https://github.com/acme-ai/acme/blob/canary/CHANGELOG.md"
-                target="_blank"
                 className="flex items-center justify-between"
+                href="https://github.com/acme-ai/acme/blob/canary/CHANGELOG.md"
                 rel="noreferrer"
+                target="_blank"
               >
                 <span className="flex items-center gap-2">
                   <Icons.Rocket className="size-4" />

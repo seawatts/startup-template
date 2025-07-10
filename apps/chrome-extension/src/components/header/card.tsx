@@ -25,9 +25,9 @@ export function WelcomeCard({
             <div className="flex justify-between">
               <div className="flex items-center gap-2">
                 <img
-                  src={ycCfLogo}
-                  className="h-16 w-auto"
                   alt="YC vibe-check"
+                  className="h-16 w-auto"
+                  src={ycCfLogo}
                 />
                 <div className="flex flex-col gap-2">
                   <span>Welcome to YC vibe-check - apply with ai</span>
@@ -58,8 +58,8 @@ export function WelcomeCard({
                 <Button asChild className="w-full max-w-44">
                   <a
                     href={`${env.PLASMO_PUBLIC_API_URL}/chrome-extension/sign-in?redirect_url=${globalThis.location.href}`}
-                    target="_blank"
                     rel="noreferrer"
+                    target="_blank"
                   >
                     <Icons.LogIn className="mr-2" />
                     Sign in
@@ -78,11 +78,11 @@ export function WelcomeCard({
                 {error.message || 'An unexpected error occurred'}
                 <div>
                   <Button
-                    variant="outline"
-                    size="sm"
                     onClick={() => {
                       onTryAgain?.();
                     }}
+                    size="sm"
+                    variant="outline"
                   >
                     Try again
                   </Button>
