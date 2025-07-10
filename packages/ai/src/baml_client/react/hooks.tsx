@@ -20,12 +20,12 @@ $ pnpm add @boundaryml/baml
 
 'use client'
 
-import type { BamlErrors } from '@boundaryml/baml/errors';
-import { toBamlError } from '@boundaryml/baml/errors';
-import { useCallback, useMemo, useReducer, useTransition } from 'react';
-import * as Actions from './server';
-import * as StreamingActions from './server_streaming';
-import type { StreamingServerTypes } from './server_streaming_types';
+import type { BamlErrors } from '@boundaryml/baml/errors'
+import { toBamlError } from '@boundaryml/baml/errors'
+import { useCallback, useMemo, useReducer, useTransition } from 'react'
+import * as Actions from './server'
+import * as StreamingActions from './server_streaming'
+import type { StreamingServerTypes } from './server_streaming_types'
 
 /**
  * Type representing a BAML stream response.
@@ -34,99 +34,74 @@ import type { StreamingServerTypes } from './server_streaming_types';
  * @template FinalType The type of the final response.
  */
 type BamlStreamResponse<PartialType, FinalType> = {
-  partial?: PartialType;
-  final?: FinalType;
-  error?: BamlErrors;
-};
+  partial?: PartialType
+  final?: FinalType
+  error?: BamlErrors
+}
 
 /**
  * A server action that returns either a ReadableStream of Uint8Array or a final output.
  */
 export type ServerAction<Input = any, Output = any> = (
   ...args: Input extends any[] ? Input : [Input]
-) => Promise<Output> | ReadableStream<Uint8Array>;
+) => Promise<Output> | ReadableStream<Uint8Array>
 
 /**
  * Type representing all function names except 'stream' and 'stream_types'
  */
-export type FunctionNames = keyof typeof Actions;
+export type FunctionNames = keyof typeof Actions
 
 /**
  * Helper type to derive the partial return type for an action.
  */
-type StreamDataType<FunctionName extends FunctionNames> =
-  StreamingServerTypes[FunctionName];
+type StreamDataType<FunctionName extends FunctionNames> = StreamingServerTypes[FunctionName]
 
 /**
  * Helper type to derive the final return type for an action.
  */
-type FinalDataType<FunctionName extends FunctionNames> =
-  (typeof Actions)[FunctionName] extends (...args: any) => any
-    ? Awaited<ReturnType<(typeof Actions)[FunctionName]>>
-    : never;
+type FinalDataType<FunctionName extends FunctionNames> = (typeof Actions)[FunctionName] extends (...args: any) => any
+  ? Awaited<ReturnType<(typeof Actions)[FunctionName]>>
+  : never
 
 /**
  * Configuration options for BAML React hooks.
  */
-export type HookInput<
-  FunctionName extends FunctionNames = FunctionNames,
-  Options extends { stream?: boolean } = { stream?: true },
-> = {
-  stream?: Options['stream'];
-  onStreamData?: Options['stream'] extends false
-    ? never
-    : (response?: StreamDataType<FunctionName>) => void;
-  onFinalData?: (response?: FinalDataType<FunctionName>) => void;
-  onData?: (
-    response?: Options['stream'] extends false
-      ? FinalDataType<FunctionName>
-      : FinalDataType<FunctionName> | StreamDataType<FunctionName>,
-  ) => void;
-  onError?: (error: BamlErrors) => void;
-};
+export type HookInput<FunctionName extends FunctionNames = FunctionNames, Options extends { stream?: boolean } = { stream?: true }> = {
+  stream?: Options['stream']
+  onStreamData?: Options['stream'] extends false ? never : (response?: StreamDataType<FunctionName>) => void
+  onFinalData?: (response?: FinalDataType<FunctionName>) => void
+  onData?: (response?: Options['stream'] extends false ? FinalDataType<FunctionName> : FinalDataType<FunctionName> | StreamDataType<FunctionName>) => void
+  onError?: (error: BamlErrors) => void
+}
 
-export type NonStreamingHookStatus = 'idle' | 'pending' | 'success' | 'error';
-export type StreamingHookStatus = NonStreamingHookStatus | 'streaming';
+export type NonStreamingHookStatus = 'idle' | 'pending' | 'success' | 'error'
+export type StreamingHookStatus = NonStreamingHookStatus | 'streaming'
 
-export type HookStatus<
-  Options extends { stream?: boolean } = { stream?: true },
-> = Options['stream'] extends false
+export type HookStatus<Options extends { stream?: boolean } = { stream?: true }> = Options['stream'] extends false
   ? NonStreamingHookStatus
-  : StreamingHookStatus;
+  : StreamingHookStatus
 
 /**
  * Return type for BAML React hooks.
  */
-export type HookOutput<
-  FunctionName extends FunctionNames = FunctionNames,
-  Options extends { stream?: boolean } = { stream?: true },
-> = {
-  data?: Options['stream'] extends false
-    ? FinalDataType<FunctionName>
-    : FinalDataType<FunctionName> | StreamDataType<FunctionName>;
-  finalData?: FinalDataType<FunctionName>;
-  streamData?: Options['stream'] extends false
-    ? never
-    : StreamDataType<FunctionName>;
-  isLoading: boolean;
-  isPending: boolean;
-  isStreaming: Options['stream'] extends false ? never : boolean;
-  isSuccess: boolean;
-  isError: boolean;
-  error?: BamlErrors;
-  status: HookStatus<Options>;
+export type HookOutput<FunctionName extends FunctionNames = FunctionNames, Options extends { stream?: boolean } = { stream?: true }> = {
+  data?: Options['stream'] extends false ? FinalDataType<FunctionName> : FinalDataType<FunctionName> | StreamDataType<FunctionName>
+  finalData?: FinalDataType<FunctionName>
+  streamData?: Options['stream'] extends false ? never : StreamDataType<FunctionName>
+  isLoading: boolean
+  isPending: boolean
+  isStreaming: Options['stream'] extends false ? never : boolean
+  isSuccess: boolean
+  isError: boolean
+  error?: BamlErrors
+  status: HookStatus<Options>
   mutate: (
     ...args: Parameters<(typeof Actions)[FunctionName]>
-  ) => Options['stream'] extends false
-    ? Promise<FinalDataType<FunctionName>>
-    : Promise<ReadableStream<Uint8Array>>;
-  reset: () => void;
-};
+  ) => Options['stream'] extends false ? Promise<FinalDataType<FunctionName>> : Promise<ReadableStream<Uint8Array>>
+  reset: () => void
+}
 
-export type HookData<
-  FunctionName extends FunctionNames,
-  Options extends { stream?: boolean } = { stream?: true },
-> = NonNullable<HookOutput<FunctionName, Options>['data']>;
+export type HookData<FunctionName extends FunctionNames, Options extends { stream?: boolean } = { stream?: true }> = NonNullable<HookOutput<FunctionName, Options>['data']>;
 
 /**
  * Type guard to check if the hook props are configured for streaming mode.
@@ -138,15 +113,15 @@ export type HookData<
 function isStreamingProps<FunctionName extends FunctionNames>(
   props: HookInput<FunctionName, { stream?: boolean }>,
 ): props is HookInput<FunctionName, { stream?: true }> {
-  return props.stream !== false;
+  return props.stream !== false
 }
 
 interface HookState<TPartial, TFinal> {
-  isSuccess: boolean;
-  isStreaming: boolean;
-  error?: BamlErrors;
-  finalData?: TFinal;
-  streamData?: TPartial;
+  isSuccess: boolean
+  isStreaming: boolean
+  error?: BamlErrors
+  finalData?: TFinal
+  streamData?: TPartial
 }
 
 type HookStateAction<TPartial, TFinal> =
@@ -154,7 +129,7 @@ type HookStateAction<TPartial, TFinal> =
   | { type: 'SET_ERROR'; payload: BamlErrors }
   | { type: 'SET_PARTIAL'; payload: TPartial }
   | { type: 'SET_FINAL'; payload: TFinal }
-  | { type: 'RESET' };
+  | { type: 'RESET' }
 
 /**
  * Reducer function to manage the hook state transitions.
@@ -173,42 +148,42 @@ function hookReducer<TPartial, TFinal>(
     case 'START_REQUEST':
       return {
         ...state,
-        error: undefined,
-        finalData: undefined,
-        isStreaming: false,
         isSuccess: false,
+        error: undefined,
+        isStreaming: false,
+        finalData: undefined,
         streamData: undefined,
-      };
+      }
     case 'SET_ERROR':
       return {
         ...state,
-        error: action.payload,
-        isStreaming: false,
         isSuccess: false,
-      };
+        isStreaming: false,
+        error: action.payload,
+      }
     case 'SET_PARTIAL':
       return {
         ...state,
         isStreaming: true,
         streamData: action.payload,
-      };
+      }
     case 'SET_FINAL':
       return {
         ...state,
-        finalData: action.payload,
-        isStreaming: false,
         isSuccess: true,
-      };
+        isStreaming: false,
+        finalData: action.payload,
+      }
     case 'RESET':
       return {
+        isSuccess: false,
+        isStreaming: false,
         error: undefined,
         finalData: undefined,
-        isStreaming: false,
-        isSuccess: false,
         streamData: undefined,
-      };
+      }
     default:
-      return state;
+      return state
   }
 }
 
@@ -235,154 +210,142 @@ function hookReducer<TPartial, TFinal>(
 function useBamlAction<FunctionName extends FunctionNames>(
   action: ServerAction,
   props: HookInput<FunctionName, { stream: false }>,
-): HookOutput<FunctionName, { stream: false }>;
+): HookOutput<FunctionName, { stream: false }>
 function useBamlAction<FunctionName extends FunctionNames>(
   action: ServerAction,
   props?: HookInput<FunctionName, { stream?: true }>,
-): HookOutput<FunctionName, { stream: true }>;
+): HookOutput<FunctionName, { stream: true }>
 function useBamlAction<FunctionName extends FunctionNames>(
   action: ServerAction,
   props: HookInput<FunctionName, { stream?: boolean }> = {},
-):
-  | HookOutput<FunctionName, { stream: true }>
-  | HookOutput<FunctionName, { stream: false }> {
-  const { onFinalData, onError } = props;
-  const [isLoading, startTransition] = useTransition();
+): HookOutput<FunctionName, { stream: true }> | HookOutput<FunctionName, { stream: false }> {
+  const { onFinalData, onError } = props
+  const [isLoading, startTransition] = useTransition()
 
-  const [state, dispatch] = useReducer(
-    hookReducer<StreamDataType<FunctionName>, FinalDataType<FunctionName>>,
-    {
-      error: undefined,
-      finalData: undefined,
-      isStreaming: false,
-      isSuccess: false,
-      streamData: undefined,
-    },
-  );
+  const [state, dispatch] = useReducer(hookReducer<StreamDataType<FunctionName>, FinalDataType<FunctionName>>, {
+    isSuccess: false,
+    error: undefined,
+    finalData: undefined,
+    isStreaming: false,
+    streamData: undefined,
+  })
 
   const mutate = useCallback(
     async (...input: Parameters<ServerAction>) => {
-      dispatch({ type: 'START_REQUEST' });
+      dispatch({ type: 'START_REQUEST' })
       try {
-        let response: Awaited<ReturnType<ServerAction>>;
+        let response: Awaited<ReturnType<ServerAction>>
         startTransition(async () => {
           // Transform any BamlImage or BamlAudio inputs to their JSON representation
-          const transformedInput = input.map((arg) => {
+          const transformedInput = input.map(arg => {
             // Check if the argument is an instance of BamlImage or BamlAudio
             // We check the constructor name since the actual classes might be proxied in browser environments
-            if (
-              arg &&
-              typeof arg === 'object' &&
-              (arg.constructor.name === 'BamlImage' ||
-                arg.constructor.name === 'BamlAudio')
-            ) {
+            if (arg && typeof arg === 'object' &&
+                (arg.constructor.name === 'BamlImage' || arg.constructor.name === 'BamlAudio')) {
               return arg.toJSON();
             }
             return arg;
           });
 
-          response = await action(...transformedInput);
+          response = await action(...transformedInput)
 
           if (isStreamingProps(props) && response instanceof ReadableStream) {
-            const reader = response.getReader();
-            const decoder = new TextDecoder();
+            const reader = response.getReader()
+            const decoder = new TextDecoder()
             try {
               while (true) {
-                const { value, done } = await reader.read();
-                if (done) break;
+                const { value, done } = await reader.read()
+                if (done) break
                 if (value) {
-                  const chunk = decoder.decode(value, { stream: true }).trim();
+                  const chunk = decoder.decode(value, { stream: true }).trim()
                   try {
                     const parsed: BamlStreamResponse<
                       StreamDataType<FunctionName>,
                       FinalDataType<FunctionName>
-                    > = JSON.parse(chunk);
+                    > = JSON.parse(chunk)
                     if (parsed.error) {
-                      if (parsed.error instanceof Error) {
-                        throw parsed.error;
+                       if (parsed.error instanceof Error) {
+                        throw parsed.error
                       }
 
-                      const parsedError = JSON.parse(parsed.error);
-                      const finalError = toBamlError(parsedError);
-                      throw finalError;
+                      const parsedError = JSON.parse(parsed.error)
+                      const finalError = toBamlError(parsedError)
+                      throw finalError
                     }
                     if (parsed.partial !== undefined) {
-                      dispatch({
-                        payload: parsed.partial,
-                        type: 'SET_PARTIAL',
-                      });
+                      dispatch({ type: 'SET_PARTIAL', payload: parsed.partial })
                       if (isStreamingProps(props)) {
-                        props.onStreamData?.(parsed.partial);
+                        props.onStreamData?.(parsed.partial)
                       }
-                      props.onData?.(parsed.partial);
+                      props.onData?.(parsed.partial)
                     }
                     if (parsed.final !== undefined) {
-                      dispatch({ payload: parsed.final, type: 'SET_FINAL' });
-                      onFinalData?.(parsed.final);
-                      props.onData?.(parsed.final);
-                      return;
+                      dispatch({ type: 'SET_FINAL', payload: parsed.final })
+                      onFinalData?.(parsed.final)
+                      props.onData?.(parsed.final)
+                      return
                     }
                   } catch (err: unknown) {
                     dispatch({
-                      payload: err as BamlErrors,
                       type: 'SET_ERROR',
-                    });
-                    onError?.(err as BamlErrors);
-                    break;
+                      payload: err as BamlErrors,
+                    })
+                    onError?.(err as BamlErrors)
+                    break
                   }
                 }
               }
             } finally {
-              reader.releaseLock();
+              reader.releaseLock()
             }
-            return;
+            return
           }
           // Non‑streaming case
-          dispatch({ payload: response, type: 'SET_FINAL' });
-          onFinalData?.(response);
-        });
-        return response;
+          dispatch({ type: 'SET_FINAL', payload: response })
+          onFinalData?.(response)
+        })
+        return response
       } catch (error_: unknown) {
-        dispatch({ payload: error_ as BamlErrors, type: 'SET_ERROR' });
-        onError?.(error_ as BamlErrors);
-        throw error_;
+        dispatch({ type: 'SET_ERROR', payload: error_ as BamlErrors })
+        onError?.(error_ as BamlErrors)
+        throw error_
       }
     },
     [action, onFinalData, onError, props],
-  );
+  )
 
   const status = useMemo<HookStatus<{ stream: typeof props.stream }>>(() => {
-    if (state.error) return 'error';
-    if (state.isSuccess) return 'success';
-    if (state.isStreaming) return 'streaming';
-    if (isLoading) return 'pending';
-    return 'idle';
-  }, [isLoading, state.error, state.isSuccess, state.isStreaming]);
+    if (state.error) return 'error'
+    if (state.isSuccess) return 'success'
+    if (state.isStreaming) return 'streaming'
+    if (isLoading) return 'pending'
+    return 'idle'
+  }, [isLoading, state.error, state.isSuccess, state.isStreaming])
 
   let data:
-    | FinalDataType<FunctionName>
-    | StreamDataType<FunctionName>
-    | undefined = state.finalData;
-  if (state.isStreaming) data = state.streamData;
+		| FinalDataType<FunctionName>
+		| StreamDataType<FunctionName>
+		| undefined = state.finalData;
+  if (state.isStreaming) data = state.streamData
 
   const result = {
     data,
-    error: state.error,
     finalData: state.finalData,
+    error: state.error,
     isError: status === 'error',
-    isLoading: status === 'pending' || status === 'streaming',
-    isPending: status === 'pending',
-    isStreaming: status === 'streaming',
     isSuccess: status === 'success',
+    isStreaming: status === 'streaming',
+    isPending: status === 'pending',
+    isLoading: status === 'pending' || status === 'streaming',
     mutate,
-    reset: () => dispatch({ type: 'RESET' }),
     status,
-  } satisfies HookOutput<FunctionName, { stream: typeof props.stream }>;
+    reset: () => dispatch({ type: 'RESET' }),
+  } satisfies HookOutput<FunctionName, { stream: typeof props.stream }>
 
   return {
     ...result,
     streamData: isStreamingProps(props) ? state.streamData : undefined,
-  } satisfies HookOutput<FunctionName, { stream: typeof props.stream }>;
+  } satisfies HookOutput<FunctionName, { stream: typeof props.stream }>
 }
 /**
  * A specialized hook for the SuggestImprovements BAML function that supports both streaming and non‑streaming responses.
@@ -425,24 +388,16 @@ function useBamlAction<FunctionName extends FunctionNames>(
  * });
  * ```
  */
-export function useSuggestImprovements(
-  props: HookInput<'SuggestImprovements', { stream: false }>,
-): HookOutput<'SuggestImprovements', { stream: false }>;
-export function useSuggestImprovements(
-  props?: HookInput<'SuggestImprovements', { stream?: true }>,
-): HookOutput<'SuggestImprovements', { stream: true }>;
+export function useSuggestImprovements(props: HookInput<'SuggestImprovements', { stream: false }>): HookOutput<'SuggestImprovements', { stream: false }>
+export function useSuggestImprovements(props?: HookInput<'SuggestImprovements', { stream?: true }>): HookOutput<'SuggestImprovements', { stream: true }>
 export function useSuggestImprovements(
   props: HookInput<'SuggestImprovements', { stream?: boolean }> = {},
-):
-  | HookOutput<'SuggestImprovements', { stream: true }>
-  | HookOutput<'SuggestImprovements', { stream: false }> {
+): HookOutput<'SuggestImprovements', { stream: true }> | HookOutput<'SuggestImprovements', { stream: false }> {
   let action: ServerAction = Actions.SuggestImprovements;
   if (isStreamingProps(props)) {
     action = StreamingActions.SuggestImprovements;
-    return useBamlAction(action, props);
+    return useBamlAction(action, props)
+  } else {
+    return useBamlAction(action, props as HookInput<'SuggestImprovements', { stream: false }>)
   }
-  return useBamlAction(
-    action,
-    props as HookInput<'SuggestImprovements', { stream: false }>,
-  );
 }

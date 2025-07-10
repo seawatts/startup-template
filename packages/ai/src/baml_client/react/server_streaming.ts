@@ -20,10 +20,13 @@ $ pnpm add @boundaryml/baml
 
 'use server'
 
-import type { Audio, Image } from '@boundaryml/baml';
 import { b } from '../index';
-import type * as types from '../types';
-import type { Check, Checked, ImprovementSuggestions } from '../types';
+import type { Check, Checked  } from "../types";
+import type { Image, Audio } from "@boundaryml/baml";
+
+import type {  ImprovementSuggestions } from "../types"
+
+import type * as types from "../types"
 
 /**
  * Streaming BAML server actions that return ReadableStreams.
@@ -46,6 +49,10 @@ export const SuggestImprovements = async (
   accessibility: string,
   structure: string,
 ): Promise<ReadableStream<Uint8Array>> => {
-  const stream = b.stream.SuggestImprovements(seo, accessibility, structure);
+  const stream = b.stream.SuggestImprovements(
+    seo,
+    accessibility,
+    structure,
+  );
   return Promise.resolve(stream.toStreamable());
 };

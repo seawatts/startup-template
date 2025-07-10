@@ -20,10 +20,13 @@ $ pnpm add @boundaryml/baml
 
 'use server'
 
-import type { Audio, Image } from '@boundaryml/baml';
 import { b } from '../index';
-import type * as types from '../types';
-import type { Check, Checked, ImprovementSuggestions } from '../types';
+import type { Check, Checked  } from "../types";
+import type { Image, Audio } from "@boundaryml/baml";
+
+import type {  ImprovementSuggestions } from "../types"
+
+import type * as types from "../types"
 
 /**
  * Regular BAML server actions that return direct responses.
@@ -46,5 +49,9 @@ export const SuggestImprovements = async (
   accessibility: string,
   structure: string,
 ): Promise<types.ImprovementSuggestions> => {
-  return b.SuggestImprovements(seo, accessibility, structure);
+  return b.SuggestImprovements(
+    seo,
+    accessibility,
+    structure,
+  );
 };
