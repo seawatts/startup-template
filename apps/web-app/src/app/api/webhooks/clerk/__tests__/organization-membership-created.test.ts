@@ -1,6 +1,6 @@
-import { db } from '@acme/db/client';
-import { OrgMembers, Orgs, Users } from '@acme/db/schema';
 import type { OrganizationMembershipWebhookEvent } from '@clerk/nextjs/server';
+import { db } from '@unhook/db/client';
+import { OrgMembers, Orgs, Users } from '@unhook/db/schema';
 import { eq } from 'drizzle-orm';
 import { handleOrganizationMembershipCreated } from '../organization-membership-created';
 

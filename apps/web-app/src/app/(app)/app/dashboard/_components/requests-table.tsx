@@ -1,4 +1,4 @@
-import { Avatar } from '@acme/ui/avatar';
+import { Avatar } from '@unhook/ui/avatar';
 import {
   Table,
   TableBody,
@@ -6,7 +6,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@acme/ui/table';
+} from '@unhook/ui/table';
 import { MoreHorizontal } from 'lucide-react';
 import Image from 'next/image';
 
@@ -71,7 +71,9 @@ export function VaultTable() {
                 <Avatar className="h-6 w-6">
                   <Image
                     alt={vault.name}
+                    height={24}
                     src={'/placeholder.svg?height=24&width=24'}
+                    width={24}
                   />
                 </Avatar>
                 <div>
@@ -99,21 +101,16 @@ export function VaultTable() {
             <TableCell>{vault.startDate}</TableCell>
             <TableCell>
               <div className="flex gap-1">
-                {Array.from({ length: 3 }).map((_, i) => (
+                {['high', 'medium', 'low'].map((liquidity) => (
                   <div
                     className={`h-1.5 w-3 rounded-full ${
-                      i <
-                      (
-                        vault.liquidity === 'high'
-                          ? 3
-                          : vault.liquidity === 'medium'
-                            ? 2
-                            : 1
-                      )
+                      liquidity === 'high'
                         ? 'bg-primary'
-                        : 'bg-muted'
+                        : liquidity === 'medium'
+                          ? 'bg-yellow-500'
+                          : 'bg-red-500'
                     }`}
-                    key={vault.liquidity}
+                    key={liquidity}
                   />
                 ))}
               </div>

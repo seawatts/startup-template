@@ -5,7 +5,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@acme/ui/card';
+} from '@unhook/ui/card';
 import { useState } from 'react';
 import { AuthCodeLoginButton } from './auth-code-login-button';
 import { CloseWindowCard } from './close-wind-card';
@@ -29,7 +29,7 @@ export function AuthCodeContent() {
         <CardTitle>Grant Access</CardTitle>
         <CardDescription>
           Select or create an organization, then click the button below to
-          authenticate with Acme.
+          authenticate with Unhook.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">

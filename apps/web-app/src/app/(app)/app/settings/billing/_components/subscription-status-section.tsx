@@ -1,28 +1,28 @@
 'use client';
 
-import { MetricButton } from '@acme/analytics/components';
-import { api } from '@acme/api/react';
+import { IconCurrencyDollar, IconInfoCircle } from '@tabler/icons-react';
+import { MetricButton } from '@unhook/analytics/components';
+import { api } from '@unhook/api/react';
 import {
   SubscriptionActive,
   SubscriptionPastDue,
   useHasActiveSubscription,
   useHasPastDueSubscription,
-} from '@acme/stripe/guards/client';
+} from '@unhook/stripe/guards/client';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@acme/ui/card';
-import { Progress } from '@acme/ui/progress';
+} from '@unhook/ui/card';
+import { Progress } from '@unhook/ui/progress';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@acme/ui/tooltip';
-import { IconCurrencyDollar, IconInfoCircle } from '@tabler/icons-react';
+} from '@unhook/ui/tooltip';
 import { useAction } from 'next-safe-action/hooks';
 import { useMemo } from 'react';
 import {
@@ -37,7 +37,7 @@ function useWebhookUsage() {
   // Fetch usage statistics for the last 30 days (for monthly) or 1 day (for daily)
   const { data: usageStats } = api.apiKeyUsage.stats.useQuery({
     days: hasActiveSubscription ? 30 : 1, // Monthly for team, daily for free
-    type: 'mcp-server',
+    type: 'webhook-event',
   });
 
   return useMemo(() => {
@@ -45,7 +45,7 @@ function useWebhookUsage() {
     const totalEvents =
       usageStats?.reduce(
         (sum: number, stat: { type: string; count: number }) => {
-          if (stat.type === 'mcp-server') {
+          if (stat.type === 'webhook-event') {
             return sum + stat.count;
           }
           return sum;

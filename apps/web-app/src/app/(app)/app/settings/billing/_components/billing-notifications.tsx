@@ -1,8 +1,8 @@
 'use client';
 
-import { Card, CardContent } from '@acme/ui/card';
-import { Icons } from '@acme/ui/custom/icons';
-import { P } from '@acme/ui/custom/typography';
+import { Card, CardContent } from '@unhook/ui/card';
+import { Icons } from '@unhook/ui/custom/icons';
+import { P } from '@unhook/ui/custom/typography';
 import { useSearchParams } from 'next/navigation';
 
 export function BillingNotifications() {

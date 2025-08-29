@@ -1,10 +1,10 @@
 'use client';
 
-import { MetricButton } from '@acme/analytics/components';
-import { Badge } from '@acme/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';
-import { Skeleton } from '@acme/ui/skeleton';
 import { useOrganization, useOrganizationList } from '@clerk/nextjs';
+import { MetricButton } from '@unhook/analytics/components';
+import { Badge } from '@unhook/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@unhook/ui/card';
+import { Skeleton } from '@unhook/ui/skeleton';
 import { useAction } from 'next-safe-action/hooks';
 import { useState } from 'react';
 import { leaveOrganizationAction } from '../actions';

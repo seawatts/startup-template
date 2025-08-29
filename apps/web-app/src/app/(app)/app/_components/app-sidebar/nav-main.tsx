@@ -1,14 +1,15 @@
 'use client';
 
-import { MetricLink } from '@acme/analytics';
+import type { Icon } from '@tabler/icons-react';
+
+import { MetricLink } from '@unhook/analytics';
 import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@acme/ui/sidebar';
-import type { Icon } from '@tabler/icons-react';
+} from '@unhook/ui/sidebar';
 import { usePathname } from 'next/navigation';
 
 export function NavMain({

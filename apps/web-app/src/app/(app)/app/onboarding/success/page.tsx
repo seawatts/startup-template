@@ -1,6 +1,6 @@
 'use client';
 
-import { MetricLink } from '@acme/analytics/components';
+import { MetricLink } from '@unhook/analytics/components';
 import {
   Card,
   CardContent,
@@ -8,13 +8,16 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@acme/ui/card';
-import { Button } from '@acme/ui/components/button';
-import { cn } from '@acme/ui/lib/utils';
+} from '@unhook/ui/card';
+import { Button } from '@unhook/ui/components/button';
+import { cn } from '@unhook/ui/lib/utils';
 import { motion } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { env } from '~/env.client';
+
+import { RealTimeEventStream } from '../../_components/webhook-wizzard/real-time-event-stream';
+import { WebhookUrlStep } from '../../_components/webhook-wizzard/webhook-url-step';
 import { AuthCodeLoginButton } from '../../auth-code/_components/auth-code-login-button';
 
 export default function OnboardingSuccessPage() {
@@ -23,7 +26,7 @@ export default function OnboardingSuccessPage() {
   const webhookName = searchParams.get('webhookName');
   const redirectTo = searchParams.get('redirectTo') || undefined;
   const source = searchParams.get('source') || undefined;
-  const [isSetupComplete] = useState(false);
+  const [isSetupComplete, setIsSetupComplete] = useState(false);
 
   if (!orgName || !webhookName) {
     return (
@@ -50,7 +53,7 @@ export default function OnboardingSuccessPage() {
     );
   }
 
-  const webhookUrl = `${env.NEXT_PUBLIC_API_URL || 'https://acme.sh'}/${orgName}/${webhookName}`;
+  const webhookUrl = `${env.NEXT_PUBLIC_WEBHOOK_BASE_URL || env.NEXT_PUBLIC_API_URL || 'https://unhook.sh'}/${orgName}/${webhookName}`;
 
   return (
     <div className="flex min-h-[calc(100vh-12rem)] items-center justify-center p-4">
@@ -71,7 +74,9 @@ export default function OnboardingSuccessPage() {
                   services.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="flex flex-col gap-4">content</CardContent>
+              <CardContent className="flex flex-col gap-4">
+                <WebhookUrlStep webhookUrl={webhookUrl} />
+              </CardContent>
               <CardFooter className="flex justify-end">
                 {source ? (
                   <AuthCodeLoginButton
@@ -115,7 +120,12 @@ export default function OnboardingSuccessPage() {
               initial={{ opacity: 0, y: 20 }}
               transition={{ delay: 0.2, duration: 0.5 }}
             >
-              content
+              <RealTimeEventStream
+                onEventReceived={() => {
+                  setIsSetupComplete(true);
+                }}
+                webhookUrl={webhookUrl}
+              />
             </motion.div>
           ) : (
             <motion.div

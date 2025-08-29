@@ -1,5 +1,5 @@
 'use client';
-import { MetricButton } from '@acme/analytics/components';
+import { MetricButton } from '@unhook/analytics/components';
 
 export function CloseWindowButton() {
   return (

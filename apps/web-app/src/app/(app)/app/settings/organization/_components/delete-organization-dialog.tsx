@@ -1,5 +1,6 @@
 'use client';
 
+import { useOrganization } from '@clerk/nextjs';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,9 +10,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@acme/ui/alert-dialog';
-import { toast } from '@acme/ui/sonner';
-import { useOrganization } from '@clerk/nextjs';
+} from '@unhook/ui/alert-dialog';
+import { toast } from '@unhook/ui/sonner';
 
 interface DeleteOrganizationDialogProps {
   isOpen: boolean;

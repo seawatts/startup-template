@@ -1,13 +1,13 @@
 'use client';
 
-import { MetricButton } from '@acme/analytics/components';
+import { MetricButton } from '@unhook/analytics/components';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@acme/ui/card';
+} from '@unhook/ui/card';
 import { useAction } from 'next-safe-action/hooks';
 import { useState } from 'react';
 import { deleteTeamAction } from '../actions';

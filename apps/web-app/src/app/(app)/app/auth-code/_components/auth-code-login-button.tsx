@@ -1,7 +1,7 @@
 'use client';
 
-import { MetricButton } from '@acme/analytics/components';
-import { Icons } from '@acme/ui/custom/icons';
+import { MetricButton } from '@unhook/analytics/components';
+import { Icons } from '@unhook/ui/custom/icons';
 import { useAction } from 'next-safe-action/hooks';
 import posthog from 'posthog-js';
 import { useCallback, useState } from 'react';

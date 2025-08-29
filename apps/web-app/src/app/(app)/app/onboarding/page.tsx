@@ -21,12 +21,13 @@ export default async function Page(props: {
     return redirect('/app/dashboard');
   }
 
-  // If orgName is provided, create the organization and redirect to webhook wizard
+  // If orgName is provided, redirect to webhook wizard
+  // The organization will be created when the user submits the form
   if (searchParams.orgName) {
-    // This will be handled by the form component
     return redirect('/app/webhooks/create');
   }
 
+  // Otherwise, show the regular onboarding form for users with source/redirect
   return (
     <div className="container mx-auto max-w-2xl py-8">
       <OnboardingForm

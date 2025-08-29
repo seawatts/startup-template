@@ -1,7 +1,7 @@
-import { SidebarInset } from '@acme/ui/sidebar';
+import { SidebarInset } from '@unhook/ui/sidebar';
 import { cookies } from 'next/headers';
 import { AppSidebar } from './_components/app-sidebar/app-sidebar';
-import { SidebarStateProvider } from './_components/app-sidebar/sidebar-state-provider';
+import { SidebarStateProvider } from './_components/sidebar-state-provider';
 import { SiteHeader } from './_components/site-header';
 
 export default async function Layout({
@@ -13,7 +13,7 @@ export default async function Layout({
   const defaultOpen = cookieStore.get('sidebar_state')?.value === 'true';
 
   return (
-    <SidebarStateProvider defaultOpen={defaultOpen}>
+    <SidebarStateProvider defaultOpen={defaultOpen ?? true}>
       <AppSidebar variant="inset" />
       <SidebarInset>
         <SiteHeader />

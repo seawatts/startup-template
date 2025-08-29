@@ -1,7 +1,8 @@
 'use server';
 
-import { db } from '@acme/db/client';
-import { Orgs } from '@acme/db/schema';
+import { auth } from '@clerk/nextjs/server';
+import { db } from '@unhook/db/client';
+import { Orgs } from '@unhook/db/schema';
 import {
   BILLING_INTERVALS,
   createBillingPortalSession,
@@ -9,8 +10,7 @@ import {
   getOrCreateCustomer,
   PLAN_TYPES,
   stripe,
-} from '@acme/stripe';
-import { auth } from '@clerk/nextjs/server';
+} from '@unhook/stripe';
 import { eq } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -38,7 +38,7 @@ export const createCheckoutSessionAction = action.action(async () => {
 
   // Get the origin URL
   const headersList = await headers();
-  const origin = headersList.get('origin') || 'https://acme.sh';
+  const origin = headersList.get('origin') || 'https://unhook.sh';
 
   // Create or get Stripe customer
   let customerId = org.stripeCustomerId;
@@ -107,7 +107,7 @@ export const createBillingPortalSessionAction = action.action(async () => {
 
   // Get the origin URL
   const headersList = await headers();
-  const origin = headersList.get('origin') || 'https://acme.sh';
+  const origin = headersList.get('origin') || 'https://unhook.sh';
 
   // Create billing portal session
   const session = await createBillingPortalSession({

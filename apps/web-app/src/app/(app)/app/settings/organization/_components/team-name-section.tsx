@@ -1,10 +1,10 @@
 'use client';
 
-import { MetricButton } from '@acme/analytics/components';
-import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';
-import { Input } from '@acme/ui/input';
-import { toast } from '@acme/ui/sonner';
 import { useOrganization } from '@clerk/nextjs';
+import { MetricButton } from '@unhook/analytics/components';
+import { Card, CardContent, CardHeader, CardTitle } from '@unhook/ui/card';
+import { Input } from '@unhook/ui/input';
+import { toast } from '@unhook/ui/sonner';
 import { useAction } from 'next-safe-action/hooks';
 import { useEffect, useState } from 'react';
 import { updateTeamNameAction } from '../actions';

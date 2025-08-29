@@ -1,7 +1,7 @@
-import { posthog } from '@acme/analytics/posthog/server';
-import { db } from '@acme/db/client';
-import { Users } from '@acme/db/schema';
 import type { SessionJSON, WebhookEvent } from '@clerk/nextjs/server';
+import { posthog } from '@unhook/analytics/posthog/server';
+import { db } from '@unhook/db/client';
+import { Users } from '@unhook/db/schema';
 import { eq } from 'drizzle-orm';
 
 export async function handleSessionCreated(event: WebhookEvent) {

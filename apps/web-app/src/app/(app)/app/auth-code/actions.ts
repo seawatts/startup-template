@@ -1,8 +1,8 @@
 'use server';
 
-import { db } from '@acme/db/client';
-import { AuthCodes } from '@acme/db/schema';
 import { auth, currentUser } from '@clerk/nextjs/server';
+import { db } from '@unhook/db/client';
+import { AuthCodes } from '@unhook/db/schema';
 import { createSafeActionClient } from 'next-safe-action';
 
 // Create the action client

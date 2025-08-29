@@ -1,15 +1,5 @@
 'use client';
 
-import { MetricLink } from '@acme/analytics';
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from '@acme/ui/sidebar';
 import {
   IconBrandGithub,
   IconCamera,
@@ -23,6 +13,16 @@ import {
   IconReport,
   IconSettings,
 } from '@tabler/icons-react';
+import { MetricLink } from '@unhook/analytics';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from '@unhook/ui/sidebar';
 import { usePathname } from 'next/navigation';
 import type * as React from 'react';
 import { Icons } from '~/app/(marketing)/_components/icons';
@@ -137,12 +137,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       {
         icon: IconBrandGithub,
         title: 'GitHub',
-        url: 'https://github.com/acme-sh/acme',
+        url: 'https://github.com/unhook-sh/unhook',
       },
       {
         icon: IconCodeDots,
         title: 'Docs',
-        url: 'https://docs.acme.sh',
+        url: 'https://docs.unhook.sh',
       },
       // {
       //   icon: IconSearch,
@@ -171,7 +171,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 metric="navigation_logo_clicked"
               >
                 <Icons.logo className="size-10" />
-                <span className="text-base font-semibold">Acme AI</span>
+                <span className="text-base font-semibold">Unhook AI</span>
               </MetricLink>
             </SidebarMenuButton>
           </SidebarMenuItem>

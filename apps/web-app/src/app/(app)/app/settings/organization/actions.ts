@@ -1,9 +1,9 @@
 'use server';
 
-import { db } from '@acme/db/client';
-import { OrgMembers, Orgs } from '@acme/db/schema';
-import { isEntitled } from '@acme/stripe/guards/server';
 import { auth, clerkClient } from '@clerk/nextjs/server';
+import { db } from '@unhook/db/client';
+import { OrgMembers, Orgs } from '@unhook/db/schema';
+import { isEntitled } from '@unhook/stripe/guards/server';
 import { and, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';

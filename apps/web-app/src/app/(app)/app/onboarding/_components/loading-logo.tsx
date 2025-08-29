@@ -76,7 +76,7 @@ export function LoadingLogo() {
           }}
         >
           <Image
-            alt="Acme Logo"
+            alt="Unhook Logo"
             className="h-32 w-auto"
             height={128}
             priority
@@ -101,7 +101,7 @@ export function LoadingLogo() {
             },
           }}
         >
-          Welcome to Acme
+          Welcome to Unhook
         </motion.div>
       </motion.div>
     </motion.div>

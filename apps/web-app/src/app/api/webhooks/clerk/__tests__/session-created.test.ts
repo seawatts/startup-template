@@ -1,6 +1,6 @@
-import { db } from '@acme/db/client';
-import { Users } from '@acme/db/schema';
 import type { SessionWebhookEvent } from '@clerk/nextjs/server';
+import { db } from '@unhook/db/client';
+import { Users } from '@unhook/db/schema';
 import { eq } from 'drizzle-orm';
 import { handleSessionCreated } from '../session-created';
 

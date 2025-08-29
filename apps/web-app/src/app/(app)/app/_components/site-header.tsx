@@ -1,5 +1,5 @@
-import { Separator } from '@acme/ui/separator';
-import { SidebarTrigger } from '@acme/ui/sidebar';
+import { Separator } from '@unhook/ui/separator';
+import { SidebarTrigger } from '@unhook/ui/sidebar';
 
 export function SiteHeader() {
   return (

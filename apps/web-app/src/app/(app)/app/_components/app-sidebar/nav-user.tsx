@@ -1,8 +1,14 @@
 'use client';
 
-import { MetricLink } from '@acme/analytics/components';
-import { api } from '@acme/api/react';
-import { Avatar, AvatarFallback, AvatarImage } from '@acme/ui/avatar';
+import { useAuth, useOrganizationList, useUser } from '@clerk/nextjs';
+import {
+  IconBuilding,
+  IconCheck,
+  IconCurrencyDollar,
+} from '@tabler/icons-react';
+import { MetricLink } from '@unhook/analytics/components';
+import { api } from '@unhook/api/react';
+import { Avatar, AvatarFallback, AvatarImage } from '@unhook/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,19 +16,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@acme/ui/dropdown-menu';
+} from '@unhook/ui/dropdown-menu';
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@acme/ui/sidebar';
-import { ToggleGroup, ToggleGroupItem } from '@acme/ui/toggle-group';
-import { useAuth, useOrganizationList, useUser } from '@clerk/nextjs';
-import {
-  IconBuilding,
-  IconCheck,
-  IconCurrencyDollar,
-} from '@tabler/icons-react';
+} from '@unhook/ui/sidebar';
+import { ToggleGroup, ToggleGroupItem } from '@unhook/ui/toggle-group';
 import {
   ArrowLeftFromLine,
   ChevronsUpDown,

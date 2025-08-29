@@ -1,14 +1,17 @@
 'use client';
 
-import { api } from '@acme/api/react';
+import { useOrganization, useOrganizationList, useUser } from '@clerk/nextjs';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+import { api } from '@unhook/api/react';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@acme/ui/card';
-import { Button } from '@acme/ui/components/button';
+} from '@unhook/ui/card';
+import { Button } from '@unhook/ui/components/button';
 import {
   Form,
   FormControl,
@@ -17,17 +20,16 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@acme/ui/components/form';
-import { Input } from '@acme/ui/components/input';
-import { Icons } from '@acme/ui/custom/icons';
-import { cn } from '@acme/ui/lib/utils';
-import { toast } from '@acme/ui/sonner';
-import { useOrganization, useOrganizationList, useUser } from '@clerk/nextjs';
-import { zodResolver } from '@hookform/resolvers/zod';
+} from '@unhook/ui/components/form';
+import { Input } from '@unhook/ui/components/input';
+import { Icons } from '@unhook/ui/custom/icons';
+import { cn } from '@unhook/ui/lib/utils';
+import { toast } from '@unhook/ui/sonner';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { env } from '~/env.client';
 
 // Constants
 const VALIDATION_REGEX = /^[a-z0-9-_]+$/;
@@ -163,6 +165,15 @@ const onboardingSchema = z.object({
       'Organization name can only contain lowercase letters, numbers, hyphens, and underscores',
     )
     .transform((val) => val.toLowerCase().trim()),
+  webhookName: z
+    .string()
+    .min(1, 'Webhook name is required')
+    .max(50, 'Webhook name must be less than 50 characters')
+    .regex(
+      VALIDATION_REGEX,
+      'Webhook name can only contain lowercase letters, numbers, hyphens, and underscores',
+    )
+    .transform((val) => val.toLowerCase().trim()),
 });
 
 type OnboardingFormData = z.infer<typeof onboardingSchema>;
@@ -187,6 +198,7 @@ export function OnboardingForm({
   const form = useForm<OnboardingFormData>({
     defaultValues: {
       orgName: '',
+      webhookName: '',
     },
     mode: 'onChange',
     resolver: zodResolver(onboardingSchema),
@@ -194,6 +206,7 @@ export function OnboardingForm({
 
   const { watch } = form;
   const orgName = watch('orgName');
+  const webhookName = watch('webhookName');
 
   // Use tRPC utils for API calls
   const apiUtils = api.useUtils();
@@ -212,6 +225,29 @@ export function OnboardingForm({
     ),
   );
 
+  const webhookNameValidation = useNameValidation(
+    webhookName,
+    1,
+    useCallback(
+      (name) => apiUtils.webhooks.checkAvailability.fetch({ name }),
+      [apiUtils.webhooks.checkAvailability],
+    ),
+  );
+
+  // Live URL preview
+  const webhookUrl = (() => {
+    // For local development, use NEXT_PUBLIC_API_URL (localhost:3000)
+    // For production, use NEXT_PUBLIC_WEBHOOK_BASE_URL or fallback to unhook.sh
+    const baseUrl =
+      env.NEXT_PUBLIC_WEBHOOK_BASE_URL ||
+      env.NEXT_PUBLIC_API_URL ||
+      'https://unhook.sh';
+    if (!orgName) return `${baseUrl}/{org-name}/{webhook-name}`;
+    if (!webhookName) return `${baseUrl}/${orgName}/{webhook-name}`;
+    return `${baseUrl}/${orgName}/${webhookName}`;
+  })();
+
+  const { mutateAsync: createWebhook } = api.webhooks.create.useMutation();
   const { mutateAsync: createOrganization } = api.org.upsert.useMutation();
 
   const handleSubmit = async (data: OnboardingFormData) => {
@@ -226,9 +262,54 @@ export function OnboardingForm({
       return;
     }
 
+    if (webhookNameValidation.available === false) {
+      toast.error('Please fix webhook name validation errors');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
+      // Check if user already has an organization to prevent duplicate creation
+      // This prevents the issue where users would end up with multiple Stripe customers
+      // by checking for existing organizations before attempting to create new ones
+      // The createOrg function also has additional duplicate prevention logic
+      if (organization) {
+        console.log(
+          'User already has an organization, preventing duplicate creation:',
+          {
+            existingOrgId: organization.id,
+            existingOrgName: organization.name,
+            requestedOrgName: data.orgName,
+            userId: user.id,
+          },
+        );
+
+        // Update existing organization name if it's different
+        if (organization.name !== data.orgName) {
+          try {
+            await organization.update({
+              name: data.orgName,
+            });
+            console.log('Organization name updated in Clerk successfully');
+            await organization.reload();
+          } catch (error) {
+            console.error('Failed to update organization in Clerk:', error);
+            // Continue with the flow even if Clerk update fails
+          }
+        }
+
+        // Redirect to webhook creation since organization already exists
+        router.push(`/app/webhooks/create?orgName=${data.orgName}`);
+        return;
+      }
+
+      console.log('Creating new organization for user:', {
+        orgName: data.orgName,
+        userEmail: user.emailAddresses?.[0]?.emailAddress,
+        userId: user.id,
+      });
+
       // Create organization with Stripe integration
       const orgResult = await createOrganization({
         name: data.orgName,
@@ -245,39 +326,49 @@ export function OnboardingForm({
         stripeCustomerId: orgResult.org.stripeCustomerId,
       });
 
-      // Update existing Clerk organization if it exists
-      if (organization) {
-        try {
-          await organization.update({
-            name: data.orgName,
-          });
-          console.log('Organization name updated in Clerk successfully');
-
-          await organization.reload();
-
-          console.log('Organization context reloaded successfully');
-        } catch (error) {
-          console.error('Failed to update organization in Clerk:', error);
-          // Continue with the flow even if Clerk update fails
-        }
-      } else {
-        console.log(
-          'No existing Clerk organization to update - this is expected during onboarding',
-        );
-      }
-
       if (setActive) {
         await setActive({ organization: orgResult.org.id });
       }
 
-      toast.success('Setup complete!', {
-        description:
-          'Organization activated successfully. Redirecting to your dashboard...',
+      // Create webhook with custom ID using the API key from the created organization
+      const webhook = await createWebhook({
+        apiKeyId: orgResult.apiKey?.id,
+        config: {
+          headers: {},
+          requests: {},
+          storage: {
+            maxRequestBodySize: 1024 * 1024,
+            maxResponseBodySize: 1024 * 1024,
+            storeHeaders: true,
+            storeRequestBody: true,
+            storeResponseBody: true,
+          },
+        },
+        id: data.webhookName,
+        name: data.webhookName,
+        orgId: orgResult.org.id,
+        status: 'active',
       });
 
-      // Redirect to success page
+      if (!webhook) {
+        throw new Error('Failed to create webhook');
+      }
+
+      console.log('Custom webhook created:', {
+        orgId: orgResult.org.id,
+        webhookId: webhook.id,
+        webhookName: webhook.name,
+      });
+
+      toast.success('Setup complete!', {
+        description:
+          'Organization activated and webhook created successfully. Redirecting to your dashboard...',
+      });
+
+      // Redirect to local setup page
       const params = new URLSearchParams({
         orgName: data.orgName,
+        webhookName: data.webhookName,
       });
 
       if (redirectTo) {
@@ -287,7 +378,7 @@ export function OnboardingForm({
         params.append('source', source);
       }
 
-      router.push(`/app/onboarding/success?${params.toString()}`);
+      router.push(`/app/onboarding/local-setup?${params.toString()}`);
     } catch (error) {
       console.error('Failed to complete setup:', error);
       toast.error('Failed to complete setup', {
@@ -341,9 +432,10 @@ export function OnboardingForm({
     <div className="flex min-h-[calc(100vh-12rem)] items-center justify-center p-4">
       <Card className="w-full max-w-2xl">
         <CardHeader>
-          <CardTitle className="text-2xl">Welcome to Acme! 🎉</CardTitle>
+          <CardTitle className="text-2xl">Welcome to Unhook! 🎉</CardTitle>
           <CardDescription>
-            Let's set up your organization. Choose a name for your organization.
+            Let's set up your webhook endpoint. Choose names for your
+            organization and webhook.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -376,7 +468,7 @@ export function OnboardingForm({
                         </div>
                       </FormControl>
                       <FormDescription>
-                        This will be your organization name. Use lowercase
+                        This will be part of your webhook URL. Use lowercase
                         letters, numbers, and hyphens only.
                       </FormDescription>
                       {orgNameValidation.available === false &&
@@ -390,6 +482,63 @@ export function OnboardingForm({
                   )}
                 />
 
+                <FormField
+                  control={form.control}
+                  name="webhookName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Webhook Name</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Input
+                            placeholder="e.g., my-project"
+                            {...field}
+                            autoCapitalize="off"
+                            autoComplete="off"
+                            autoCorrect="off"
+                            autoSave="off"
+                            className={getInputBorderClasses(
+                              webhookNameValidation,
+                            )}
+                            disabled={isSubmitting || isLoading}
+                          />
+                          {renderValidationIcon(webhookNameValidation)}
+                        </div>
+                      </FormControl>
+                      <FormDescription>
+                        You will use this webhook on a per-project basis. Each
+                        project gets its own webhook endpoint that can receive
+                        events from multiple services like Stripe, GitHub,
+                        Discord, or any webhook provider. Use lowercase letters,
+                        numbers, and hyphens only.
+                      </FormDescription>
+                      {webhookNameValidation.available === false &&
+                        webhookNameValidation.message && (
+                          <p className="text-sm text-destructive">
+                            {webhookNameValidation.message}
+                          </p>
+                        )}
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Live URL Preview */}
+                <div className="space-y-3 p-4 bg-muted/50 rounded-lg border">
+                  <div className="flex items-center gap-2">
+                    <Icons.ExternalLink size="sm" variant="muted" />
+                    <span className="text-sm font-medium text-muted-foreground">
+                      Your webhook will be available at:
+                    </span>
+                  </div>
+                  <div className="font-mono text-sm text-center p-2 bg-background rounded border">
+                    {webhookUrl}
+                  </div>
+                  <p className="text-xs text-muted-foreground text-center">
+                    This URL will be created after you submit the form
+                  </p>
+                </div>
+
                 <div className="flex justify-end">
                   <Button
                     className="min-w-32"
@@ -397,7 +546,9 @@ export function OnboardingForm({
                       isSubmitting ||
                       isLoading ||
                       !orgName ||
-                      orgNameValidation.available === false
+                      !webhookName ||
+                      orgNameValidation.available === false ||
+                      webhookNameValidation.available === false
                     }
                     type="submit"
                   >
@@ -410,7 +561,7 @@ export function OnboardingForm({
                         Setting up...
                       </>
                     ) : (
-                      'Create Organization'
+                      'Create Webhook'
                     )}
                   </Button>
                 </div>
