@@ -2,7 +2,7 @@
   "files": [
     "*.json"
   ],
-  "name": "@acme/tsconfig",
+  "name": "@cove/tsconfig",
   "private": true,
   "type": "module",
   "version": "0.1.0"

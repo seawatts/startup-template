@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a T3 Turbo Monorepo - a full-stack TypeScript monorepo using Turborepo, designed for building scalable applications with multiple frontend and backend services sharing common packages.
+This is the Cove Startup Template - a production-ready full-stack TypeScript monorepo using Turborepo, designed for building scalable applications with multiple frontend and backend services sharing common packages. Optimized for AI code generation workflows.
 
 ## Essential Commands
 
@@ -85,17 +85,17 @@ bun ui-add
 
 1. **Type Safety**: End-to-end type safety with tRPC. API types are automatically inferred from server to client.
 
-2. **Database Access**: All database operations go through the `@t3-template/db` package using Drizzle ORM.
+2. **Database Access**: All database operations go through the `@acme/db` package using Drizzle ORM.
 
 3. **Environment Variables**: Use `bun with-env` to load environment variables from Infisical.
 
-4. **UI Components**: Shared components in `@t3-template/ui` package. Use `bun ui-add` to add new shadcn components.
+4. **UI Components**: Shared components in `@acme/ui` package. Use `bun ui-add` to add new shadcn components.
 
 5. **API Routes**: Define tRPC routers in `packages/api/src/router`. Routes are automatically type-safe across all apps.
 
 6. **Real-time Features**: Supabase real-time subscriptions are available for live data updates.
 
-7. **AI Integration**: BAML templates in `packages/ai` for structured LLM interactions.
+7. **AI Integration**: BAML templates in `packages/ai` for structured LLM interactions. This enables AI to understand your codebase context and generate consistent, type-safe code across all platforms.
 
 ### Testing Approach
 - Unit tests use Bun's built-in test runner

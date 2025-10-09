@@ -6,14 +6,14 @@
     "drizzle-orm": "0.44.5"
   },
   "devDependencies": {
-    "@acme/tsconfig": "workspace:*",
+    "@cove/tsconfig": "workspace:*",
     "typescript": "5.9.2"
   },
   "exports": {
     ".": "./src/index.ts"
   },
   "license": "MIT",
-  "name": "@acme/test-utils",
+  "name": "@cove/test-utils",
   "private": true,
   "scripts": {
     "clean": "git clean -xdf .turbo node_modules dist",

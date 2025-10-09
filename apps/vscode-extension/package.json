@@ -247,7 +247,7 @@
   },
   "description": "Webhook Development",
   "devDependencies": {
-    "@acme/tsconfig": "workspace:*",
+    "@cove/tsconfig": "workspace:*",
     "@types/bun": "1.2.21",
     "@types/glob": "9.0.0",
     "@types/node": "24.3.0",
@@ -277,7 +277,7 @@
     "debugging"
   ],
   "main": "./dist/extension.js",
-  "name": "acme-vscode",
+  "name": "cove-vscode",
   "private": true,
   "publisher": "acme",
   "repository": {

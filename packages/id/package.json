@@ -12,7 +12,7 @@
     ".": "./src/index.ts"
   },
   "license": "MIT",
-  "name": "@acme/id",
+  "name": "@cove/id",
   "private": true,
   "scripts": {
     "clean": "git clean -xdf .turbo node_modules dist",

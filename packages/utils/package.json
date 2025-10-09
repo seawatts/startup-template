@@ -3,14 +3,14 @@
     "dedent-js": "1.0.1"
   },
   "devDependencies": {
-    "@acme/tsconfig": "workspace:*",
+    "@cove/tsconfig": "workspace:*",
     "typescript": "5.9.2"
   },
   "exports": {
     ".": "./src/index.ts"
   },
   "license": "MIT",
-  "name": "@acme/utils",
+  "name": "@cove/utils",
   "private": true,
   "scripts": {
     "clean": "git clean -xdf .turbo node_modules dist",

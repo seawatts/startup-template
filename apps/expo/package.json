@@ -27,7 +27,7 @@
     "superjson": "2.2.2"
   },
   "devDependencies": {
-    "@acme/tsconfig": "workspace:*",
+    "@cove/tsconfig": "workspace:*",
     "@babel/core": "7.28.3",
     "@babel/preset-env": "7.28.3",
     "@babel/runtime": "7.28.3",
@@ -37,7 +37,7 @@
     "typescript": "5.9.2"
   },
   "main": "expo-router/entry",
-  "name": "@acme/expo",
+  "name": "@cove/expo",
   "private": true,
   "scripts": {
     "android": "expo run:android",

@@ -5,7 +5,7 @@
   "exports": {
     ".": "./prepare-publish.js"
   },
-  "name": "@acme/npm",
+  "name": "@cove/npm",
   "private": true,
   "publishConfig": {
     "access": "public"

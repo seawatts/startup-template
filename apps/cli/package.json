@@ -4,14 +4,14 @@
     "acme": "./bin/cli.js"
   },
   "bugs": {
-    "url": "https://github.com/acme-sh/acme/issues"
+    "url": "https://github.com/cove-sh/cove/issues"
   },
   "dependencies": {
-    "@acme/api": "workspace:*",
-    "@acme/db": "workspace:*",
-    "@acme/id": "workspace:*",
-    "@acme/logger": "workspace:*",
-    "@acme/zustand": "workspace:*",
+    "@cove/api": "workspace:*",
+    "@cove/db": "workspace:*",
+    "@cove/id": "workspace:*",
+    "@cove/logger": "workspace:*",
+    "@cove/zustand": "workspace:*",
     "@clerk/backend": "2.10.0",
     "@clerk/clerk-js": "5.89.0",
     "@clerk/express": "1.7.25",
@@ -46,8 +46,8 @@
   },
   "description": "A CLI tool for testing webhooks locally with team collaboration features.",
   "devDependencies": {
-    "@acme/npm": "workspace:*",
-    "@acme/tsconfig": "workspace:*",
+    "@cove/npm": "workspace:*",
+    "@cove/tsconfig": "workspace:*",
     "@happy-dom/global-registrator": "18.0.1",
     "@playwright/test": "1.55.0",
     "@types/bun": "1.2.21",
@@ -81,7 +81,7 @@
     "README.md",
     "LICENSE"
   ],
-  "homepage": "https://github.com/acme-sh/acme#readme",
+  "homepage": "https://github.com/cove-sh/cove#readme",
   "keywords": [
     "webhook",
     "development",
@@ -103,7 +103,7 @@
     "svix"
   ],
   "license": "MIT",
-  "name": "@acme/cli",
+  "name": "@cove/cli",
   "private": false,
   "publishConfig": {
     "access": "public"

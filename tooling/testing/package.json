@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "@acme/tsconfig": "workspace:*",
+    "@cove/tsconfig": "workspace:*",
     "@happy-dom/global-registrator": "18.0.1",
     "@testing-library/dom": "10.4.1",
     "@testing-library/jest-dom": "6.8.0",
@@ -11,7 +11,7 @@
     ".": "./src/index.ts"
   },
   "license": "MIT",
-  "name": "@acme/tooling-testing",
+  "name": "@cove/tooling-testing",
   "private": true,
   "scripts": {
     "clean": "git clean -xdf .turbo node_modules dist",

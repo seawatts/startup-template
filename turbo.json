@@ -15,12 +15,12 @@
     "VERCEL_TOKEN"
   ],
   "tasks": {
-    "@acme/stripe#build": {
+    "@cove/stripe#build": {
       "cache": false,
       "env": ["STRIPE_*"]
     },
-    "@acme/web-app#build": {
-      "dependsOn": ["@acme/stripe#build"],
+    "@cove/web-app#build": {
+      "dependsOn": ["@cove/stripe#build"],
       "env": [
         "NEXT_PUBLIC_*",
         "CLERK_*",
@@ -35,11 +35,11 @@
     "//#clean": {
       "cache": false
     },
-    "acme-vscode#dev:extension": {
+    "cove-vscode#dev:extension": {
       "cache": false,
       "persistent": true
     },
-    "acme-vscode#dev:webview": {
+    "cove-vscode#dev:webview": {
       "cache": false,
       "persistent": true
     },

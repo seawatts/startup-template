@@ -1,10 +1,10 @@
 {
   "dependencies": {
-    "@acme/db": "workspace:*",
-    "@acme/email": "workspace:*",
-    "@acme/logger": "workspace:*",
-    "@acme/stripe": "workspace:*",
-    "@acme/utils": "workspace:*",
+    "@cove/db": "workspace:*",
+    "@cove/email": "workspace:*",
+    "@cove/logger": "workspace:*",
+    "@cove/stripe": "workspace:*",
+    "@cove/utils": "workspace:*",
     "@clerk/nextjs": "6.31.5",
     "@t3-oss/env-core": "0.13.8",
     "@t3-oss/env-nextjs": "0.13.8",
@@ -23,7 +23,7 @@
     "zod-to-json-schema": "3.24.6"
   },
   "devDependencies": {
-    "@acme/tsconfig": "workspace:*",
+    "@cove/tsconfig": "workspace:*",
     "@types/react": "19.1.11",
     "@types/react-dom": "19.1.8",
     "typescript": "5.9.2"
@@ -35,7 +35,7 @@
     "./server": "./src/react/server-exports.ts"
   },
   "license": "MIT",
-  "name": "@acme/api",
+  "name": "@cove/api",
   "private": true,
   "scripts": {
     "clean": "git clean -xdf .turbo node_modules dist",

@@ -3,14 +3,14 @@
     "zustand": "5.0.8"
   },
   "devDependencies": {
-    "@acme/tsconfig": "workspace:*",
+    "@cove/tsconfig": "workspace:*",
     "typescript": "5.9.2"
   },
   "exports": {
     ".": "./src/index.ts"
   },
   "license": "MIT",
-  "name": "@acme/zustand",
+  "name": "@cove/zustand",
   "private": true,
   "scripts": {
     "clean": "git clean -xdf .turbo node_modules dist",

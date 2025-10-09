@@ -1,5 +1,5 @@
 {
-  "name": "@acme/ios",
+  "name": "@cove/ios",
   "private": true,
   "scripts": {
     "build.skip": "xcodebuild -workspace ios/project.yml -scheme ios -configuration Release -sdk iphoneos -derivedDataPath build"

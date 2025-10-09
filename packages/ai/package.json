@@ -3,7 +3,7 @@
     "@boundaryml/baml": "0.205.0"
   },
   "devDependencies": {
-    "@acme/tsconfig": "workspace:*",
+    "@cove/tsconfig": "workspace:*",
     "typescript": "5.9.2"
   },
   "exports": {
@@ -11,7 +11,7 @@
     "./react/*": "./src/baml_client/react/*.ts"
   },
   "license": "MIT",
-  "name": "@acme/ai",
+  "name": "@cove/ai",
   "private": true,
   "scripts": {
     "build": "bun generate",

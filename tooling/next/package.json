@@ -13,7 +13,7 @@
     "./base": "./base.mjs"
   },
   "license": "MIT",
-  "name": "@acme/next-config",
+  "name": "@cove/next-config",
   "private": true,
   "scripts": {
     "clean": "git clean -xdf .turbo node_modules",

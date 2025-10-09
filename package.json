@@ -1,11 +1,11 @@
 {
   "commitlint": {
     "extends": [
-      "@acme/commitlint-config"
+      "@cove/commitlint-config"
     ]
   },
   "devDependencies": {
-    "@acme/commitlint-config": "workspace:*",
+    "@cove/commitlint-config": "workspace:*",
     "@biomejs/biome": "2.2.2",
     "@changesets/changelog-github": "0.5.1",
     "@changesets/cli": "2.29.6",
@@ -24,7 +24,7 @@
   "engines": {
     "node": ">=20.12.0"
   },
-  "name": "@acme/root",
+  "name": "@cove/root",
   "overrides": {
     "@types/vscode": "1.96.0"
   },
@@ -41,15 +41,15 @@
     "cleanup:orgs:dry-run": "bun run scripts/cleanup-orgs.ts --dry-run",
     "cleanup:webhooks": "bun run scripts/cleanup-webhooks.ts",
     "cleanup:webhooks:dry-run": "bun run scripts/cleanup-webhooks.ts --dry-run",
-    "db:gen-migration": "turbo -F @acme/db gen-migration",
-    "db:migrate": "turbo -F @acme/db migrate",
-    "db:push": "turbo -F @acme/db push",
-    "db:seed": "turbo -F @acme/db seed",
-    "db:studio": "turbo -F @acme/db studio",
+    "db:gen-migration": "turbo -F @cove/db gen-migration",
+    "db:migrate": "turbo -F @cove/db migrate",
+    "db:push": "turbo -F @cove/db push",
+    "db:seed": "turbo -F @cove/db seed",
+    "db:studio": "turbo -F @cove/db studio",
     "dev": "turbo watch dev dev:extension dev:webview",
-    "dev:next": "turbo watch dev -F @acme/web-app...",
-    "dev:vscode": "turbo watch dev dev:extension dev:webview -F acme-vscode... -F @acme/web-app...",
-    "docs": "turbo run dev --filter=@acme/docs...",
+    "dev:next": "turbo watch dev -F @cove/web-app...",
+    "dev:vscode": "turbo watch dev dev:extension dev:webview -F cove-vscode... -F @cove/web-app...",
+    "docs": "turbo run dev --filter=@cove/docs...",
     "ensure:user-resources": "bun run scripts/ensure-user-resources.ts",
     "ensure:user-resources:dry-run": "bun run scripts/ensure-user-resources.ts --dry-run",
     "format": "biome check",
@@ -60,11 +60,11 @@
     "postinstall": "bun lint:ws",
     "publish": "turbo run build --filter=./apps/cli... --filter=./packages/client... --filter=./apps/vscode-extension... && changeset publish",
     "test": "bun test",
-    "test:integ": "turbo run test --filter=@acme/integ-test",
-    "test:integ:ci": "turbo run test:ci --filter=@acme/integ-test",
-    "test:integ:watch": "turbo run test:watch --filter=@acme/integ-test",
+    "test:integ": "turbo run test --filter=@cove/integ-test",
+    "test:integ:ci": "turbo run test:ci --filter=@cove/integ-test",
+    "test:integ:watch": "turbo run test:watch --filter=@cove/integ-test",
     "typecheck": "turbo run typecheck",
-    "typecheck:ci": "turbo run build --filter @acme/stripe && turbo run typecheck",
+    "typecheck:ci": "turbo run build --filter @cove/stripe && turbo run typecheck",
     "ui-add": "turbo run ui-add",
     "version": "changeset version && bun biome check --write",
     "with-env": "infisical run --"

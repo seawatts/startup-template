@@ -18,7 +18,7 @@
     "./destinations/vscode-output": "./src/destinations/vscode-output.ts"
   },
   "license": "MIT",
-  "name": "@acme/logger",
+  "name": "@cove/logger",
   "private": true,
   "scripts": {
     "clean": "git clean -xdf .turbo node_modules dist",

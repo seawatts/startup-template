@@ -36,7 +36,7 @@
   },
   "description": "YC vibe-check: Use AI to auto-fill your application, get expert advice, and practice for interviews to secure funding",
   "devDependencies": {
-    "@acme/tsconfig": "workspace:*",
+    "@cove/tsconfig": "workspace:*",
     "@thedutchcoder/postcss-rem-to-px": "0.0.2",
     "@types/chrome": "0.1.4",
     "@types/lodash-es": "4.17.12",
@@ -90,7 +90,7 @@
       }
     ]
   },
-  "name": "@acme/chrome-extension",
+  "name": "@cove/chrome-extension",
   "private": true,
   "scripts": {
     "build.skip": "plasmo build",

@@ -2,7 +2,7 @@
   "dependencies": {
     "mint": "4.2.83"
   },
-  "name": "@acme/docs",
+  "name": "@cove/docs",
   "private": true,
   "scripts": {
     "dev": "mint dev"

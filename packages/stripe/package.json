@@ -1,11 +1,11 @@
 {
   "dependencies": {
-    "@acme/analytics": "workspace:*",
+    "@cove/analytics": "workspace:*",
     "next": "15.5.1",
     "stripe": "18.4.0"
   },
   "devDependencies": {
-    "@acme/tsconfig": "workspace:*",
+    "@cove/tsconfig": "workspace:*",
     "typescript": "5.9.2"
   },
   "exports": {
@@ -14,7 +14,7 @@
     "./guards/server": "./src/guards/server.ts"
   },
   "license": "MIT",
-  "name": "@acme/stripe",
+  "name": "@cove/stripe",
   "private": true,
   "scripts": {
     "build": "bun run populate-ids",

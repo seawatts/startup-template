@@ -16,7 +16,7 @@
     "zod": "3.25.76"
   },
   "devDependencies": {
-    "@acme/tsconfig": "workspace:*",
+    "@cove/tsconfig": "workspace:*",
     "@types/aws-lambda": "8.10.152",
     "@types/chrome": "0.1.4",
     "@types/react": "19.1.11",
@@ -33,7 +33,7 @@
     "./posthog/vscode": "./src/posthog/vscode.ts"
   },
   "license": "MIT",
-  "name": "@acme/analytics",
+  "name": "@cove/analytics",
   "private": true,
   "scripts": {
     "clean": "git clean -xdf .turbo node_modules dist",
