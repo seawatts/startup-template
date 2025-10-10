@@ -1,9 +1,9 @@
 import ycCfLogo from 'data-base64:~/../assets/yc-cf-logo.png';
-import { Alert, AlertDescription, AlertTitle } from '@acme/ui/alert';
-import { Button } from '@acme/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';
-import { Icons } from '@acme/ui/icons';
 import { SignedOut } from '@clerk/chrome-extension';
+import { Alert, AlertDescription, AlertTitle } from '@seawatts/ui/alert';
+import { Button } from '@seawatts/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@seawatts/ui/card';
+import { Icons } from '@seawatts/ui/icons';
 
 import { CouponDiscountAlert } from '~/components/coupon-discount-alert';
 import { PoweredByLink } from '~/components/powered-by-link';
@@ -102,9 +102,9 @@ export function WelcomeCard({
             </span>
             <a
               className="text-xs text-muted-foreground underline-offset-4 hover:underline"
-              href="mailto:vibes@acme.ai"
+              href="mailto:vibes@seawatts.ai"
             >
-              vibes@acme.ai
+              vibes@seawatts.ai
             </a>
           </div>
         </div>

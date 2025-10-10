@@ -1,12 +1,12 @@
 {
   "dependencies": {
     "@seawatts/analytics": "workspace:*",
-    "next": "15.5.1",
-    "stripe": "18.4.0"
+    "next": "15.5.4",
+    "stripe": "19.1.0"
   },
   "devDependencies": {
     "@seawatts/tsconfig": "workspace:*",
-    "typescript": "5.9.2"
+    "typescript": "5.9.3"
   },
   "exports": {
     ".": "./src/index.ts",

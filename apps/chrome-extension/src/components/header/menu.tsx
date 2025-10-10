@@ -1,12 +1,12 @@
-import { Button } from '@acme/ui/button';
+import { sendToBackground } from '@plasmohq/messaging';
+import { Button } from '@seawatts/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@acme/ui/dropdown-menu';
-import { Icons } from '@acme/ui/icons';
-import { sendToBackground } from '@plasmohq/messaging';
+} from '@seawatts/ui/dropdown-menu';
+import { Icons } from '@seawatts/ui/icons';
 
 import { useChromePortal } from '~/hooks/use-chrome-portal';
 

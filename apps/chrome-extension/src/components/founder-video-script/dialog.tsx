@@ -5,9 +5,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@acme/ui/alert-dialog';
-import { Button } from '@acme/ui/button';
-import { CopyButton } from '@acme/ui/copy-button';
+} from '@seawatts/ui/alert-dialog';
+import { Button } from '@seawatts/ui/button';
+import { CopyButton } from '@seawatts/ui/copy-button';
 
 import { useChromePortal } from '~/hooks/use-chrome-portal';
 import { Entitled } from '../entitlement/entitled';

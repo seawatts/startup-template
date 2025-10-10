@@ -1,10 +1,10 @@
 'use client';
 
-import { Button } from '@acme/ui/components/button';
-import { GitHubStarsButtonWrapper } from '@acme/ui/custom/github-stars-button/button-wrapper';
-import { ThemeToggle } from '@acme/ui/custom/theme';
-import { cn } from '@acme/ui/lib/utils';
 import { SignedIn, SignedOut } from '@clerk/nextjs';
+import { Button } from '@seawatts/ui/components/button';
+import { GitHubStarsButtonWrapper } from '@seawatts/ui/custom/github-stars-button/button-wrapper';
+import { ThemeToggle } from '@seawatts/ui/custom/theme';
+import { cn } from '@seawatts/ui/lib/utils';
 import { Menu, X } from 'lucide-react';
 import { AnimatePresence, motion, useScroll } from 'motion/react';
 import Link from 'next/link';

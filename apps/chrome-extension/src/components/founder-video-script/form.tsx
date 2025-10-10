@@ -1,7 +1,7 @@
-import { Alert, AlertDescription, AlertTitle } from '@acme/ui/alert';
-import { Icons } from '@acme/ui/custom/icons';
-import { toast } from '@acme/ui/sonner';
 import { useUser } from '@clerk/chrome-extension';
+import { Alert, AlertDescription, AlertTitle } from '@seawatts/ui/alert';
+import { Icons } from '@seawatts/ui/custom/icons';
+import { toast } from '@seawatts/ui/sonner';
 import { useCallback, useState } from 'react';
 
 import { useFounderName } from '~/hooks/use-founder-name';

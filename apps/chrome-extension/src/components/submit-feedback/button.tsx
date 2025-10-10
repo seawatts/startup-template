@@ -1,6 +1,6 @@
 import logoIcon from 'data-base64:~/../assets/icon.png';
-import { Button } from '@acme/ui/button';
 import { SignedIn } from '@clerk/chrome-extension';
+import { Button } from '@seawatts/ui/button';
 import { useState } from 'react';
 
 import { SubmitFeedbackDialog } from './dialog';

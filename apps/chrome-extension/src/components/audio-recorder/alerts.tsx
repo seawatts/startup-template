@@ -1,5 +1,5 @@
-import { Alert, AlertDescription, AlertTitle } from '@acme/ui/alert';
-import { Icons } from '@acme/ui/custom/icons';
+import { Alert, AlertDescription, AlertTitle } from '@seawatts/ui/alert';
+import { Icons } from '@seawatts/ui/custom/icons';
 
 import { formatTimeReadable } from '~/utils/format-time';
 import { useAudioRecorderContext } from './context/audio-recorder-context';

@@ -1,8 +1,8 @@
 'use client';
 
-import { useMediaQuery } from '@acme/ui/hooks/use-media-query';
-import { FlickeringGrid } from '@acme/ui/magicui/flickering-grid';
 import { ChevronRightIcon } from '@radix-ui/react-icons';
+import { useMediaQuery } from '@seawatts/ui/hooks/use-media-query';
+import { FlickeringGrid } from '@seawatts/ui/magicui/flickering-grid';
 import Link from 'next/link';
 import { Icons } from '~/app/(marketing)/_components/icons';
 import { siteConfig } from '~/app/(marketing)/_lib/config';

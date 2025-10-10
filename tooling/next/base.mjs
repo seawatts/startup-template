@@ -36,7 +36,7 @@ const nextConfig = {
       { hostname: 'img.clerk.com' },
       { hostname: 'image.tmdb.org' },
       { hostname: 'picsum.photos' },
-      { hostname: 'unhook.sh' },
+      { hostname: 'acme.sh' },
       { hostname: 'randomuser.me' },
       { hostname: 'cdn.brandfetch.io' },
     ],

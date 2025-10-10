@@ -1,4 +1,4 @@
-import { cn } from '@acme/ui/lib/utils';
+import { cn } from '@seawatts/ui/lib/utils';
 import Image from 'next/image';
 
 export const Icons = {

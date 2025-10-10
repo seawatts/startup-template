@@ -1,6 +1,6 @@
-import { api } from '@acme/api/chrome-extension';
-import { Label } from '@acme/ui/label';
-import { Textarea } from '@acme/ui/textarea';
+import { api } from '@seawatts/api/chrome-extension';
+import { Label } from '@seawatts/ui/label';
+import { Textarea } from '@seawatts/ui/textarea';
 import * as React from 'react';
 
 import { useCompany } from '../company/context';

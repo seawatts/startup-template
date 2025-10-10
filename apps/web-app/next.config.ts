@@ -1,16 +1,16 @@
-import baseConfig from '@acme/next-config/base';
+import baseConfig from '@seawatts/next-config/base';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   ...baseConfig,
   transpilePackages: [
-    '@acme/analytics',
-    '@acme/api',
-    '@acme/db',
-    '@acme/id',
-    '@acme/ui',
-    '@acme/logger',
-    '@acme/stripe',
+    '@seawatts/analytics',
+    '@seawatts/api',
+    '@seawatts/db',
+    '@seawatts/id',
+    '@seawatts/ui',
+    '@seawatts/logger',
+    '@seawatts/stripe',
   ],
 };
 

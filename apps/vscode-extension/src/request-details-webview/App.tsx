@@ -1,5 +1,5 @@
 /** biome-ignore-all lint/style/useFilenamingConvention: todo */
-import { Icons } from '@acme/ui/custom/icons';
+import { Icons } from '@seawatts/ui/custom/icons';
 import { useEffect, useRef, useState } from 'react';
 
 // Declare the vscode global

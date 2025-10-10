@@ -4,7 +4,7 @@ import {
   type Server,
   type ServerResponse,
 } from 'node:http';
-import { debug } from '@acme/logger';
+import { debug } from '@seawatts/logger';
 import { env } from '~/env';
 import { capture } from '../posthog';
 import { InvalidAuthResponseError } from './errors';

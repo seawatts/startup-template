@@ -1,5 +1,5 @@
-import { db } from '@acme/db/client';
 import { auth } from '@clerk/nextjs/server';
+import { db } from '@seawatts/db/client';
 
 export const createTRPCContext = async () => {
   let authResult: Awaited<ReturnType<typeof auth>> | null = null;

@@ -1,4 +1,4 @@
-import { debug } from '@acme/logger';
+import { debug } from '@seawatts/logger';
 import { type PropsWithChildren, useEffect } from 'react';
 import { captureException } from '~/lib/posthog';
 import { useAuthStore } from '~/stores/auth-store';

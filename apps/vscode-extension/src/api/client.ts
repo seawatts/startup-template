@@ -1,5 +1,5 @@
-import type { RouterOutputs } from '@acme/api';
-import { createClient } from '@acme/api/client';
+import type { RouterOutputs } from '@seawatts/api';
+import { createClient } from '@seawatts/api/client';
 
 export type ApiClient = ReturnType<typeof createClient>;
 export type AuthUser = RouterOutputs['auth']['verifySessionToken']['user'];

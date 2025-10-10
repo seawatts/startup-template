@@ -1,4 +1,4 @@
-import { ApiKeyUsage, CreateApiKeyUsageSchema } from '@acme/db/schema';
+import { ApiKeyUsage, CreateApiKeyUsageSchema } from '@seawatts/db/schema';
 import { and, desc, eq, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '../trpc';

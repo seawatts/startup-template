@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@unhook/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@seawatts/ui/card';
 import { CloseWindowButton } from './close-window-button';
 
 export function CloseWindowCard() {

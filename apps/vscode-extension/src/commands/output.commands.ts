@@ -1,4 +1,4 @@
-import type { VSCodeOutputDestination } from '@acme/logger/destinations/vscode-output';
+import type { VSCodeOutputDestination } from '@seawatts/logger/destinations/vscode-output';
 import * as vscode from 'vscode';
 
 export function registerOutputCommands(

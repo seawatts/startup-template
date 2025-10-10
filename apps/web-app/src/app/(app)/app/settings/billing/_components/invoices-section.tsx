@@ -1,19 +1,19 @@
 'use client';
 
-import { MetricButton } from '@unhook/analytics/components';
-import { api } from '@unhook/api/react';
-import { useHasActiveSubscription } from '@unhook/stripe/guards/client';
-import { Badge } from '@unhook/ui/badge';
+import { MetricButton } from '@seawatts/analytics/components';
+import { api } from '@seawatts/api/react';
+import { useHasActiveSubscription } from '@seawatts/stripe/guards/client';
+import { Badge } from '@seawatts/ui/badge';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@unhook/ui/card';
-import { Icons } from '@unhook/ui/custom/icons';
-import { P } from '@unhook/ui/custom/typography';
-import { Skeleton } from '@unhook/ui/skeleton';
+} from '@seawatts/ui/card';
+import { Icons } from '@seawatts/ui/custom/icons';
+import { P } from '@seawatts/ui/custom/typography';
+import { Skeleton } from '@seawatts/ui/skeleton';
 
 export function InvoicesSection() {
   const hasActiveSubscription = useHasActiveSubscription();

@@ -4,7 +4,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@acme/ui/card';
+} from '@seawatts/ui/card';
 
 import { NotEntitled } from '../entitlement/not-entitled';
 import { StripeCheckoutButton } from '../stripe-checkout/button';

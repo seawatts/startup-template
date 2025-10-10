@@ -1,14 +1,14 @@
 'use client';
 
-import { MetricLink } from '@acme/analytics/components';
+import { SignedIn, SignedOut, useOrganization } from '@clerk/nextjs';
+import { MetricLink } from '@seawatts/analytics/components';
 import {
   SubscriptionActive,
   SubscriptionPastDue,
   useHasActiveSubscription,
   useHasPastDueSubscription,
-} from '@acme/stripe/guards/client';
-import { cn } from '@acme/ui/lib/utils';
-import { SignedIn, SignedOut, useOrganization } from '@clerk/nextjs';
+} from '@seawatts/stripe/guards/client';
+import { cn } from '@seawatts/ui/lib/utils';
 import { IconCheck } from '@tabler/icons-react';
 import { motion } from 'motion/react';
 import { useAction } from 'next-safe-action/hooks';

@@ -5,8 +5,8 @@
     "unique-names-generator": "4.7.1"
   },
   "devDependencies": {
-    "@acme/tsconfig": "workspace:*",
-    "typescript": "5.9.2"
+    "@seawatts/tsconfig": "workspace:*",
+    "typescript": "5.9.3"
   },
   "exports": {
     ".": "./src/index.ts"

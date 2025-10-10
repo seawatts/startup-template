@@ -1,6 +1,6 @@
 import type { UserWebhookEvent } from '@clerk/nextjs/server';
-import { db } from '@unhook/db/client';
-import { Users } from '@unhook/db/schema';
+import { db } from '@seawatts/db/client';
+import { Users } from '@seawatts/db/schema';
 import { eq } from 'drizzle-orm';
 import { handleUserUpdated } from '../user-updated';
 

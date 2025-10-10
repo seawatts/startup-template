@@ -1,19 +1,19 @@
 {
   "dependencies": {
-    "@react-email/components": "0.5.1",
-    "@react-email/render": "1.2.1",
+    "@react-email/components": "0.5.6",
+    "@react-email/render": "1.3.2",
     "@t3-oss/env-core": "0.13.8",
-    "react": "19.1.1",
-    "react-dom": "19.1.1",
-    "resend": "6.0.1",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "resend": "6.1.2",
     "server-only": "0.0.1",
-    "zod": "3.25.76"
+    "zod": "4.1.12"
   },
   "devDependencies": {
     "@seawatts/tsconfig": "workspace:*",
-    "@types/react": "19.1.11",
-    "@types/react-dom": "19.1.8",
-    "typescript": "5.9.2"
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.1",
+    "typescript": "5.9.3"
   },
   "exports": {
     ".": "./src/index.ts",

@@ -55,7 +55,7 @@ jobs:
           POSTGRES_URL: postgresql://postgres:postgres@localhost:5432/test
 
       - name: Build packages
-        run: bun run build --filter=@acme/integ-test...
+        run: bun run build --filter=@seawatts/integ-test...
 
       - name: Run integration tests
         run: bun run test:ci
@@ -108,7 +108,7 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Build packages
-        run: bun run build --filter=@acme/integ-test...
+        run: bun run build --filter=@seawatts/integ-test...
 
       - name: Run integration tests with containers
         run: bun run test:ci

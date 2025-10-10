@@ -1,4 +1,4 @@
-import { createSelectors } from '@acme/zustand';
+import { createSelectors } from '@seawatts/zustand';
 import { createStore } from 'zustand';
 import type { ScalarDict } from './types';
 

@@ -1,5 +1,5 @@
-import { Separator } from '@unhook/ui/separator';
-import { SidebarTrigger } from '@unhook/ui/sidebar';
+import { Separator } from '@seawatts/ui/separator';
+import { SidebarTrigger } from '@seawatts/ui/sidebar';
 
 export function SiteHeader() {
   return (

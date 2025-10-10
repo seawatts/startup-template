@@ -1,16 +1,15 @@
 'use client';
 
 import { useOrganizationList, useUser } from '@clerk/nextjs';
-import { IconLoader2 } from '@tabler/icons-react';
-import { MetricButton, MetricLink } from '@unhook/analytics/components';
-import { api } from '@unhook/api/react';
+import { MetricButton, MetricLink } from '@seawatts/analytics/components';
+import { api } from '@seawatts/api/react';
 import {
   Entitled,
   NotEntitled,
   useIsEntitled,
-} from '@unhook/stripe/guards/client';
-import { Button } from '@unhook/ui/components/button';
-import { P } from '@unhook/ui/custom/typography';
+} from '@seawatts/stripe/guards/client';
+import { Button } from '@seawatts/ui/components/button';
+import { P } from '@seawatts/ui/custom/typography';
 import {
   Dialog,
   DialogClose,
@@ -18,9 +17,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@unhook/ui/dialog';
-import { Input } from '@unhook/ui/input';
-import { Label } from '@unhook/ui/label';
+} from '@seawatts/ui/dialog';
+import { Input } from '@seawatts/ui/input';
+import { Label } from '@seawatts/ui/label';
+import { IconLoader2 } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { env } from '~/env.client';
 
@@ -52,8 +52,10 @@ export function NewOrgDialog({ open, onOpenChange }: NewOrgDialogProps) {
   // API mutations
   const { mutateAsync: createOrganization, isPending: isCreatingOrg } =
     api.org.upsert.useMutation();
-  const { mutateAsync: createWebhook, isPending: isCreatingWebhook } =
-    api.webhooks.create.useMutation();
+  // TODO: Re-enable when webhooks are re-implemented
+  // const { mutateAsync: createWebhook, isPending: isCreatingWebhook } =
+  //   api.webhooks.create.useMutation();
+  const isCreatingWebhook = false;
 
   const isLoading = isCreatingOrg || isCreatingWebhook;
 
@@ -62,7 +64,7 @@ export function NewOrgDialog({ open, onOpenChange }: NewOrgDialogProps) {
     const baseUrl =
       env.NEXT_PUBLIC_WEBHOOK_BASE_URL ||
       env.NEXT_PUBLIC_API_URL ||
-      'https://unhook.sh';
+      'https://acme.sh';
     if (!name) return `${baseUrl}/{org-name}/{webhook-name}`;
     if (!webhookName) return `${baseUrl}/${name}/{webhook-name}`;
     return `${baseUrl}/${name}/${webhookName}`;
@@ -140,37 +142,38 @@ export function NewOrgDialog({ open, onOpenChange }: NewOrgDialogProps) {
         stripeCustomerId: orgResult.org.stripeCustomerId,
       });
 
+      // TODO: Re-enable when webhooks are re-implemented
       // Create webhook with custom ID if provided, using the existing API
-      if (webhookName.trim() && orgResult.apiKey?.id) {
-        const webhook = await createWebhook({
-          apiKeyId: orgResult.apiKey.id,
-          config: {
-            headers: {},
-            requests: {},
-            storage: {
-              maxRequestBodySize: 1024 * 1024,
-              maxResponseBodySize: 1024 * 1024,
-              storeHeaders: true,
-              storeRequestBody: true,
-              storeResponseBody: true,
-            },
-          },
-          id: webhookName.trim(),
-          name: webhookName.trim(),
-          orgId: orgResult.org.id, // Pass the organization ID we just created
-          status: 'active',
-        });
+      // if (webhookName.trim() && orgResult.apiKey?.id) {
+      //   const webhook = await createWebhook({
+      //     apiKeyId: orgResult.apiKey.id,
+      //     config: {
+      //       headers: {},
+      //       requests: {},
+      //       storage: {
+      //         maxRequestBodySize: 1024 * 1024,
+      //         maxResponseBodySize: 1024 * 1024,
+      //         storeHeaders: true,
+      //         storeRequestBody: true,
+      //         storeResponseBody: true,
+      //       },
+      //     },
+      //     id: webhookName.trim(),
+      //     name: webhookName.trim(),
+      //     orgId: orgResult.org.id, // Pass the organization ID we just created
+      //     status: 'active',
+      //   });
 
-        if (!webhook) {
-          throw new Error('Failed to create webhook');
-        }
+      //   if (!webhook) {
+      //     throw new Error('Failed to create webhook');
+      //   }
 
-        console.log('Custom webhook created:', {
-          orgId: orgResult.org.id,
-          webhookId: webhook.id,
-          webhookName: webhook.name,
-        });
-      }
+      //   console.log('Custom webhook created:', {
+      //     orgId: orgResult.org.id,
+      //     webhookId: webhook.id,
+      //     webhookName: webhook.name,
+      //   });
+      // }
 
       // Set the new organization as active
       if (!setActive) return;

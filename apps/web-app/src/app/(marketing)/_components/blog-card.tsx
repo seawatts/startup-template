@@ -1,4 +1,4 @@
-import { formatDate } from '@acme/ui/lib/format-date';
+import { formatDate } from '@seawatts/ui/lib/format-date';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Post } from '../_lib/blog';

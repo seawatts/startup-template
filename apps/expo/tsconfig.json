@@ -10,6 +10,6 @@
     "types": ["nativewind/types"]
   },
   "exclude": ["node_modules"],
-  "extends": ["@acme/tsconfig/base.json"],
+  "extends": ["@seawatts/tsconfig/base.json"],
   "include": ["src", "*.ts", "*.js", ".expo/types/**/*.ts", "expo-env.d.ts"]
 }

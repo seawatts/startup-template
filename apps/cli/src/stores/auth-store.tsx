@@ -1,8 +1,8 @@
-import type { RouterOutputs } from '@acme/api';
-import { createClient } from '@acme/api/client';
-import { createId } from '@acme/id';
-import { debug } from '@acme/logger';
-import { createSelectors } from '@acme/zustand';
+import type { RouterOutputs } from '@seawatts/api';
+import { createClient } from '@seawatts/api/client';
+import { createId } from '@seawatts/id';
+import { debug } from '@seawatts/logger';
+import { createSelectors } from '@seawatts/zustand';
 import clipboard from 'clipboardy';
 import { createStore } from 'zustand';
 import { env } from '../env';

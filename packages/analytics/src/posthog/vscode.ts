@@ -1,4 +1,4 @@
-import { debug } from '@acme/logger';
+import { debug } from '@seawatts/logger';
 import { PostHog } from 'posthog-node';
 import { env } from '../env.client';
 

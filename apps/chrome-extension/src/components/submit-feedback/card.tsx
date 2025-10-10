@@ -4,7 +4,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@acme/ui/card';
+} from '@seawatts/ui/card';
 import type React from 'react';
 
 import { SubmitFeedbackButton } from './button';

@@ -4,15 +4,15 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@acme/ui/dialog';
+} from '@seawatts/ui/dialog';
 import {
   Drawer,
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
   DrawerTitle,
-} from '@acme/ui/drawer';
-import { isDesktop } from '@acme/ui/hooks/use-media-query';
+} from '@seawatts/ui/drawer';
+import { isDesktop } from '@seawatts/ui/hooks/use-media-query';
 
 import { useChromePortal } from '~/hooks/use-chrome-portal';
 import { CouponDiscountAlert } from '../coupon-discount-alert';

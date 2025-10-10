@@ -1,6 +1,5 @@
 'use client';
 
-import { api } from '@unhook/api/react';
 import {
   Card,
   CardAction,
@@ -8,18 +7,18 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@unhook/ui/card';
-import { type ChartConfig, ChartContainer } from '@unhook/ui/chart';
-import { useIsMobile } from '@unhook/ui/hooks/use-mobile';
+} from '@seawatts/ui/card';
+import { type ChartConfig, ChartContainer } from '@seawatts/ui/chart';
+import { useIsMobile } from '@seawatts/ui/hooks/use-mobile';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@unhook/ui/select';
-import { ToggleGroup, ToggleGroupItem } from '@unhook/ui/toggle-group';
-import { format, subDays } from 'date-fns';
+} from '@seawatts/ui/select';
+import { ToggleGroup, ToggleGroupItem } from '@seawatts/ui/toggle-group';
+import { format } from 'date-fns';
 import * as React from 'react';
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 
@@ -57,88 +56,17 @@ export function ChartAreaInteractive() {
     }
   }, [isMobile]);
 
+  // TODO: Re-enable when events are re-implemented
   // Fetch all events from the database
-  const { data: events = [], isLoading } = api.events.all.useQuery({});
+  // const { data: events = [], isLoading } = api.events.all.useQuery({});
+  const isLoading = false;
 
   // Transform events data for the chart
   const chartData = React.useMemo(() => {
-    if (!events.length) return [];
-
-    // Calculate the start date based on time range
-    const now = new Date();
-    let startDate: Date;
-
-    switch (timeRange) {
-      case '7d':
-        startDate = subDays(now, 7);
-        break;
-      case '30d':
-        startDate = subDays(now, 30);
-        break;
-      default:
-        startDate = subDays(now, 90);
-        break;
-    }
-
-    // Filter events within the time range
-    const filteredEvents = events.filter((event) => {
-      const eventDate = new Date(event.timestamp);
-      return eventDate >= startDate;
-    });
-
-    // Group events by date and status
-    const groupedData = new Map<
-      string,
-      {
-        date: string;
-        completed: number;
-        failed: number;
-        pending: number;
-        processing: number;
-      }
-    >();
-
-    // Initialize all dates in the range
-    const currentDate = new Date(startDate);
-    while (currentDate <= now) {
-      const dateKey = format(currentDate, 'yyyy-MM-dd');
-      groupedData.set(dateKey, {
-        completed: 0,
-        date: dateKey,
-        failed: 0,
-        pending: 0,
-        processing: 0,
-      });
-      currentDate.setDate(currentDate.getDate() + 1);
-    }
-
-    // Count events by date and status
-    filteredEvents.forEach((event) => {
-      const dateKey = format(new Date(event.timestamp), 'yyyy-MM-dd');
-      const existing = groupedData.get(dateKey);
-      if (existing) {
-        switch (event.status) {
-          case 'completed':
-            existing.completed++;
-            break;
-          case 'failed':
-            existing.failed++;
-            break;
-          case 'pending':
-            existing.pending++;
-            break;
-          case 'processing':
-            existing.processing++;
-            break;
-        }
-      }
-    });
-
-    // Convert to array and sort by date
-    return Array.from(groupedData.values()).sort(
-      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-    );
-  }, [events, timeRange]);
+    // TODO: Re-enable when events are re-implemented
+    // Events disabled for now
+    return [];
+  }, []);
 
   const getTimeRangeDescription = () => {
     switch (timeRange) {

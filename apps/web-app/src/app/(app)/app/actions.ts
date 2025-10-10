@@ -1,9 +1,9 @@
 'use server';
 
 import { auth, currentUser } from '@clerk/nextjs/server';
-import { upsertOrg } from '@unhook/db';
-import { db } from '@unhook/db/client';
-import { Orgs } from '@unhook/db/schema';
+import { upsertOrg } from '@seawatts/db';
+import { db } from '@seawatts/db/client';
+import { Orgs } from '@seawatts/db/schema';
 import { eq } from 'drizzle-orm';
 import { createSafeActionClient } from 'next-safe-action';
 import { z } from 'zod';
@@ -76,12 +76,13 @@ export const upsertOrgAction = action
 
     console.log('New org result:', result);
 
+    // TODO: Re-enable when webhooks are re-implemented
     // If webhookId is provided, create a custom webhook
-    if (webhookId && result.webhook) {
-      // Update the webhook with the custom ID
-      // Note: This would require additional API calls to update the webhook
-      console.log('Custom webhook ID requested:', webhookId);
-    }
+    // if (webhookId && result.webhook) {
+    //   // Update the webhook with the custom ID
+    //   // Note: This would require additional API calls to update the webhook
+    //   console.log('Custom webhook ID requested:', webhookId);
+    // }
 
     return {
       apiKey: result.apiKey,

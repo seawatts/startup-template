@@ -1,8 +1,8 @@
 'use client';
 
-import { Card, CardContent } from '@unhook/ui/card';
-import { Icons } from '@unhook/ui/custom/icons';
-import { P } from '@unhook/ui/custom/typography';
+import { Card, CardContent } from '@seawatts/ui/card';
+import { Icons } from '@seawatts/ui/custom/icons';
+import { P } from '@seawatts/ui/custom/typography';
 import { useSearchParams } from 'next/navigation';
 
 export function BillingNotifications() {

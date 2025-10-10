@@ -1,12 +1,12 @@
 import type { ForegroundColorName } from 'chalk';
-import figlet from 'figlet';
+import figlet, { type FigletOptions, type FontName } from 'figlet';
 import { Text } from 'ink';
 import type { LiteralUnion } from 'type-fest';
 
 type AsciiProps = {
-  font?: figlet.Fonts;
-  horizontalLayout?: figlet.KerningMethods;
-  verticalLayout?: figlet.KerningMethods;
+  font?: FontName;
+  horizontalLayout?: FigletOptions['horizontalLayout'];
+  verticalLayout?: FigletOptions['verticalLayout'];
   text?: string;
   width?: number;
   color?: LiteralUnion<ForegroundColorName, string>;

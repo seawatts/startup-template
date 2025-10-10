@@ -1,16 +1,16 @@
-import { api } from '@acme/api/chrome-extension';
-import { cn } from '@acme/ui';
-import { Alert, AlertDescription, AlertTitle } from '@acme/ui/alert';
-import { Icons } from '@acme/ui/icons';
-import { Label } from '@acme/ui/label';
+import { api } from '@seawatts/api/chrome-extension';
+import { cn } from '@seawatts/ui';
+import { Alert, AlertDescription, AlertTitle } from '@seawatts/ui/alert';
+import { Icons } from '@seawatts/ui/icons';
+import { Label } from '@seawatts/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@acme/ui/select';
-import { Textarea } from '@acme/ui/textarea';
+} from '@seawatts/ui/select';
+import { Textarea } from '@seawatts/ui/textarea';
 import { useEffect, useState } from 'react';
 
 import { useChromePortal } from '~/hooks/use-chrome-portal';

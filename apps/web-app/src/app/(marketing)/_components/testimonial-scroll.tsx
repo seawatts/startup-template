@@ -1,6 +1,6 @@
-import { cn } from '@acme/ui/lib/utils';
+import { cn } from '@seawatts/ui/lib/utils';
 /* eslint-disable @next/next/no-img-element */
-import { Marquee } from '@acme/ui/magicui/marquee';
+import { Marquee } from '@seawatts/ui/magicui/marquee';
 
 export interface TestimonialCardProps
   extends React.HTMLAttributes<HTMLDivElement> {

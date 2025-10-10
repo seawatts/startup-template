@@ -1,25 +1,24 @@
 'use client';
 
 import { useOrganization } from '@clerk/nextjs';
-import { IconInfoCircle } from '@tabler/icons-react';
-import { MetricButton } from '@unhook/analytics/components';
-import { api } from '@unhook/api/react';
-import { useIsEntitled } from '@unhook/stripe/guards/client';
+import { MetricButton } from '@seawatts/analytics/components';
+import { useIsEntitled } from '@seawatts/stripe/guards/client';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@unhook/ui/card';
-import { Icons } from '@unhook/ui/custom/icons';
-import { Progress } from '@unhook/ui/progress';
+} from '@seawatts/ui/card';
+import { Icons } from '@seawatts/ui/custom/icons';
+import { Progress } from '@seawatts/ui/progress';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@unhook/ui/tooltip';
+} from '@seawatts/ui/tooltip';
+import { IconInfoCircle } from '@tabler/icons-react';
 import { useAction } from 'next-safe-action/hooks';
 import { useMemo } from 'react';
 import { createCheckoutSessionAction } from '~/app/(app)/app/settings/billing/actions';
@@ -126,26 +125,15 @@ function UsageDisplay({ usage }: { usage: UsageData }) {
 
 // Usage data hook that fetches real data from the API
 function useWebhookUsage(): UsageData {
-  const { data: usageStats, isLoading } = api.events.usage.useQuery({
-    period: 'month',
-  });
+  // TODO: Re-enable when events are re-implemented
+  // const { data: usageStats, isLoading } = api.events.usage.useQuery({
+  //   period: 'month',
+  // });
 
   return useMemo(() => {
-    if (isLoading) {
-      return {
-        current: 0,
-        description: '',
-        isLoading: true,
-        isUnlimited: false,
-        limit: 0,
-        period: 'month',
-        planName: '',
-      };
-    }
-
     // Free plan: 50 webhook events per month
     return {
-      current: usageStats ?? 0,
+      current: 0,
       description: '50 webhook events per month',
       isLoading: false,
       isUnlimited: false,
@@ -153,7 +141,7 @@ function useWebhookUsage(): UsageData {
       period: 'month',
       planName: 'Free Plan',
     };
-  }, [usageStats, isLoading]);
+  }, []);
 }
 
 export function UsageCard() {

@@ -1,4 +1,4 @@
-import { Card } from '@unhook/ui/card';
+import { Card } from '@seawatts/ui/card';
 import { ArrowUpRight } from 'lucide-react';
 import type React from 'react'; // Added import for React
 

@@ -1,17 +1,17 @@
 'use client';
 
 import { useOrganization, useOrganizationList } from '@clerk/nextjs';
-import { MetricButton } from '@unhook/analytics/components';
+import { MetricButton } from '@seawatts/analytics/components';
 import {
   Command,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
-} from '@unhook/ui/command';
-import { Icons } from '@unhook/ui/custom/icons';
-import { cn } from '@unhook/ui/lib/utils';
-import { Popover, PopoverContent, PopoverTrigger } from '@unhook/ui/popover';
+} from '@seawatts/ui/command';
+import { Icons } from '@seawatts/ui/custom/icons';
+import { cn } from '@seawatts/ui/lib/utils';
+import { Popover, PopoverContent, PopoverTrigger } from '@seawatts/ui/popover';
 import { ChevronsUpDown } from 'lucide-react';
 import posthog from 'posthog-js';
 import React from 'react';

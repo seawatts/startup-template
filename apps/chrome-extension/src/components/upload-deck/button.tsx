@@ -1,8 +1,8 @@
 import logoIcon from 'data-base64:~/../assets/icon.png';
-import { cn } from '@acme/ui';
-import { Button } from '@acme/ui/button';
-import { Icons } from '@acme/ui/icons';
-import { Label } from '@acme/ui/label';
+import { cn } from '@seawatts/ui';
+import { Button } from '@seawatts/ui/button';
+import { Icons } from '@seawatts/ui/icons';
+import { Label } from '@seawatts/ui/label';
 import { formatDistanceToNow } from 'date-fns';
 import pluralize from 'pluralize';
 import { useState } from 'react';

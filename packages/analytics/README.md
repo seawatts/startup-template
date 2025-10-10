@@ -1,4 +1,4 @@
-# @acme/analytics
+# @seawatts/analytics
 
 Analytics package for Acme with PostHog integration and Next.js components.
 
@@ -11,7 +11,7 @@ A Link component that extends Next.js Link with automatic PostHog analytics trac
 #### Usage
 
 ```tsx
-import { MetricLink } from '@acme/analytics/components';
+import { MetricLink } from '@seawatts/analytics/components';
 
 // Basic usage
 <MetricLink href="/dashboard" metric="navigation_dashboard_clicked">
@@ -56,17 +56,17 @@ When a user clicks on a MetricLink, it automatically calls `posthog.capture(metr
 
 The package includes PostHog client and server-side integrations for various environments:
 
-- **Client**: `@acme/analytics/posthog/client`
-- **Server**: `@acme/analytics/posthog/server`
-- **Chrome Extension**: `@acme/analytics/posthog/chrome-extension`
-- **VS Code Extension**: `@acme/analytics/posthog/vscode`
+- **Client**: `@seawatts/analytics/posthog/client`
+- **Server**: `@seawatts/analytics/posthog/server`
+- **Chrome Extension**: `@seawatts/analytics/posthog/chrome-extension`
+- **VS Code Extension**: `@seawatts/analytics/posthog/vscode`
 
 ## Analytics Providers
 
 Use the `AnalyticsProviders` component to wrap your app with analytics services:
 
 ```tsx
-import { AnalyticsProviders } from '@acme/analytics';
+import { AnalyticsProviders } from '@seawatts/analytics';
 
 export default function RootLayout({ children }) {
   return (

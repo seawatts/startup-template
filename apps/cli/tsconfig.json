@@ -15,6 +15,6 @@
     "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json"
   },
   "exclude": ["node_modules", "dist", "scripts", "bin"],
-  "extends": "@acme/tsconfig/react-library.json",
+  "extends": "@seawatts/tsconfig/react-library.json",
   "include": ["*.ts", "*.tsx", "src"]
 }

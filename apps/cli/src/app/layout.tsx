@@ -1,6 +1,6 @@
-import { TRPCReactProvider } from '@acme/api/react';
+import { TRPCReactProvider } from '@seawatts/api/react';
 
-import { debug } from '@acme/logger';
+import { debug } from '@seawatts/logger';
 import { Box, Text } from 'ink';
 import { type FC, useEffect, useRef } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';

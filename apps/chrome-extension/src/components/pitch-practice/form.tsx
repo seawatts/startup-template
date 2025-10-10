@@ -1,6 +1,6 @@
-import { Alert, AlertDescription, AlertTitle } from '@acme/ui/alert';
-import { Icons } from '@acme/ui/custom/icons';
-import { Label } from '@acme/ui/label';
+import { Alert, AlertDescription, AlertTitle } from '@seawatts/ui/alert';
+import { Icons } from '@seawatts/ui/custom/icons';
+import { Label } from '@seawatts/ui/label';
 import { useCallback, useEffect, useReducer } from 'react';
 
 import { useAudio } from '../../hooks/use-audio';

@@ -1,14 +1,9 @@
 'use client';
 
 import { useAuth, useOrganizationList, useUser } from '@clerk/nextjs';
-import {
-  IconBuilding,
-  IconCheck,
-  IconCurrencyDollar,
-} from '@tabler/icons-react';
-import { MetricLink } from '@unhook/analytics/components';
-import { api } from '@unhook/api/react';
-import { Avatar, AvatarFallback, AvatarImage } from '@unhook/ui/avatar';
+import { MetricLink } from '@seawatts/analytics/components';
+import { api } from '@seawatts/api/react';
+import { Avatar, AvatarFallback, AvatarImage } from '@seawatts/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,13 +11,18 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@unhook/ui/dropdown-menu';
+} from '@seawatts/ui/dropdown-menu';
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@unhook/ui/sidebar';
-import { ToggleGroup, ToggleGroupItem } from '@unhook/ui/toggle-group';
+} from '@seawatts/ui/sidebar';
+import { ToggleGroup, ToggleGroupItem } from '@seawatts/ui/toggle-group';
+import {
+  IconBuilding,
+  IconCheck,
+  IconCurrencyDollar,
+} from '@tabler/icons-react';
 import {
   ArrowLeftFromLine,
   ChevronsUpDown,

@@ -1,4 +1,4 @@
-import { debug } from '@acme/logger';
+import { debug } from '@seawatts/logger';
 import * as vscode from 'vscode';
 import { type ApiClient, type AuthUser, createApiClient } from '../api/client';
 

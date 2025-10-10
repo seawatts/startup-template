@@ -1,11 +1,11 @@
 {
   "devDependencies": {
+    "@happy-dom/global-registrator": "20.0.0",
     "@seawatts/tsconfig": "workspace:*",
-    "@happy-dom/global-registrator": "18.0.1",
     "@testing-library/dom": "10.4.1",
-    "@testing-library/jest-dom": "6.8.0",
+    "@testing-library/jest-dom": "6.9.1",
     "@testing-library/react": "16.3.0",
-    "typescript": "5.9.2"
+    "typescript": "5.9.3"
   },
   "exports": {
     ".": "./src/index.ts"

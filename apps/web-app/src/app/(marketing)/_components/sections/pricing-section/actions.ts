@@ -1,14 +1,14 @@
 'use server';
 
-import { db } from '@acme/db/client';
-import { Orgs } from '@acme/db/schema';
+import { auth } from '@clerk/nextjs/server';
+import { db } from '@seawatts/db/client';
+import { Orgs } from '@seawatts/db/schema';
 import {
   BILLING_INTERVALS,
   createCheckoutSession,
   getOrCreateCustomer,
   PLAN_TYPES,
-} from '@acme/stripe';
-import { auth } from '@clerk/nextjs/server';
+} from '@seawatts/stripe';
 import { eq } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';

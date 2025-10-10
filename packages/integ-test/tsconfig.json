@@ -5,6 +5,6 @@
     "types": ["vitest/globals", "node", "ws"]
   },
   "exclude": ["node_modules"],
-  "extends": "@acme/tsconfig/node.json",
+  "extends": "@seawatts/tsconfig/node.json",
   "include": ["*.ts", "src", "vitest.config.ts", "test-utils/**/*"]
 }

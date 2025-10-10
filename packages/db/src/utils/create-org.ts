@@ -1,16 +1,16 @@
-import { generateRandomName } from '@acme/id';
+import {
+  clerkClient,
+  type Organization,
+  type User,
+} from '@clerk/nextjs/server';
+import { generateRandomName } from '@seawatts/id';
 import {
   BILLING_INTERVALS,
   createSubscription,
   getFreePlanPriceId,
   PLAN_TYPES,
   upsertStripeCustomer,
-} from '@acme/stripe';
-import {
-  clerkClient,
-  type Organization,
-  type User,
-} from '@clerk/nextjs/server';
+} from '@seawatts/stripe';
 import { eq } from 'drizzle-orm';
 import type Stripe from 'stripe';
 import { db } from '../client';

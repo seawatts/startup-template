@@ -1,9 +1,9 @@
-import { api } from '@acme/api/chrome-extension';
-import { Button } from '@acme/ui/button';
-import { Icons } from '@acme/ui/icons';
-import { Input } from '@acme/ui/input';
-import { Label } from '@acme/ui/label';
-import { Progress } from '@acme/ui/progress';
+import { api } from '@seawatts/api/chrome-extension';
+import { Button } from '@seawatts/ui/button';
+import { Icons } from '@seawatts/ui/icons';
+import { Input } from '@seawatts/ui/input';
+import { Label } from '@seawatts/ui/label';
+import { Progress } from '@seawatts/ui/progress';
 import { formatDistanceToNow } from 'date-fns';
 import pluralize from 'pluralize';
 import type React from 'react';

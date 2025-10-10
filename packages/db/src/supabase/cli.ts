@@ -1,4 +1,4 @@
-import { debug } from '@acme/logger';
+import { debug } from '@seawatts/logger';
 import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { env } from '../env.client';
 import type { Database } from './types';

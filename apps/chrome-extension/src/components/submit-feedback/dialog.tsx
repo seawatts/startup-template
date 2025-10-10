@@ -1,20 +1,20 @@
-import { Button } from '@acme/ui/button';
+import { Button } from '@seawatts/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@acme/ui/dialog';
+} from '@seawatts/ui/dialog';
 import {
   Drawer,
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
   DrawerTitle,
-} from '@acme/ui/drawer';
-import { isDesktop } from '@acme/ui/hooks/use-media-query';
-import { Icons } from '@acme/ui/icons';
+} from '@seawatts/ui/drawer';
+import { isDesktop } from '@seawatts/ui/hooks/use-media-query';
+import { Icons } from '@seawatts/ui/icons';
 
 import { useChromePortal } from '~/hooks/use-chrome-portal';
 import { SubmitFeedbackForm } from './form';

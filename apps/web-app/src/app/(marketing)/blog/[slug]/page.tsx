@@ -1,4 +1,4 @@
-import { formatDate } from '@acme/ui/lib/format-date';
+import { formatDate } from '@seawatts/ui/lib/format-date';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';

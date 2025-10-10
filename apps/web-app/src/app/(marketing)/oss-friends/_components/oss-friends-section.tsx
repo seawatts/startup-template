@@ -1,16 +1,16 @@
 'use client';
 
-import { MetricButton } from '@acme/analytics/components';
-import { Badge } from '@acme/ui/badge';
+import { MetricButton } from '@seawatts/analytics/components';
+import { Badge } from '@seawatts/ui/badge';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@acme/ui/card';
-import { H1, H2, P } from '@acme/ui/custom/typography';
-import { MagicCard } from '@acme/ui/magicui/magic-card';
+} from '@seawatts/ui/card';
+import { H1, H2, P } from '@seawatts/ui/custom/typography';
+import { MagicCard } from '@seawatts/ui/magicui/magic-card';
 import { ExternalLink } from 'lucide-react';
 import { motion } from 'motion/react';
 

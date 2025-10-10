@@ -1,7 +1,7 @@
-import { Button } from '@acme/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';
-import { Icons } from '@acme/ui/icons';
 import { useUser } from '@clerk/chrome-extension';
+import { Button } from '@seawatts/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@seawatts/ui/card';
+import { Icons } from '@seawatts/ui/icons';
 import { useEffect, useState } from 'react';
 
 import '../style.css';
@@ -246,7 +246,7 @@ function AccountPage() {
               don't hesitate to reach out.
             </p>
             <Button asChild variant="outline">
-              <a href="mailto:vibes@acme.ai">
+              <a href="mailto:vibes@seawatts.ai">
                 <Icons.Mail className="mr-2" />
                 Contact Support
               </a>

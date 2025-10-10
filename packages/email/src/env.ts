@@ -8,7 +8,7 @@ export const env = createEnv({
     RESEND_API_KEY: process.env.RESEND_API_KEY,
   },
   server: {
-    EMAIL_FROM: z.string().email().default('noreply@acme.sh'),
+    EMAIL_FROM: z.string().email().default('noreply@seawatts.sh'),
     EMAIL_REPLY_TO: z.string().email().optional(),
     RESEND_API_KEY: z.string().min(1),
   },

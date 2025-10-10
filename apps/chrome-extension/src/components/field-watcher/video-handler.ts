@@ -1,5 +1,5 @@
-import type { RouterOutputs } from '@acme/api';
 import { sendToBackground } from '@plasmohq/messaging';
+import type { RouterOutputs } from '@seawatts/api';
 
 import type { InputActionProps } from './types';
 

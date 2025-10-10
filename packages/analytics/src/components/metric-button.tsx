@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, type buttonVariants } from '@acme/ui/button';
+import { Button, type buttonVariants } from '@seawatts/ui/button';
 import type { VariantProps } from 'class-variance-authority';
 import posthog from 'posthog-js';
 import type { ComponentProps } from 'react';

@@ -1,4 +1,4 @@
-import { debug } from '@acme/logger';
+import { debug } from '@seawatts/logger';
 import { capture, captureException } from '../posthog';
 
 const log = debug('acme:cli:auth-errors');

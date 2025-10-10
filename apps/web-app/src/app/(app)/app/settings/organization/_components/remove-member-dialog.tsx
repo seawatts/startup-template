@@ -10,7 +10,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@unhook/ui/alert-dialog';
+} from '@seawatts/ui/alert-dialog';
 
 interface RemoveMemberDialogProps {
   isOpen: boolean;

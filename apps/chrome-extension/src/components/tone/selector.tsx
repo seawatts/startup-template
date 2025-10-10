@@ -1,15 +1,15 @@
-import { api } from '@acme/api/chrome-extension';
-import { cn } from '@acme/ui';
-import { Icons } from '@acme/ui/icons';
-import { Label } from '@acme/ui/label';
+import { api } from '@seawatts/api/chrome-extension';
+import { cn } from '@seawatts/ui';
+import { Icons } from '@seawatts/ui/icons';
+import { Label } from '@seawatts/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@acme/ui/select';
-import { Textarea } from '@acme/ui/textarea';
+} from '@seawatts/ui/select';
+import { Textarea } from '@seawatts/ui/textarea';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 

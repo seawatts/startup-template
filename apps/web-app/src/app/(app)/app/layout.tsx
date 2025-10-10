@@ -1,4 +1,4 @@
-import { SidebarInset } from '@unhook/ui/sidebar';
+import { SidebarInset } from '@seawatts/ui/sidebar';
 import { cookies } from 'next/headers';
 import { AppSidebar } from './_components/app-sidebar/app-sidebar';
 import { SidebarStateProvider } from './_components/sidebar-state-provider';

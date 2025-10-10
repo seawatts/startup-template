@@ -1,6 +1,6 @@
-import { Label } from '@acme/ui/label';
-import { Progress } from '@acme/ui/progress';
 import { useUser } from '@clerk/chrome-extension';
+import { Label } from '@seawatts/ui/label';
+import { Progress } from '@seawatts/ui/progress';
 import type React from 'react';
 import { useCallback, useState } from 'react';
 

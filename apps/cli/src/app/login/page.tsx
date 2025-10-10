@@ -1,4 +1,4 @@
-import { debug } from '@acme/logger';
+import { debug } from '@seawatts/logger';
 import { Box, Text, useInput } from 'ink';
 import open from 'open';
 import type { FC } from 'react';

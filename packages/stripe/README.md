@@ -1,4 +1,4 @@
-# @acme/stripe
+# @seawatts/stripe
 
 Type-safe Stripe integration for Acme.
 

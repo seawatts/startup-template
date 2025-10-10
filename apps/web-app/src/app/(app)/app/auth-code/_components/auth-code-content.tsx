@@ -5,7 +5,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@unhook/ui/card';
+} from '@seawatts/ui/card';
 import { useState } from 'react';
 import { AuthCodeLoginButton } from './auth-code-login-button';
 import { CloseWindowCard } from './close-wind-card';
@@ -29,7 +29,7 @@ export function AuthCodeContent() {
         <CardTitle>Grant Access</CardTitle>
         <CardDescription>
           Select or create an organization, then click the button below to
-          authenticate with Unhook.
+          authenticate with acme.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">

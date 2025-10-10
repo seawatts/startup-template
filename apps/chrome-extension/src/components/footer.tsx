@@ -1,4 +1,4 @@
-import { Icons } from '@acme/ui/icons';
+import { Icons } from '@seawatts/ui/icons';
 
 import { PoweredByLink } from './powered-by-link';
 

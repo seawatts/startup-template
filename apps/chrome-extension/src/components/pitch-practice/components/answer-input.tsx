@@ -1,6 +1,6 @@
-import { Button } from '@acme/ui/button';
-import { ExpandingTextarea } from '@acme/ui/expanding-textarea';
-import { Icons } from '@acme/ui/icons';
+import { Button } from '@seawatts/ui/button';
+import { ExpandingTextarea } from '@seawatts/ui/expanding-textarea';
+import { Icons } from '@seawatts/ui/icons';
 
 interface AnswerInputProps {
   value: string;

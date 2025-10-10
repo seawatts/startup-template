@@ -2,10 +2,10 @@ import type {
   OrganizationMembershipJSON,
   WebhookEvent,
 } from '@clerk/nextjs/server';
-import { posthog } from '@unhook/analytics/posthog/server';
-import { db } from '@unhook/db/client';
-import { Orgs } from '@unhook/db/schema';
-import { PLAN_TYPES, stripe } from '@unhook/stripe';
+import { posthog } from '@seawatts/analytics/posthog/server';
+import { db } from '@seawatts/db/client';
+import { Orgs } from '@seawatts/db/schema';
+import { PLAN_TYPES, stripe } from '@seawatts/stripe';
 import { eq } from 'drizzle-orm';
 
 export async function handleOrganizationMembershipDeleted(event: WebhookEvent) {

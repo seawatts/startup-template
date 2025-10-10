@@ -1,21 +1,21 @@
 'use client';
 
-import { Alert, AlertDescription } from '@unhook/ui/alert';
-import { Badge } from '@unhook/ui/badge';
+import { Alert, AlertDescription } from '@seawatts/ui/alert';
+import { Badge } from '@seawatts/ui/badge';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@unhook/ui/card';
-import { Button } from '@unhook/ui/components/button';
-import { CopyButton } from '@unhook/ui/custom/copy-button';
-import { Icons } from '@unhook/ui/custom/icons';
-import { H3, H4, P } from '@unhook/ui/custom/typography';
-import { Separator } from '@unhook/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@unhook/ui/tabs';
-import { Textarea } from '@unhook/ui/textarea';
+} from '@seawatts/ui/card';
+import { Button } from '@seawatts/ui/components/button';
+import { CopyButton } from '@seawatts/ui/custom/copy-button';
+import { Icons } from '@seawatts/ui/custom/icons';
+import { H3, H4, P } from '@seawatts/ui/custom/typography';
+import { Separator } from '@seawatts/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@seawatts/ui/tabs';
+import { Textarea } from '@seawatts/ui/textarea';
 import { BookOpen, FileText, HelpCircle, Terminal } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -37,12 +37,12 @@ export function LocalDevelopmentSetup({
   const router = useRouter();
   const [selectedTab, setSelectedTab] = useState('cli');
 
-  const webhookUrl = `${env.NEXT_PUBLIC_WEBHOOK_BASE_URL || env.NEXT_PUBLIC_API_URL || 'https://unhook.sh'}/${orgName}/${webhookName}`;
+  const webhookUrl = `${env.NEXT_PUBLIC_WEBHOOK_BASE_URL || env.NEXT_PUBLIC_API_URL || 'https://acme.sh'}/${orgName}/${webhookName}`;
 
-  // Generate the unhook.yml content
-  const generateUnhookYml = () => {
-    return `# Unhook Configuration
-# This file configures how Unhook delivers webhooks to your local development environment
+  // Generate the acme.yml content
+  const generateacmeYml = () => {
+    return `# acme Configuration
+# This file configures how acme delivers webhooks to your local development environment
 
 webhookUrl: ${webhookUrl}
 
@@ -68,8 +68,8 @@ delivery:
 
 # Optional: Server configuration
 # server:
-#   apiUrl: https://api.unhook.sh
-#   dashboardUrl: https://unhook.sh
+#   apiUrl: https://api.acme.sh
+#   dashboardUrl: https://acme.sh
 
 # Optional: Enable debug mode
 # debug: true
@@ -78,7 +78,7 @@ delivery:
 # telemetry: false`;
   };
 
-  const unhookYmlContent = generateUnhookYml();
+  const acmeYmlContent = generateacmeYml();
 
   const handleContinue = () => {
     const params = new URLSearchParams({
@@ -123,7 +123,7 @@ delivery:
             <CardDescription>
               Create an{' '}
               <code className="bg-muted px-1 py-0.5 rounded text-xs">
-                unhook.yml
+                acme.yml
               </code>{' '}
               file in your project root
             </CardDescription>
@@ -137,7 +137,7 @@ delivery:
                 <span className="text-sm">
                   Create a new file called{' '}
                   <code className="bg-muted px-1 py-0.5 rounded text-xs">
-                    unhook.yml
+                    acme.yml
                   </code>
                 </span>
               </div>
@@ -151,7 +151,7 @@ delivery:
                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-500/10 text-xs font-medium text-blue-600">
                   3
                 </div>
-                <span className="text-sm">Start the Unhook CLI</span>
+                <span className="text-sm">Start the acme CLI</span>
               </div>
             </div>
 
@@ -160,16 +160,12 @@ delivery:
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Configuration File</span>
-                <CopyButton
-                  size="sm"
-                  text={unhookYmlContent}
-                  variant="outline"
-                />
+                <CopyButton size="sm" text={acmeYmlContent} variant="outline" />
               </div>
               <Textarea
                 className="font-mono text-xs resize-none min-h-[300px]"
                 readOnly
-                value={unhookYmlContent}
+                value={acmeYmlContent}
               />
             </div>
           </CardContent>
@@ -216,11 +212,11 @@ delivery:
                         className="font-mono text-xs resize-none"
                         readOnly
                         rows={1}
-                        value="npx @unhook/cli listen"
+                        value="npx @seawatts/cli listen"
                       />
                       <CopyButton
                         size="sm"
-                        text="npx @unhook/cli listen"
+                        text="npx @seawatts/cli listen"
                         variant="outline"
                       />
                     </div>
@@ -241,17 +237,17 @@ delivery:
                         className="font-mono text-xs resize-none"
                         readOnly
                         rows={1}
-                        value="code --install-extension unhook.unhook-vscode"
+                        value="code --install-extension acme.acme-vscode"
                       />
                       <CopyButton
                         size="sm"
-                        text="code --install-extension unhook.unhook-vscode"
+                        text="code --install-extension acme.acme-vscode"
                         variant="outline"
                       />
                     </div>
                     <p className="text-xs text-muted-foreground">
                       Install the extension and it will automatically detect
-                      your unhook.yml
+                      your acme.yml
                     </p>
                   </div>
                 </div>
@@ -261,9 +257,9 @@ delivery:
                 <div className="space-y-2">
                   <H4 className="text-sm">Install Cursor Extension</H4>
                   <p className="text-xs text-muted-foreground">
-                    Search for "Unhook" in Cursor's extension marketplace and
+                    Search for "acme" in Cursor's extension marketplace and
                     install it. The extension will automatically detect your
-                    unhook.yml configuration.
+                    acme.yml configuration.
                   </p>
                 </div>
               </TabsContent>
@@ -322,7 +318,7 @@ delivery:
             <div className="space-y-2">
               <H4 className="text-sm">Monitor Webhooks</H4>
               <p className="text-xs text-muted-foreground">
-                Use the Unhook dashboard to monitor incoming webhooks, debug
+                Use the acme dashboard to monitor incoming webhooks, debug
                 issues, and replay events for testing.
               </p>
             </div>
@@ -352,7 +348,7 @@ delivery:
         </Button>
         <Button asChild variant="outline">
           <a
-            href="https://docs.unhook.sh"
+            href="https://docs.acme.sh"
             rel="noopener noreferrer"
             target="_blank"
           >
@@ -369,7 +365,7 @@ delivery:
           Need help? Check out our{' '}
           <a
             className="underline hover:no-underline"
-            href="https://docs.unhook.sh"
+            href="https://docs.acme.sh"
             rel="noopener noreferrer"
             target="_blank"
           >
@@ -378,7 +374,7 @@ delivery:
           , join our{' '}
           <a
             className="underline hover:no-underline"
-            href="https://discord.gg/unhook"
+            href="https://discord.gg/acme"
             rel="noopener noreferrer"
             target="_blank"
           >
@@ -387,7 +383,7 @@ delivery:
           , or{' '}
           <a
             className="underline hover:no-underline"
-            href="https://github.com/unhook-sh/unhook/issues"
+            href="https://github.com/acme-sh/acme/issues"
             rel="noopener noreferrer"
             target="_blank"
           >

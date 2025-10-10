@@ -1,6 +1,6 @@
 'use client';
 
-import { SidebarProvider } from '@unhook/ui/sidebar';
+import { SidebarProvider } from '@seawatts/ui/sidebar';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 

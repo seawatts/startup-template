@@ -1,6 +1,6 @@
-import { api } from '@acme/api/chrome-extension';
-import { Alert, AlertDescription, AlertTitle } from '@acme/ui/alert';
-import { Icons } from '@acme/ui/icons';
+import { api } from '@seawatts/api/chrome-extension';
+import { Alert, AlertDescription, AlertTitle } from '@seawatts/ui/alert';
+import { Icons } from '@seawatts/ui/icons';
 import { differenceInDays, fromUnixTime } from 'date-fns';
 
 import { CompanyCreated } from './company/company-created';

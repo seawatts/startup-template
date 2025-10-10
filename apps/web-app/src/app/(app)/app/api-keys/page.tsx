@@ -8,7 +8,7 @@ export default function ApiKeysPage() {
         <div className="space-y-2">
           <div className="text-2xl font-bold">API Keys</div>
           <div className="text-sm text-muted-foreground">
-            Create an API key to use Unhook in your applications.
+            Create an API key to use acme in your applications.
           </div>
         </div>
         <CreateApiKeyDialog />

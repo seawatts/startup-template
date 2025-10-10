@@ -4,7 +4,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@acme/ui/card';
+} from '@seawatts/ui/card';
 
 import { FeatureWaitlistButton } from './feature-waitlist/button';
 

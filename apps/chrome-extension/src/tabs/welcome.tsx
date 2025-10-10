@@ -1,13 +1,13 @@
-import { Button } from '@acme/ui/button';
+import { Button } from '@seawatts/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@acme/ui/card';
-import { Icons } from '@acme/ui/icons';
-import { Separator } from '@acme/ui/separator';
+} from '@seawatts/ui/card';
+import { Icons } from '@seawatts/ui/icons';
+import { Separator } from '@seawatts/ui/separator';
 
 import '../style.css';
 
@@ -311,9 +311,9 @@ function WelcomePage() {
                 To delete your account email us at{' '}
                 <a
                   className="text-muted-foreground underline underline-offset-4"
-                  href="mailto:vibes@acme.ai"
+                  href="mailto:vibes@seawatts.ai"
                 >
-                  vibes@acme.ai
+                  vibes@seawatts.ai
                 </a>
               </li>
             </ul>
@@ -344,7 +344,7 @@ function WelcomePage() {
               to reach out. We're here to help you succeed!
             </p>
             <Button asChild variant="outline">
-              <a href="mailto:vibes@acme.ai">
+              <a href="mailto:vibes@seawatts.ai">
                 <Icons.Mail className="mr-2" />
                 Contact Support
               </a>

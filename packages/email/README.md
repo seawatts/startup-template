@@ -1,4 +1,4 @@
-# @acme/email
+# @seawatts/email
 
 Email sending package for Acme using Resend and React Email.
 
@@ -12,7 +12,7 @@ Email sending package for Acme using Resend and React Email.
 ## Installation
 
 ```bash
-bun add @acme/email
+bun add @seawatts/email
 ```
 
 ## Configuration
@@ -21,8 +21,8 @@ Set the following environment variables:
 
 ```env
 RESEND_API_KEY=your-resend-api-key
-EMAIL_FROM=noreply@acme.sh
-EMAIL_REPLY_TO=support@acme.sh # Optional
+EMAIL_FROM=noreply@seawatts.sh
+EMAIL_REPLY_TO=support@seawatts.sh # Optional
 ```
 
 ## Usage
@@ -30,13 +30,13 @@ EMAIL_REPLY_TO=support@acme.sh # Optional
 ### Basic Email Sending
 
 ```typescript
-import { createEmailClient } from '@acme/email';
-import { WebhookAccessRequestEmail } from '@acme/email/templates';
+import { createEmailClient } from '@seawatts/email';
+import { WebhookAccessRequestEmail } from '@seawatts/email/templates';
 
 const emailClient = createEmailClient({
   apiKey: process.env.RESEND_API_KEY!,
-  from: 'noreply@acme.sh',
-  replyTo: 'support@acme.sh',
+  from: 'noreply@seawatts.sh',
+  replyTo: 'support@seawatts.sh',
 });
 
 // Send a single email

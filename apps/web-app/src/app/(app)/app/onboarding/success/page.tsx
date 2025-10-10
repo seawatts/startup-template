@@ -1,6 +1,6 @@
 'use client';
 
-import { MetricLink } from '@unhook/analytics/components';
+import { MetricLink } from '@seawatts/analytics/components';
 import {
   Card,
   CardContent,
@@ -8,16 +8,24 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@unhook/ui/card';
-import { Button } from '@unhook/ui/components/button';
-import { cn } from '@unhook/ui/lib/utils';
+} from '@seawatts/ui/card';
+import { Button } from '@seawatts/ui/components/button';
+import { cn } from '@seawatts/ui/lib/utils';
 import { motion } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { env } from '~/env.client';
 
-import { RealTimeEventStream } from '../../_components/webhook-wizzard/real-time-event-stream';
-import { WebhookUrlStep } from '../../_components/webhook-wizzard/webhook-url-step';
+// TODO: Re-enable when webhook wizard is re-implemented
+// import { RealTimeEventStream } from '../../_components/webhook-wizzard/real-time-event-stream';
+// import { WebhookUrlStep } from '../../_components/webhook-wizzard/webhook-url-step';
+const RealTimeEventStream = (_props: Record<string, unknown>) => (
+  <div>Event stream coming soon...</div>
+);
+const WebhookUrlStep = (_props: Record<string, unknown>) => (
+  <div>Webhook setup coming soon...</div>
+);
+
 import { AuthCodeLoginButton } from '../../auth-code/_components/auth-code-login-button';
 
 export default function OnboardingSuccessPage() {
@@ -53,7 +61,7 @@ export default function OnboardingSuccessPage() {
     );
   }
 
-  const webhookUrl = `${env.NEXT_PUBLIC_WEBHOOK_BASE_URL || env.NEXT_PUBLIC_API_URL || 'https://unhook.sh'}/${orgName}/${webhookName}`;
+  const webhookUrl = `${env.NEXT_PUBLIC_WEBHOOK_BASE_URL || env.NEXT_PUBLIC_API_URL || 'https://acme.sh'}/${orgName}/${webhookName}`;
 
   return (
     <div className="flex min-h-[calc(100vh-12rem)] items-center justify-center p-4">

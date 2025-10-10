@@ -16,8 +16,8 @@ export const env = createEnv({
    * This way you can ensure the app isn't built with invalid env vars.
    */
   server: {
-    EMAIL_FROM: z.string().default('noreply@acme.sh'),
-    EMAIL_REPLY_TO: z.string().default('noreply@acme.sh'),
+    EMAIL_FROM: z.string().default('noreply@seawatts.sh'),
+    EMAIL_REPLY_TO: z.string().default('noreply@seawatts.sh'),
     RESEND_API_KEY: z.string(),
   },
 

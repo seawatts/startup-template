@@ -1,7 +1,7 @@
 import type { UserJSON, WebhookEvent } from '@clerk/nextjs/server';
-import { posthog } from '@unhook/analytics/posthog/server';
-import { db } from '@unhook/db/client';
-import { Users } from '@unhook/db/schema';
+import { posthog } from '@seawatts/analytics/posthog/server';
+import { db } from '@seawatts/db/client';
+import { Users } from '@seawatts/db/schema';
 
 export async function handleUserCreated(event: WebhookEvent) {
   // Narrow event.data to UserJSON for 'user.created' events

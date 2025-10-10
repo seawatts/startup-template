@@ -1,4 +1,4 @@
-import type { api } from '@acme/api/chrome-extension';
+import type { api } from '@seawatts/api/chrome-extension';
 
 import { calculateFileHash } from '~/utils/file-hash';
 import type { Company } from '../company/context';

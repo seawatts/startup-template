@@ -1,6 +1,6 @@
 'use client';
 
-import { debug } from '@acme/logger';
+import { debug } from '@seawatts/logger';
 import type {
   REALTIME_SUBSCRIBE_STATES,
   RealtimeChannel,

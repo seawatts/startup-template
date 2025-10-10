@@ -1,10 +1,10 @@
 {
   "dependencies": {
-    "@boundaryml/baml": "0.205.0"
+    "@boundaryml/baml": "0.211.0"
   },
   "devDependencies": {
     "@seawatts/tsconfig": "workspace:*",
-    "typescript": "5.9.2"
+    "typescript": "5.9.3"
   },
   "exports": {
     "./*": "./src/baml_client/*.ts",

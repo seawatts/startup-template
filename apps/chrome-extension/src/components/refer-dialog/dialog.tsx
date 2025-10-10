@@ -1,5 +1,5 @@
-import { Button } from '@acme/ui/button';
-import { CopyButton } from '@acme/ui/copy-button';
+import { Button } from '@seawatts/ui/button';
+import { CopyButton } from '@seawatts/ui/copy-button';
 import {
   Dialog,
   DialogContent,
@@ -7,7 +7,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@acme/ui/dialog';
+} from '@seawatts/ui/dialog';
 import {
   Drawer,
   DrawerContent,
@@ -15,9 +15,9 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-} from '@acme/ui/drawer';
-import { isDesktop } from '@acme/ui/hooks/use-media-query';
-import { Icons } from '@acme/ui/icons';
+} from '@seawatts/ui/drawer';
+import { isDesktop } from '@seawatts/ui/hooks/use-media-query';
+import { Icons } from '@seawatts/ui/icons';
 
 import { useChromePortal } from '~/hooks/use-chrome-portal';
 import { ReferForm } from './form';

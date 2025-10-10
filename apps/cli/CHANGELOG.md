@@ -1,4 +1,4 @@
-# @acme/cli
+# @seawatts/cli
 
 ## 0.12.21
 
@@ -37,7 +37,7 @@
 - [`2031c1b`](https://github.com/acme-sh/acme/commit/2031c1b6fe97d1c0fba844371feca760c55f6e53) Thanks [@seawatts](https://github.com/seawatts)! - Test
 
 - Updated dependencies [[`2031c1b`](https://github.com/acme-sh/acme/commit/2031c1b6fe97d1c0fba844371feca760c55f6e53)]:
-  - @acme/client@0.4.6
+  - @seawatts/client@0.4.6
 
 ## 0.12.12
 
@@ -46,7 +46,7 @@
 - [`7a73526`](https://github.com/acme-sh/acme/commit/7a73526720fdb2fec1b672a6d513bc5d66820439) Thanks [@seawatts](https://github.com/seawatts)! - Move away from bun --compile
 
 - Updated dependencies [[`7a73526`](https://github.com/acme-sh/acme/commit/7a73526720fdb2fec1b672a6d513bc5d66820439)]:
-  - @acme/client@0.4.5
+  - @seawatts/client@0.4.5
 
 ## 0.12.11
 
@@ -67,7 +67,7 @@
 - [`954edef`](https://github.com/acme-sh/acme/commit/954edef048cda371347d53d03630f9c175b2308d) Thanks [@seawatts](https://github.com/seawatts)! - Bump
 
 - Updated dependencies [[`954edef`](https://github.com/acme-sh/acme/commit/954edef048cda371347d53d03630f9c175b2308d)]:
-  - @acme/client@0.4.4
+  - @seawatts/client@0.4.4
 
 ## 0.12.7
 
@@ -94,7 +94,7 @@
 - [`48723b7`](https://github.com/acme-sh/acme/commit/48723b7dbebd91dac4246028887d67c752525be7) Thanks [@seawatts](https://github.com/seawatts)! - Fix release
 
 - Updated dependencies [[`48723b7`](https://github.com/acme-sh/acme/commit/48723b7dbebd91dac4246028887d67c752525be7)]:
-  - @acme/client@0.4.3
+  - @seawatts/client@0.4.3
 
 ## 0.12.2
 
@@ -109,7 +109,7 @@
 - [`9ec655d`](https://github.com/acme-sh/acme/commit/9ec655dd64489e642922c69d7624d2673caa21b9) Thanks [@seawatts](https://github.com/seawatts)! - Fix issue with publishing
 
 - Updated dependencies [[`9ec655d`](https://github.com/acme-sh/acme/commit/9ec655dd64489e642922c69d7624d2673caa21b9)]:
-  - @acme/client@0.4.2
+  - @seawatts/client@0.4.2
 
 ## 0.12.0
 
@@ -132,7 +132,7 @@
 ### Patch Changes
 
 - Updated dependencies [[`cbb97c0`](https://github.com/acme-sh/acme/commit/cbb97c078ced78e4a37c98bd7b0524822984b163)]:
-  - @acme/client@0.4.1
+  - @seawatts/client@0.4.1
 
 ## 0.9.0
 
@@ -149,7 +149,7 @@
 ### Patch Changes
 
 - Updated dependencies [[`bb8ef63`](https://github.com/acme-sh/acme/commit/bb8ef6322063190b66cf08987a7cecc971001bc3)]:
-  - @acme/client@0.4.0
+  - @seawatts/client@0.4.0
 
 ## 0.7.0
 
@@ -160,7 +160,7 @@
 ### Patch Changes
 
 - Updated dependencies [[`7be13e1`](https://github.com/acme-sh/acme/commit/7be13e1ee39c63f7504f993fbafa245bead1f125)]:
-  - @acme/client@0.3.0
+  - @seawatts/client@0.3.0
 
 ## 0.6.1
 

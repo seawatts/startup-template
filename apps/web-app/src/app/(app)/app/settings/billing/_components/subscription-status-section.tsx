@@ -1,28 +1,28 @@
 'use client';
 
-import { IconCurrencyDollar, IconInfoCircle } from '@tabler/icons-react';
-import { MetricButton } from '@unhook/analytics/components';
-import { api } from '@unhook/api/react';
+import { MetricButton } from '@seawatts/analytics/components';
+import { api } from '@seawatts/api/react';
 import {
   SubscriptionActive,
   SubscriptionPastDue,
   useHasActiveSubscription,
   useHasPastDueSubscription,
-} from '@unhook/stripe/guards/client';
+} from '@seawatts/stripe/guards/client';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@unhook/ui/card';
-import { Progress } from '@unhook/ui/progress';
+} from '@seawatts/ui/card';
+import { Progress } from '@seawatts/ui/progress';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@unhook/ui/tooltip';
+} from '@seawatts/ui/tooltip';
+import { IconCurrencyDollar, IconInfoCircle } from '@tabler/icons-react';
 import { useAction } from 'next-safe-action/hooks';
 import { useMemo } from 'react';
 import {
@@ -37,15 +37,15 @@ function useWebhookUsage() {
   // Fetch usage statistics for the last 30 days (for monthly) or 1 day (for daily)
   const { data: usageStats } = api.apiKeyUsage.stats.useQuery({
     days: hasActiveSubscription ? 30 : 1, // Monthly for team, daily for free
-    type: 'webhook-event',
+    type: 'mcp-server',
   });
 
   return useMemo(() => {
-    // Calculate total webhook events from the stats
+    // Calculate total MCP server events from the stats
     const totalEvents =
       usageStats?.reduce(
         (sum: number, stat: { type: string; count: number }) => {
-          if (stat.type === 'webhook-event') {
+          if (stat.type === 'mcp-server') {
             return sum + stat.count;
           }
           return sum;
@@ -57,7 +57,7 @@ function useWebhookUsage() {
       // Team plan has unlimited usage
       return {
         current: totalEvents,
-        description: 'Unlimited webhook events per month', // -1 indicates unlimited
+        description: 'Unlimited MCP server events per month', // -1 indicates unlimited
         isUnlimited: true,
         limit: -1,
         period: 'month' as const,
@@ -67,7 +67,7 @@ function useWebhookUsage() {
     // Free plan has 50 events per day
     return {
       current: totalEvents,
-      description: '50 webhook events per day',
+      description: '50 MCP server events per day',
       isUnlimited: false,
       limit: 50,
       period: 'day' as const,

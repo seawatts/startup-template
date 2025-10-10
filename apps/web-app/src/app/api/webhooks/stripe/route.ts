@@ -1,6 +1,6 @@
-import { db } from '@acme/db/client';
-import { Orgs, type stripeSubscriptionStatusEnum } from '@acme/db/schema';
-import { constructWebhookEvent } from '@acme/stripe';
+import { db } from '@seawatts/db/client';
+import { Orgs, type stripeSubscriptionStatusEnum } from '@seawatts/db/schema';
+import { constructWebhookEvent } from '@seawatts/stripe';
 import { eq } from 'drizzle-orm';
 import { type NextRequest, NextResponse } from 'next/server';
 import type Stripe from 'stripe';

@@ -1,7 +1,7 @@
 'use client';
 
-import { cn } from '@acme/ui/lib/utils';
-import { FlickeringGrid } from '@acme/ui/magicui/flickering-grid';
+import { cn } from '@seawatts/ui/lib/utils';
+import { FlickeringGrid } from '@seawatts/ui/magicui/flickering-grid';
 import { motion } from 'motion/react';
 
 interface SecurityShieldBackgroundProps {

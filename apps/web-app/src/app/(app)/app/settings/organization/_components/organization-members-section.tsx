@@ -1,17 +1,17 @@
 'use client';
 
 import { useOrganization, useUser } from '@clerk/nextjs';
-import { MetricButton } from '@unhook/analytics/components';
-import { Card, CardContent, CardHeader, CardTitle } from '@unhook/ui/card';
+import { MetricButton } from '@seawatts/analytics/components';
+import { Card, CardContent, CardHeader, CardTitle } from '@seawatts/ui/card';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@unhook/ui/select';
-import { Skeleton } from '@unhook/ui/skeleton';
-import { toast } from '@unhook/ui/sonner';
+} from '@seawatts/ui/select';
+import { Skeleton } from '@seawatts/ui/skeleton';
+import { toast } from '@seawatts/ui/sonner';
 import { useAction } from 'next-safe-action/hooks';
 import { useState } from 'react';
 import { removeMemberAction, updateMemberRoleAction } from '../actions';

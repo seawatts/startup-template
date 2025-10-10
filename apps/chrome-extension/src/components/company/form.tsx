@@ -1,7 +1,7 @@
-import { api } from '@acme/api/chrome-extension';
-import { Input } from '@acme/ui/input';
-import { Label } from '@acme/ui/label';
-import { Textarea } from '@acme/ui/textarea';
+import { api } from '@seawatts/api/chrome-extension';
+import { Input } from '@seawatts/ui/input';
+import { Label } from '@seawatts/ui/label';
+import { Textarea } from '@seawatts/ui/textarea';
 import { isEmpty } from 'lodash-es';
 import type * as React from 'react';
 import { useEffect, useState } from 'react';

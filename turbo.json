@@ -35,14 +35,6 @@
     "//#clean": {
       "cache": false
     },
-    "seawatts-vscode#dev:extension": {
-      "cache": false,
-      "persistent": true
-    },
-    "seawatts-vscode#dev:webview": {
-      "cache": false,
-      "persistent": true
-    },
     "build": {
       "dependsOn": ["^build"],
       "env": [
@@ -128,6 +120,14 @@
         "NODE_ENV"
       ],
       "interactive": true
+    },
+    "seawatts-vscode#dev:extension": {
+      "cache": false,
+      "persistent": true
+    },
+    "seawatts-vscode#dev:webview": {
+      "cache": false,
+      "persistent": true
     },
     "seed": {
       "cache": false,

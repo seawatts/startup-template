@@ -7,7 +7,7 @@
  * The pieces you will need to use are documented accordingly near the end
  */
 
-import { debug } from '@acme/logger';
+import { debug } from '@seawatts/logger';
 import { initTRPC, TRPCError } from '@trpc/server';
 import superjson from 'superjson';
 import { ZodError } from 'zod';

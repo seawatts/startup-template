@@ -1,6 +1,6 @@
 import { lookup } from 'node:dns/promises';
 import { networkInterfaces } from 'node:os';
-import { debug } from '@acme/logger';
+import { debug } from '@seawatts/logger';
 
 const log = debug('acme:lib:network-monitor');
 

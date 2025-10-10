@@ -76,11 +76,11 @@ export default defineConfig({
   format: ['esm'],
   minify: !isDevBuild,
   noExternal: [
-    '@acme/api',
-    '@acme/db',
-    '@acme/id',
-    '@acme/logger',
-    '@acme/zustand',
+    '@seawatts/api',
+    '@seawatts/db',
+    '@seawatts/id',
+    '@seawatts/logger',
+    '@seawatts/zustand',
   ],
   onSuccess: async () => {
     // Make the output file executable

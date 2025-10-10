@@ -1,4 +1,4 @@
-import { debug, defaultLogger } from '@acme/logger';
+import { debug, defaultLogger } from '@seawatts/logger';
 import { useCliStore } from '../../stores/cli-store';
 import { capture, captureException, shutdown } from '../posthog';
 

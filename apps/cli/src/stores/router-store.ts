@@ -1,5 +1,5 @@
-import { debug } from '@acme/logger';
-import { createSelectors } from '@acme/zustand';
+import { debug } from '@seawatts/logger';
+import { createSelectors } from '@seawatts/zustand';
 import open from 'open';
 import type { FC } from 'react';
 import { createStore } from 'zustand';

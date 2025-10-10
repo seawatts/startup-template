@@ -8,7 +8,7 @@
   "packageRules": [
     {
       "enabled": false,
-      "matchPackagePatterns": ["^@acme/"]
+      "matchPackagePatterns": ["^@seawatts/"]
     }
   ],
   "rangeStrategy": "bump",

@@ -1,5 +1,5 @@
-import { Button } from '@acme/ui/button';
-import { Icons } from '@acme/ui/icons';
+import { Button } from '@seawatts/ui/button';
+import { Icons } from '@seawatts/ui/icons';
 
 import { formatTime } from '~/utils/format-time';
 import { AudioCanvas } from './canvas';

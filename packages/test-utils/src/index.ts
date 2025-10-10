@@ -1,7 +1,7 @@
-import { db } from '@acme/db/client';
-import { ApiKeys, AuthCodes, Orgs, Users } from '@acme/db/schema';
-import { createId } from '@acme/id';
 import { createClerkClient } from '@clerk/backend';
+import { db } from '@seawatts/db/client';
+import { ApiKeys, AuthCodes, Orgs, Users } from '@seawatts/db/schema';
+import { createId } from '@seawatts/id';
 import { eq } from 'drizzle-orm';
 import { env } from './env';
 

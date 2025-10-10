@@ -1,14 +1,14 @@
 'use client';
 
-import { Badge } from '@acme/ui/badge';
+import { Badge } from '@seawatts/ui/badge';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@acme/ui/card';
-import { MagicCard } from '@acme/ui/magicui/magic-card';
+} from '@seawatts/ui/card';
+import { MagicCard } from '@seawatts/ui/magicui/magic-card';
 import { motion } from 'motion/react';
 
 interface Competitor {

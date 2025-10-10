@@ -1,7 +1,7 @@
 import type { OrganizationJSON, WebhookEvent } from '@clerk/nextjs/server';
-import { posthog } from '@unhook/analytics/posthog/server';
-import { db } from '@unhook/db/client';
-import { Orgs } from '@unhook/db/schema';
+import { posthog } from '@seawatts/analytics/posthog/server';
+import { db } from '@seawatts/db/client';
+import { Orgs } from '@seawatts/db/schema';
 import { eq } from 'drizzle-orm';
 
 export async function handleOrganizationUpdated(event: WebhookEvent) {

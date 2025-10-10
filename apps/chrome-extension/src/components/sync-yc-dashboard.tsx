@@ -1,4 +1,4 @@
-import { api } from '@acme/api/chrome-extension';
+import { api } from '@seawatts/api/chrome-extension';
 import { useEffect, useRef } from 'react';
 
 import { useYcDashboard } from '~/hooks/yc/use-yc-dashboard';

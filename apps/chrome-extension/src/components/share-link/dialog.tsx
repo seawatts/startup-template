@@ -1,14 +1,14 @@
-import { api } from '@acme/api/chrome-extension';
-import { Button } from '@acme/ui/button';
+import { api } from '@seawatts/api/chrome-extension';
+import { Button } from '@seawatts/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@acme/ui/dialog';
-import { isDesktop } from '@acme/ui/hooks/use-media-query';
-import { Icons } from '@acme/ui/icons';
+} from '@seawatts/ui/dialog';
+import { isDesktop } from '@seawatts/ui/hooks/use-media-query';
+import { Icons } from '@seawatts/ui/icons';
 
 import { useChromePortal } from '~/hooks/use-chrome-portal';
 import { useCompany } from '../company/context';

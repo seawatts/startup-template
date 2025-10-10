@@ -1,7 +1,7 @@
 'use client';
 
-import { colorWithOpacity, getRGBA } from '@acme/ui/magicui/utils';
 import NumberFlow from '@number-flow/react';
+import { colorWithOpacity, getRGBA } from '@seawatts/ui/magicui/utils';
 import { motion, useInView } from 'motion/react';
 import {
   type CSSProperties,

@@ -21,7 +21,7 @@ export interface FormContextType<T extends ZodSchema> {
   getValue: (id: string) => string;
   onSubmit: (values: z.infer<T>) => void;
   getAllValues: () => Record<string, string>;
-  validate: () => { success: boolean; error?: z.ZodError };
+  validate: () => { success: boolean; error?: z.ZodError<z.infer<T>> };
   validateInput: (id: string) => boolean;
   activeInput: string | null;
   setActiveInput: (id: string | null) => void;
@@ -142,14 +142,14 @@ export function FormProvider<T extends ZodSchema>({
       if (error instanceof z.ZodError) {
         // Map Zod errors to input IDs
         const newErrors: Record<string, string> = {};
-        for (const err of error.errors) {
+        for (const err of error.issues) {
           const path = err.path[0];
           if (typeof path === 'string') {
             newErrors[path] = err.message;
           }
         }
         setErrors(newErrors);
-        return { error, success: false };
+        return { error: error as z.ZodError<z.infer<T>>, success: false };
       }
       throw error;
     }
@@ -169,7 +169,7 @@ export function FormProvider<T extends ZodSchema>({
       return true;
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const message = error.errors[0]?.message;
+        const message = error.issues[0]?.message;
         if (message) {
           setError(id, message);
         }
@@ -205,34 +205,43 @@ export function FormProvider<T extends ZodSchema>({
     ) {
       const validation = validate();
       if (validation.success) {
-        onSubmit(getAllValues());
+        onSubmit(getAllValues() as z.infer<T>);
       }
     }
     // Only run when completedInputs, errors, or inputs change
   }, [completedInputs, errors, inputs, onSubmit, getAllValues, validate]);
 
+  const wrappedOnSubmit = useCallback(
+    (values: z.infer<T>) => {
+      onSubmit(values);
+    },
+    [onSubmit],
+  );
+
   return (
     <FormContext.Provider
-      value={{
-        activeInput,
-        getAllValues,
-        getError,
-        getNextInput,
-        getValue,
-        isInputActive,
-        isInputAvailable,
-        isInputComplete,
-        markInputComplete,
-        onSubmit,
-        registerInput,
-        setActiveInput,
-        setError,
-        setInputAvailable,
-        setValue,
-        unregisterInput,
-        validate,
-        validateInput,
-      }}
+      value={
+        {
+          activeInput,
+          getAllValues,
+          getError,
+          getNextInput,
+          getValue,
+          isInputActive,
+          isInputAvailable,
+          isInputComplete,
+          markInputComplete,
+          onSubmit: wrappedOnSubmit,
+          registerInput,
+          setActiveInput,
+          setError,
+          setInputAvailable,
+          setValue,
+          unregisterInput,
+          validate,
+          validateInput,
+        } as FormContextType<ZodSchema>
+      }
     >
       <Box flexDirection="column">{children}</Box>
     </FormContext.Provider>

@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { debug } from '@acme/logger';
+import { debug } from '@seawatts/logger';
 import type { StorageInterface } from './storage-interface';
 
 const log = debug('acme:cli:file-storage');

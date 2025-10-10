@@ -1,7 +1,7 @@
 import logoIcon from 'data-base64:~/../assets/icon.png';
-import { Button } from '@acme/ui/button';
-import { Icons } from '@acme/ui/custom/icons';
 import { useUser } from '@clerk/chrome-extension';
+import { Button } from '@seawatts/ui/button';
+import { Icons } from '@seawatts/ui/custom/icons';
 import { useState } from 'react';
 
 interface FeatureWaitlistButtonProps {

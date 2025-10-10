@@ -1,4 +1,4 @@
-import { Orgs } from '@acme/db/schema';
+import { Orgs } from '@seawatts/db/schema';
 import {
   BILLING_INTERVALS,
   createBillingPortalSession,
@@ -6,7 +6,7 @@ import {
   getOrCreateCustomer,
   PLAN_TYPES,
   stripe,
-} from '@acme/stripe';
+} from '@seawatts/stripe';
 import { eq } from 'drizzle-orm';
 import type Stripe from 'stripe';
 import { z } from 'zod';

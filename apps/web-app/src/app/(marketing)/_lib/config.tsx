@@ -1,4 +1,4 @@
-import { cn } from '@acme/ui/lib/utils';
+import { cn } from '@seawatts/ui/lib/utils';
 import { Globe } from 'lucide-react';
 import { FirstBentoAnimation } from '~/app/(marketing)/_components/first-bento-animation';
 import { FourthBentoAnimation } from '~/app/(marketing)/_components/fourth-bento-animation';
@@ -324,7 +324,7 @@ export const siteConfig = {
         {
           id: 15,
           title: 'Acme CLI',
-          url: 'https://www.npmjs.com/package/@acme/cli',
+          url: 'https://www.npmjs.com/package/@seawatts/cli',
         },
       ],
       title: 'Products',
@@ -458,7 +458,7 @@ export const siteConfig = {
         name: 'MCP Server',
       },
       {
-        href: 'https://www.npmjs.com/package/@acme/cli',
+        href: 'https://www.npmjs.com/package/@seawatts/cli',
         id: 6,
         name: 'Acme CLI',
       },

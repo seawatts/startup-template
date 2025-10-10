@@ -1,11 +1,11 @@
-import { Button } from '@acme/ui/button';
+import { Button } from '@seawatts/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@acme/ui/card';
+} from '@seawatts/ui/card';
 
 import { NoCompany } from './company/no-company';
 

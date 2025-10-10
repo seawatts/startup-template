@@ -1,5 +1,5 @@
-import { toast } from '@acme/ui/sonner';
 import { useUser } from '@clerk/chrome-extension';
+import { toast } from '@seawatts/ui/sonner';
 import { useCallback } from 'react';
 
 import type { Application, Company } from '~/components/company/context';

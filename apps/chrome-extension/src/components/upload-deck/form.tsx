@@ -1,9 +1,9 @@
-import { api } from '@acme/api/chrome-extension';
-import { Alert, AlertDescription, AlertTitle } from '@acme/ui/alert';
-import { Icons } from '@acme/ui/icons';
-import { Input } from '@acme/ui/input';
-import { Label } from '@acme/ui/label';
-import { Progress } from '@acme/ui/progress';
+import { api } from '@seawatts/api/chrome-extension';
+import { Alert, AlertDescription, AlertTitle } from '@seawatts/ui/alert';
+import { Icons } from '@seawatts/ui/icons';
+import { Input } from '@seawatts/ui/input';
+import { Label } from '@seawatts/ui/label';
+import { Progress } from '@seawatts/ui/progress';
 import type React from 'react';
 import { useCallback, useState } from 'react';
 

@@ -1,5 +1,5 @@
-import { api } from '@acme/api/chrome-extension';
 import { useUser } from '@clerk/chrome-extension';
+import { api } from '@seawatts/api/chrome-extension';
 
 import { useCompany } from '../company/context';
 

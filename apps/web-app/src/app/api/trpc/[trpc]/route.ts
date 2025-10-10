@@ -1,4 +1,4 @@
-import { appRouter, createTRPCContext } from '@acme/api';
+import { appRouter, createTRPCContext } from '@seawatts/api';
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
 import type { NextRequest } from 'next/server';
 

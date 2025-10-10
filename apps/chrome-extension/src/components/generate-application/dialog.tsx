@@ -5,8 +5,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@acme/ui/alert-dialog';
-import { Button } from '@acme/ui/button';
+} from '@seawatts/ui/alert-dialog';
+import { Button } from '@seawatts/ui/button';
 
 import { useChromePortal } from '~/hooks/use-chrome-portal';
 import { GenerateApplicationForm } from './form';

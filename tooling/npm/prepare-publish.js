@@ -67,13 +67,13 @@ if (!skipInstallUpdate && !isVsCodeExtension) {
   console.log('⏭️  Skipping install script update (--no-install-update)');
 }
 
-// Get all @acme/* dependencies from both dependencies and devDependencies
+// Get all @seawatts/* dependencies from both dependencies and devDependencies
 const acmeDeps = [
   ...Object.keys(packageJson.dependencies || {}).filter(
-    (dep) => dep.startsWith('@acme/') && dep !== '@acme/client',
+    (dep) => dep.startsWith('@seawatts/') && dep !== '@seawatts/client',
   ),
   ...Object.keys(packageJson.devDependencies || {}).filter(
-    (dep) => dep.startsWith('@acme/') && dep !== '@acme/client',
+    (dep) => dep.startsWith('@seawatts/') && dep !== '@seawatts/client',
   ),
 ];
 
@@ -83,18 +83,18 @@ for (const dep of acmeDeps) {
   delete packageJson.devDependencies?.[dep];
 }
 
-// Replace @acme/client workspace dependency with actual version
-if (packageJson.dependencies?.['@acme/client'] === 'workspace:*') {
-  packageJson.dependencies['@acme/client'] = clientPackageJson.version;
+// Replace @seawatts/client workspace dependency with actual version
+if (packageJson.dependencies?.['@seawatts/client'] === 'workspace:*') {
+  packageJson.dependencies['@seawatts/client'] = clientPackageJson.version;
   console.log(
-    `✅ Updated @acme/client dependency to version ${clientPackageJson.version}`,
+    `✅ Updated @seawatts/client dependency to version ${clientPackageJson.version}`,
   );
 }
 
-if (packageJson.devDependencies?.['@acme/client'] === 'workspace:*') {
-  packageJson.devDependencies['@acme/client'] = clientPackageJson.version;
+if (packageJson.devDependencies?.['@seawatts/client'] === 'workspace:*') {
+  packageJson.devDependencies['@seawatts/client'] = clientPackageJson.version;
   console.log(
-    `✅ Updated @acme/client devDependency to version ${clientPackageJson.version}`,
+    `✅ Updated @seawatts/client devDependency to version ${clientPackageJson.version}`,
   );
 }
 

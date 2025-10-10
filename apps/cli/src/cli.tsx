@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import { homedir } from 'node:os';
 import { join } from 'node:path';
-import { debug, defaultLogger } from '@acme/logger';
-import { RollingFileDestination } from '@acme/logger/destinations/rolling-file';
+import { debug, defaultLogger } from '@seawatts/logger';
+import { RollingFileDestination } from '@seawatts/logger/destinations/rolling-file';
 
 const logDir = join(homedir(), '.acme');
 defaultLogger.addDestination(

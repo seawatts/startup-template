@@ -1,6 +1,6 @@
-import * as schema from '@acme/db/schema';
-import { createId } from '@acme/id';
 import { faker } from '@faker-js/faker';
+import * as schema from '@seawatts/db/schema';
+import { createId } from '@seawatts/id';
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 
 export class TestFactories {

@@ -1,5 +1,5 @@
 import type { SessionJSON, WebhookEvent } from '@clerk/nextjs/server';
-import { posthog } from '@unhook/analytics/posthog/server';
+import { posthog } from '@seawatts/analytics/posthog/server';
 
 export async function handleSessionEnded(event: WebhookEvent) {
   // Narrow event.data to SessionJSON for 'session.ended' events

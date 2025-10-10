@@ -1,9 +1,8 @@
 'use client';
 
-import { IconPlus } from '@tabler/icons-react';
-import { MetricButton } from '@unhook/analytics/components';
-import { api } from '@unhook/api/react';
-import { Icons } from '@unhook/ui/custom/icons';
+import { MetricButton } from '@seawatts/analytics/components';
+import { api } from '@seawatts/api/react';
+import { Icons } from '@seawatts/ui/custom/icons';
 import {
   Dialog,
   DialogContent,
@@ -12,8 +11,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@unhook/ui/dialog';
-import { Input } from '@unhook/ui/input';
+} from '@seawatts/ui/dialog';
+import { Input } from '@seawatts/ui/input';
+import { IconPlus } from '@tabler/icons-react';
 import posthog from 'posthog-js';
 import { useState } from 'react';
 

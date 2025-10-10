@@ -1,5 +1,5 @@
-import { debug } from '@acme/logger';
-import { createSelectors } from '@acme/zustand';
+import { debug } from '@seawatts/logger';
+import { createSelectors } from '@seawatts/zustand';
 import { Box, Text, type TextProps, useInput } from 'ink';
 import type React from 'react';
 import { useEffect, useRef } from 'react';

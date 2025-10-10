@@ -1,10 +1,10 @@
 'use client';
 
 import { useOrganization } from '@clerk/nextjs';
-import { MetricButton } from '@unhook/analytics/components';
-import { Card, CardContent, CardHeader, CardTitle } from '@unhook/ui/card';
-import { Input } from '@unhook/ui/input';
-import { toast } from '@unhook/ui/sonner';
+import { MetricButton } from '@seawatts/analytics/components';
+import { Card, CardContent, CardHeader, CardTitle } from '@seawatts/ui/card';
+import { Input } from '@seawatts/ui/input';
+import { toast } from '@seawatts/ui/sonner';
 import { useAction } from 'next-safe-action/hooks';
 import { useEffect, useState } from 'react';
 import { updateTeamNameAction } from '../actions';

@@ -1,18 +1,18 @@
-import { ReactScan } from '@acme/ui/custom/react-scan';
-import { ThemeProvider } from '@acme/ui/custom/theme';
-import { cn } from '@acme/ui/lib/utils';
-import { Toaster } from '@acme/ui/sonner';
+import { ReactScan } from '@seawatts/ui/custom/react-scan';
+import { ThemeProvider } from '@seawatts/ui/custom/theme';
+import { cn } from '@seawatts/ui/lib/utils';
+import { Toaster } from '@seawatts/ui/sonner';
 import { GeistMono } from 'geist/font/mono';
 import { GeistSans } from 'geist/font/sans';
 import type { Metadata, Viewport } from 'next';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
-import '@acme/ui/globals.css';
+import '@seawatts/ui/globals.css';
 
-import { AnalyticsProviders } from '@acme/analytics/providers';
-import { TRPCReactProvider } from '@acme/api/react';
-import { StripeProvider } from '@acme/stripe/guards/client';
 import { ClerkProvider } from '@clerk/nextjs';
+import { AnalyticsProviders } from '@seawatts/analytics/providers';
+import { TRPCReactProvider } from '@seawatts/api/react';
+import { StripeProvider } from '@seawatts/stripe/guards/client';
 import { Suspense } from 'react';
 import { env } from '~/env.server';
 

@@ -1,6 +1,6 @@
 import interviewImage from 'data-base64:~/../assets/interviewer.png';
-import { Button } from '@acme/ui/button';
-import { toast } from '@acme/ui/sonner';
+import { Button } from '@seawatts/ui/button';
+import { toast } from '@seawatts/ui/sonner';
 import { useCallback, useEffect, useRef } from 'react';
 
 interface CameraProps {

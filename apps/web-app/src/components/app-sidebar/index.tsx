@@ -1,7 +1,7 @@
 'use client';
 
-import { Icons } from '@acme/ui/custom/icons';
-import { cn } from '@acme/ui/lib/utils';
+import { Icons } from '@seawatts/ui/custom/icons';
+import { cn } from '@seawatts/ui/lib/utils';
 import {
   Sidebar,
   SidebarContent,
@@ -15,7 +15,7 @@ import {
   SidebarMenuItem,
   SidebarMenuSkeleton,
   SidebarTrigger,
-} from '@acme/ui/sidebar';
+} from '@seawatts/ui/sidebar';
 import {
   BookOpen,
   Code,

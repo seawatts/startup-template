@@ -1,4 +1,4 @@
-import { debug } from '@acme/logger';
+import { debug } from '@seawatts/logger';
 import { Text } from 'ink';
 import type { FC } from 'react';
 import { matchRoute, useRouterStore } from '~/stores/router-store';

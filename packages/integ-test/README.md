@@ -148,7 +148,7 @@ The package is integrated with Turborepo. Run tests as part of the monorepo:
 
 ```bash
 # From root directory
-turbo run test --filter=@acme/integ-test
+turbo run test --filter=@seawatts/integ-test
 ```
 
 ## Test Structure

@@ -1,18 +1,18 @@
 'use client';
 
-import { IconAlertTriangle, IconCheck, IconRefresh } from '@tabler/icons-react';
-import { MetricButton } from '@unhook/analytics/components';
-import { api } from '@unhook/api/react';
-import { useHasActiveSubscription } from '@unhook/stripe/guards/client';
+import { MetricButton } from '@seawatts/analytics/components';
+import { api } from '@seawatts/api/react';
+import { useHasActiveSubscription } from '@seawatts/stripe/guards/client';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@unhook/ui/card';
-import { Icons } from '@unhook/ui/custom/icons';
-import { P } from '@unhook/ui/custom/typography';
+} from '@seawatts/ui/card';
+import { Icons } from '@seawatts/ui/custom/icons';
+import { P } from '@seawatts/ui/custom/typography';
+import { IconAlertTriangle, IconCheck, IconRefresh } from '@tabler/icons-react';
 import { toast } from 'sonner';
 
 export function SubscriptionManagementSection() {

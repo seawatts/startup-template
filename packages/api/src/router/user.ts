@@ -1,5 +1,5 @@
-import { eq } from '@acme/db';
-import { CreateUserSchema, Users } from '@acme/db/schema';
+import { eq } from '@seawatts/db';
+import { CreateUserSchema, Users } from '@seawatts/db/schema';
 import type { TRPCRouterRecord } from '@trpc/server';
 import { z } from 'zod';
 

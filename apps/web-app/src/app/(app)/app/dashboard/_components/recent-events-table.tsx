@@ -1,12 +1,16 @@
 'use client';
 
-import { MetricButton } from '@unhook/analytics/components';
-import { api } from '@unhook/api/react';
-import { extractEventName } from '@unhook/client/utils/extract-event-name';
-import { getSourceDisplayText } from '@unhook/client/utils/source-display';
-import { Badge } from '@unhook/ui/badge';
-import { TimezoneDisplay } from '@unhook/ui/custom/timezone-display';
-import { Skeleton } from '@unhook/ui/skeleton';
+import { MetricButton } from '@seawatts/analytics/components';
+
+// TODO: Re-enable when client utils are re-implemented
+// import { extractEventName } from '@seawatts/client/utils/extract-event-name';
+// import { getSourceDisplayText } from '@seawatts/client/utils/source-display';
+const extractEventName = (_event: unknown) => 'Event';
+const getSourceDisplayText = (source: string) => source;
+
+import { Badge } from '@seawatts/ui/badge';
+import { TimezoneDisplay } from '@seawatts/ui/custom/timezone-display';
+import { Skeleton } from '@seawatts/ui/skeleton';
 import {
   Table,
   TableBody,
@@ -14,8 +18,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@unhook/ui/table';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@unhook/ui/tooltip';
+} from '@seawatts/ui/table';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@seawatts/ui/tooltip';
 import { Eye, Play } from 'lucide-react';
 import posthog from 'posthog-js';
 
@@ -60,10 +64,21 @@ function getStatusBadgeVariant(status: string) {
 }
 
 export function RecentEventsTable() {
-  const events = api.events.all.useQuery({
-    limit: 50,
-    offset: 0,
-  });
+  // TODO: Re-enable when events are re-implemented
+  // const events = api.events.all.useQuery({
+  //   limit: 50,
+  //   offset: 0,
+  // });
+  const events: {
+    data: Array<{
+      id: string;
+      timestamp: Date;
+      originRequest: { method: string; body?: unknown };
+      status: string;
+      source?: string;
+    }>;
+    isLoading: boolean;
+  } = { data: [], isLoading: false };
 
   const handleViewEvent = (eventId: string) => {
     // Track the event view action
@@ -150,7 +165,7 @@ export function RecentEventsTable() {
                   </TableCell>
                   <TableCell>
                     <div className="font-mono text-sm text-muted-foreground">
-                      {getSourceDisplayText(event)}
+                      {getSourceDisplayText(event.source || 'unknown')}
                     </div>
                   </TableCell>
                   <TableCell>

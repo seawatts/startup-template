@@ -1,5 +1,5 @@
 import logoIcon from 'data-base64:~/../assets/icon.png';
-import { Button } from '@acme/ui/button';
+import { Button } from '@seawatts/ui/button';
 import { useState } from 'react';
 
 import { PitchPracticeDialog } from './dialog';

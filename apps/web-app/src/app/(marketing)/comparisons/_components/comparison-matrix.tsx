@@ -1,6 +1,6 @@
 'use client';
 
-import { MagicCard } from '@acme/ui/magicui/magic-card';
+import { MagicCard } from '@seawatts/ui/magicui/magic-card';
 import { XCircle } from 'lucide-react';
 import { motion } from 'motion/react';
 

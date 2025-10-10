@@ -1,6 +1,6 @@
-import { db } from '@acme/db/client';
-import { Orgs } from '@acme/db/schema';
 import { auth } from '@clerk/nextjs/server';
+import { db } from '@seawatts/db/client';
+import { Orgs } from '@seawatts/db/schema';
 import { eq } from 'drizzle-orm';
 import { stripe } from '../index';
 import type {

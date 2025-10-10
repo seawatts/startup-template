@@ -2,7 +2,7 @@ import {
   AlertDialogDescription,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@acme/ui/alert-dialog';
+} from '@seawatts/ui/alert-dialog';
 
 import { PITCH_PRACTICE_DESCRIPTION, PITCH_PRACTICE_TIPS } from '../constants';
 import type { GeneratePitchPracticeQuestionResponse } from '../types';

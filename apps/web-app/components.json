@@ -4,8 +4,8 @@
     "components": "@/components",
     "hooks": "@/hooks",
     "lib": "@/lib",
-    "ui": "@acme/ui/components",
-    "utils": "@acme/ui/lib/utils"
+    "ui": "@seawatts/ui/components",
+    "utils": "@seawatts/ui/lib/utils"
   },
   "iconLibrary": "lucide",
   "rsc": true,

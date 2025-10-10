@@ -1,5 +1,5 @@
 import type { WebhookEvent } from '@clerk/nextjs/server';
-import { posthog } from '@unhook/analytics/posthog/server';
+import { posthog } from '@seawatts/analytics/posthog/server';
 
 export async function handleUserDeleted(event: WebhookEvent) {
   // For 'user.deleted' events, event.data only contains minimal info

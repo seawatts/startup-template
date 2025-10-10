@@ -1,4 +1,4 @@
-import { debug } from '@acme/logger';
+import { debug } from '@seawatts/logger';
 import keytar from 'keytar';
 import type { StorageInterface } from './storage-interface';
 

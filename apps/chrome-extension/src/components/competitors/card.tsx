@@ -1,4 +1,4 @@
-import { Card } from '@acme/ui/card';
+import { Card } from '@seawatts/ui/card';
 import type React from 'react';
 
 export const CompetitorsCard: React.FC = () => {

@@ -1,4 +1,4 @@
-import { debug, defaultLogger } from '@acme/logger';
+import { debug, defaultLogger } from '@seawatts/logger';
 
 const log = debug('acme:cli');
 

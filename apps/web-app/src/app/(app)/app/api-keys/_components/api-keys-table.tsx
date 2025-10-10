@@ -1,14 +1,13 @@
 'use client';
 
-import { IconEye, IconEyeOff, IconPencil } from '@tabler/icons-react';
-import { MetricButton } from '@unhook/analytics/components';
-import { api } from '@unhook/api/react';
-import { CopyButton } from '@unhook/ui/custom/copy-button';
-import { TimezoneDisplay } from '@unhook/ui/custom/timezone-display';
-import * as Editable from '@unhook/ui/diceui/editable-input';
-import { Input } from '@unhook/ui/input';
-import { Skeleton } from '@unhook/ui/skeleton';
-import { toast } from '@unhook/ui/sonner';
+import { MetricButton } from '@seawatts/analytics/components';
+import { api } from '@seawatts/api/react';
+import { CopyButton } from '@seawatts/ui/custom/copy-button';
+import { TimezoneDisplay } from '@seawatts/ui/custom/timezone-display';
+import * as Editable from '@seawatts/ui/diceui/editable-input';
+import { Input } from '@seawatts/ui/input';
+import { Skeleton } from '@seawatts/ui/skeleton';
+import { toast } from '@seawatts/ui/sonner';
 import {
   Table,
   TableBody,
@@ -16,8 +15,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@unhook/ui/table';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@unhook/ui/tooltip';
+} from '@seawatts/ui/table';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@seawatts/ui/tooltip';
+import { IconEye, IconEyeOff, IconPencil } from '@tabler/icons-react';
 import posthog from 'posthog-js';
 import { useState } from 'react';
 import { maskApiKey } from '~/lib/mask-api-key';

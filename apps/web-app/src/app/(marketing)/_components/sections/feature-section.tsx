@@ -1,4 +1,4 @@
-import { Feature as FeatureComponent } from '@acme/ui/magicui/feature-slideshow';
+import { Feature as FeatureComponent } from '@seawatts/ui/magicui/feature-slideshow';
 import { SectionHeader } from '~/app/(marketing)/_components/section-header';
 import { siteConfig } from '~/app/(marketing)/_lib/config';
 

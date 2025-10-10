@@ -1,4 +1,4 @@
-import { Markdown } from '@acme/ui/markdown';
+import { Markdown } from '@seawatts/ui/markdown';
 
 interface FeedbackProps {
   content: string;

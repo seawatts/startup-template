@@ -1,5 +1,5 @@
 import os from 'node:os';
-import { debug } from '@acme/logger';
+import { debug } from '@seawatts/logger';
 import { $ } from 'zx';
 
 const log = debug('acme:cli:get-process-id');

@@ -2,9 +2,9 @@ import {
   AlertDialog,
   AlertDialogContent,
   AlertDialogFooter,
-} from '@acme/ui/alert-dialog';
-import { Button } from '@acme/ui/button';
-import { Icons } from '@acme/ui/icons';
+} from '@seawatts/ui/alert-dialog';
+import { Button } from '@seawatts/ui/button';
+import { Icons } from '@seawatts/ui/icons';
 import { useEffect } from 'react';
 
 import { useChromePortal } from '~/hooks/use-chrome-portal';

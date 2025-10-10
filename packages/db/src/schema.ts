@@ -1,4 +1,4 @@
-import { createId } from '@acme/id';
+import { createId } from '@seawatts/id';
 import { relations, sql } from 'drizzle-orm';
 import {
   boolean,
@@ -37,14 +37,14 @@ export const stripeSubscriptionStatusEnum = pgEnum('stripeSubscriptionStatus', [
 
 export const apiKeyUsageTypeEnum = pgEnum('apiKeyUsageType', ['mcp-server']);
 
-export const UserRoleType = z.enum(userRoleEnum.enumValues).Enum;
+export const UserRoleType = z.enum(userRoleEnum.enumValues).enum;
 export const LocalConnectionStatusType = z.enum(
   localConnectionStatusEnum.enumValues,
-).Enum;
+).enum;
 export const StripeSubscriptionStatusType = z.enum(
   stripeSubscriptionStatusEnum.enumValues,
-).Enum;
-export const ApiKeyUsageTypeType = z.enum(apiKeyUsageTypeEnum.enumValues).Enum;
+).enum;
+export const ApiKeyUsageTypeType = z.enum(apiKeyUsageTypeEnum.enumValues).enum;
 
 export const Users = pgTable('user', {
   avatarUrl: text('avatarUrl'),

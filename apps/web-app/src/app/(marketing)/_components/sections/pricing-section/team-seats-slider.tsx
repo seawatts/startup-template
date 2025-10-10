@@ -1,6 +1,6 @@
 'use client';
 
-import { Slider } from '@acme/ui/slider';
+import { Slider } from '@seawatts/ui/slider';
 import { memo } from 'react';
 import { TEAM_PRICING } from '~/app/(marketing)/_lib/config';
 

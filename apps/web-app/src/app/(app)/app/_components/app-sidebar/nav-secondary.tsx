@@ -1,14 +1,14 @@
 'use client';
 
-import type { Icon } from '@tabler/icons-react';
-import { MetricLink } from '@unhook/analytics';
+import { MetricLink } from '@seawatts/analytics';
 import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@unhook/ui/sidebar';
+} from '@seawatts/ui/sidebar';
+import type { Icon } from '@tabler/icons-react';
 import type * as React from 'react';
 
 export function NavSecondary({

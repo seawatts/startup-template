@@ -1,5 +1,5 @@
 import path from 'node:path';
-import * as schema from '@acme/db/schema';
+import * as schema from '@seawatts/db/schema';
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { migrate } from 'drizzle-orm/postgres-js/migrator';

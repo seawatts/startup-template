@@ -1,17 +1,17 @@
-import { api } from '@acme/api/chrome-extension';
-import { Button } from '@acme/ui/button';
-import { CopyButton } from '@acme/ui/copy-button';
-import { Icons } from '@acme/ui/icons';
-import { Input } from '@acme/ui/input';
-import { Label } from '@acme/ui/label';
+import { api } from '@seawatts/api/chrome-extension';
+import { Button } from '@seawatts/ui/button';
+import { CopyButton } from '@seawatts/ui/copy-button';
+import { Icons } from '@seawatts/ui/icons';
+import { Input } from '@seawatts/ui/input';
+import { Label } from '@seawatts/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@acme/ui/select';
-import { toast } from '@acme/ui/sonner';
+} from '@seawatts/ui/select';
+import { toast } from '@seawatts/ui/sonner';
 import * as React from 'react';
 
 import { useChromePortal } from '~/hooks/use-chrome-portal';

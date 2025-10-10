@@ -1,5 +1,5 @@
-import type { RouterOutputs } from '@acme/api';
-import { api } from '@acme/api/chrome-extension';
+import type { RouterOutputs } from '@seawatts/api';
+import { api } from '@seawatts/api/chrome-extension';
 import type { PropsWithChildren } from 'react';
 import { createContext, useContext, useMemo } from 'react';
 

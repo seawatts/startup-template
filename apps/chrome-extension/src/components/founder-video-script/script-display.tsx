@@ -1,5 +1,5 @@
-import { Icons } from '@acme/ui/customicons';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@acme/ui/tabs';
+import { Icons } from '@seawatts/ui/customicons';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@seawatts/ui/tabs';
 
 export interface ScriptLine {
   speaker?: string;

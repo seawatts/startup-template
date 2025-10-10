@@ -1,30 +1,33 @@
 'use client';
 
-import { api } from '@unhook/api/react';
+import { api } from '@seawatts/api/react';
 import {
   Card,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@unhook/ui/card';
-import { CopyButton } from '@unhook/ui/custom/copy-button';
-import { Skeleton } from '@unhook/ui/skeleton';
+} from '@seawatts/ui/card';
+import { CopyButton } from '@seawatts/ui/custom/copy-button';
+import { Skeleton } from '@seawatts/ui/skeleton';
 import { env } from '~/env.client';
 import { maskApiKey } from '~/lib/mask-api-key';
 
 export function SectionCards() {
   const apiKeys = api.apiKeys.allWithLastUsage.useQuery();
-  const webhooks = api.webhooks.all.useQuery();
+  // TODO: Re-enable when webhooks are re-implemented
+  // const webhooks = api.webhooks.all.useQuery();
   const org = api.org.current.useQuery();
 
-  const webhook = webhooks.data?.[0];
+  // TODO: Re-enable when webhooks are re-implemented
+  // const webhook = webhooks.data?.[0];
+  const webhook: { id: string; name: string } | null = null;
   const apiKey = apiKeys.data?.[0];
   const maskedApiKey = apiKey ? maskApiKey(apiKey.key) : '';
-  const webhookUrl = `${env.NEXT_PUBLIC_WEBHOOK_BASE_URL || env.NEXT_PUBLIC_API_URL || 'https://unhook.sh'}/${org.data?.name}/${webhook?.name}`;
+  const webhookUrl = `${env.NEXT_PUBLIC_WEBHOOK_BASE_URL || env.NEXT_PUBLIC_API_URL || 'https://acme.sh'}/${org.data?.name}/webhook-name`;
   const webhookConfigComments = `
-# Unhook Webhook Configuration
-# For more information, visit: https://docs.unhook.sh/configuration
+# acme Webhook Configuration
+# For more information, visit: https://docs.acme.sh/configuration
 #
 # Schema:
 #   webhookId: string                    # Unique identifier for your webhook
@@ -69,7 +72,7 @@ delivery:
                 <span className="ml-2">
                   <CopyButton
                     size="sm"
-                    text={webhook?.id ?? ''}
+                    text={(webhook as { id: string; name: string }).id ?? ''}
                     variant="outline"
                   />
                 </span>
@@ -103,7 +106,7 @@ delivery:
               />
             </div>
             <div className="text-muted-foreground text-xs mt-1">
-              Put this in your unhook.yaml file
+              Put this in your acme.yaml file
             </div>
           </div>
         </CardFooter>
@@ -222,12 +225,12 @@ delivery:
           <div className="flex flex-col gap-1 w-full">
             <div className="flex items-center gap-2">
               <span className="font-mono bg-muted px-2 py-1 rounded text-xs select-all">
-                env UNHOOK_API_KEY=
-                {maskedApiKey} npx -y @unhook/mcp
+                env acme_API_KEY=
+                {maskedApiKey} npx -y @seawatts/mcp
               </span>
               <CopyButton
                 size="sm"
-                text={`env UNHOOK_API_KEY=${apiKey?.key} npx -y @unhook/mcp`}
+                text={`env acme_API_KEY=${apiKey?.key} npx -y @seawatts/mcp`}
                 variant="outline"
               />
             </div>

@@ -3,10 +3,10 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@acme/ui/accordion';
-import { Button } from '@acme/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';
-import { Icons } from '@acme/ui/icons';
+} from '@seawatts/ui/accordion';
+import { Button } from '@seawatts/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@seawatts/ui/card';
+import { Icons } from '@seawatts/ui/icons';
 import { formatDistanceToNow, isValid, parseISO } from 'date-fns';
 
 import '../style.css';
@@ -137,7 +137,7 @@ function ChangelogPage() {
               </Button>
             </div>
             <Button asChild variant="outline">
-              <a href="mailto:vibes@acme.ai">
+              <a href="mailto:vibes@seawatts.ai">
                 <Icons.Mail className="mr-2" />
                 Contact Support
               </a>

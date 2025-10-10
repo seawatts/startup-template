@@ -9,6 +9,6 @@
     "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json"
   },
   "exclude": ["node_modules", "build", "assets", "scripts"],
-  "extends": "@acme/tsconfig/base.json",
+  "extends": "@seawatts/tsconfig/base.json",
   "include": [".", ".plasmo/index.d.ts", "sst-env.d.ts"]
 }

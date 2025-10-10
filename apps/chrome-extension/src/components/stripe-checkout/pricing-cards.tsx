@@ -1,6 +1,7 @@
-import { api } from '@acme/api/chrome-extension';
-import { Badge } from '@acme/ui/badge';
-import { Button } from '@acme/ui/button';
+import { useUser } from '@clerk/chrome-extension';
+import { api } from '@seawatts/api/chrome-extension';
+import { Badge } from '@seawatts/ui/badge';
+import { Button } from '@seawatts/ui/button';
 import {
   Card,
   CardContent,
@@ -8,9 +9,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@acme/ui/card';
-import { Icons } from '@acme/ui/icons';
-import { useUser } from '@clerk/chrome-extension';
+} from '@seawatts/ui/card';
+import { Icons } from '@seawatts/ui/icons';
 import { useMemo } from 'react';
 
 import { useCompany } from '../company/context';

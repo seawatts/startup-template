@@ -1,5 +1,5 @@
-import { debug, defaultLogger } from '@acme/logger';
-import { VSCodeOutputDestination } from '@acme/logger/destinations/vscode-output';
+import { debug, defaultLogger } from '@seawatts/logger';
+import { VSCodeOutputDestination } from '@seawatts/logger/destinations/vscode-output';
 import * as vscode from 'vscode';
 import { registerAuthCommands } from './auth/commands';
 import { registerOutputCommands } from './commands/output.commands';

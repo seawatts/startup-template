@@ -1,4 +1,4 @@
-import { OrbitingCircles } from '@acme/ui/magicui/orbiting-circle';
+import { OrbitingCircles } from '@seawatts/ui/magicui/orbiting-circle';
 import { Icons } from '~/app/(marketing)/_components/icons';
 
 export function SecondBentoAnimation() {
