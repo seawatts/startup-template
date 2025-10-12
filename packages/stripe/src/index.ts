@@ -14,9 +14,18 @@ import {
 import { env } from './env.server';
 
 // Initialize Stripe with the secret key
-export const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
-  typescript: true,
-});
+// Note: This will fail at runtime if STRIPE_SECRET_KEY is not configured
+export const stripe = new Stripe(
+  env.STRIPE_SECRET_KEY ??
+    (() => {
+      throw new Error(
+        'STRIPE_SECRET_KEY is required. Please configure your Stripe credentials.',
+      );
+    })(),
+  {
+    typescript: true,
+  },
+);
 
 // Create a checkout session for a new subscription
 export async function createCheckoutSession({
@@ -174,11 +183,15 @@ export function constructWebhookEvent(
   body: string | Buffer,
   signature: string,
 ): Stripe.Event {
-  return stripe.webhooks.constructEvent(
-    body,
-    signature,
-    env.STRIPE_WEBHOOK_SECRET,
-  );
+  const webhookSecret =
+    env.STRIPE_WEBHOOK_SECRET ??
+    (() => {
+      throw new Error(
+        'STRIPE_WEBHOOK_SECRET is required. Please configure your Stripe credentials.',
+      );
+    })();
+
+  return stripe.webhooks.constructEvent(body, signature, webhookSecret);
 }
 
 // Get or create a Stripe customer

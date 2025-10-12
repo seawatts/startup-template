@@ -16,11 +16,13 @@ export const env = createEnv({
    * This way you can ensure the app isn't built with invalid env vars.
    */
   server: {
-    STRIPE_PUBLISHABLE_KEY: z.string(),
-    STRIPE_SECRET_KEY: z.string(),
-    STRIPE_WEBHOOK_SECRET: z.string(),
+    STRIPE_PUBLISHABLE_KEY: z.string().optional(),
+    STRIPE_SECRET_KEY: z.string().optional(),
+    STRIPE_WEBHOOK_SECRET: z.string().optional(),
   },
 
   skipValidation:
-    !!process.env.CI || process.env.npm_lifecycle_event === 'lint',
+    !!process.env.CI ||
+    process.env.npm_lifecycle_event === 'lint' ||
+    process.env.npm_lifecycle_event === 'typecheck',
 });

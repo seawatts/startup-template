@@ -4,9 +4,18 @@ import Stripe from 'stripe';
 import { env } from '../src/env.server';
 
 // Initialize Stripe with the secret key
-const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
-  typescript: true,
-});
+// Note: This script requires STRIPE_SECRET_KEY to be configured
+const stripe = new Stripe(
+  env.STRIPE_SECRET_KEY ??
+    (() => {
+      throw new Error(
+        'STRIPE_SECRET_KEY is required. Please configure your Stripe credentials.',
+      );
+    })(),
+  {
+    typescript: true,
+  },
+);
 
 async function deleteCustomerSubscriptions(customerId: string): Promise<void> {
   try {

@@ -10,7 +10,7 @@ const nextConfig = {
     browserDebugInfoInTerminal: true,
 
     // cacheLife: true,
-    cacheComponents: true,
+    // cacheComponents: true,
     // Activate new client-side router improvements
     clientSegmentCache: true, // will be renamed to cacheComponents in Next.js 16
 
@@ -22,7 +22,7 @@ const nextConfig = {
     // Enable support for `global-not-found`, which allows you to more easily define a global 404 page.
     globalNotFound: true,
     scrollRestoration: true,
-    turbopackPersistentCaching: true,
+    // turbopackPersistentCaching: true,
     useCache: true,
   },
   images: {
@@ -51,6 +51,15 @@ const nextConfig = {
   // removeConsole: true,
   // },
   reactStrictMode: true,
+  transpilePackages: [
+    '@seawatts/analytics',
+    '@seawatts/api',
+    '@seawatts/db',
+    '@seawatts/id',
+    '@seawatts/ui',
+    '@seawatts/logger',
+    '@seawatts/stripe',
+  ],
   typescript: { ignoreBuildErrors: true },
 };
 
@@ -66,10 +75,13 @@ const configWithPlugins = withPlugins.reduce(
 );
 
 /** @type {import('next').NextConfig} */
-const finalConfig = withPostHogConfig(configWithPlugins, {
-  envId: process.env.POSTHOG_ENV_ID, // Environment ID
-  host: process.env.NEXT_PUBLIC_POSTHOG_HOST, // (optional), defaults to https://us.posthog.com
-  personalApiKey: process.env.POSTHOG_PERSONAL_API_KEY, // Personal API Key
-});
+const finalConfig =
+  process.env.POSTHOG_PERSONAL_API_KEY && process.env.POSTHOG_ENV_ID
+    ? withPostHogConfig(configWithPlugins, {
+        envId: process.env.POSTHOG_ENV_ID, // Environment ID
+        host: process.env.NEXT_PUBLIC_POSTHOG_HOST, // (optional), defaults to https://us.posthog.com
+        personalApiKey: process.env.POSTHOG_PERSONAL_API_KEY, // Personal API Key
+      })
+    : configWithPlugins;
 
 export default finalConfig;

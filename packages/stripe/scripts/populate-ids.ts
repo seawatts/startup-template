@@ -1,15 +1,10 @@
 #!/usr/bin/env bun
 
-import { readFileSync, writeFileSync } from 'node:fs';
+import { copyFileSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import Stripe from 'stripe';
 import { env } from '../src/env.server';
 import { PRICE_LOOKUP_KEYS } from './billing-ids.template';
-
-// Initialize Stripe
-const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
-  typescript: true,
-});
 
 // Define the mapping of lookup keys to their corresponding product names
 const LOOKUP_KEY_MAPPINGS = {
@@ -27,7 +22,7 @@ const LOOKUP_KEY_MAPPINGS = {
   seawatts_team_2025_01_yearly: { name: 'TEAM_PLAN', type: 'product' },
 } as const;
 
-async function fetchStripeIds() {
+async function fetchStripeIds(stripe: Stripe) {
   console.log('🔍 Fetching Stripe IDs...');
 
   const productIds: Record<string, string> = {};
@@ -124,9 +119,33 @@ function generateBillingTypesFile(
 
 async function main() {
   try {
+    // Check if Stripe credentials are configured
+    if (!env.STRIPE_SECRET_KEY) {
+      console.log(
+        '⚠️  Skipping Stripe ID generation - STRIPE_SECRET_KEY not configured',
+      );
+      console.log('📋 Using template file with placeholder IDs');
+
+      // Copy template to generated file so imports work
+      const templatePath = join(import.meta.dir, 'billing-ids.template.ts');
+      const outputPath = join(
+        import.meta.dir,
+        '../src/billing-ids.generated.ts',
+      );
+      copyFileSync(templatePath, outputPath);
+      console.log('✅ Generated billing-ids.generated.ts with placeholder IDs');
+
+      return;
+    }
+
     console.log('🚀 Starting billing ids generation...');
 
-    const { productIds, priceIds } = await fetchStripeIds();
+    // Initialize Stripe only when credentials are available
+    const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
+      typescript: true,
+    });
+
+    const { productIds, priceIds } = await fetchStripeIds(stripe);
 
     console.log('📊 Found IDs:');
     console.log('Products:', productIds);

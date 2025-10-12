@@ -1,9 +1,18 @@
 import Stripe from 'stripe';
 import { env } from '../src/env.server';
 
-const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
-  typescript: true,
-});
+// Note: This script requires STRIPE_SECRET_KEY to be configured
+const stripe = new Stripe(
+  env.STRIPE_SECRET_KEY ??
+    (() => {
+      throw new Error(
+        'STRIPE_SECRET_KEY is required. Please configure your Stripe credentials.',
+      );
+    })(),
+  {
+    typescript: true,
+  },
+);
 
 // Constants
 const CONSTANTS = {
