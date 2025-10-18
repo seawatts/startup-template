@@ -42,9 +42,7 @@ export async function handleOrganizationMembershipCreated(event: WebhookEvent) {
       },
       target: [OrgMembers.userId, OrgMembers.orgId],
     })
-    .returning({
-      id: OrgMembers.id,
-    });
+    .returning();
 
   if (!member) {
     return new Response('Failed to create organization membership', {

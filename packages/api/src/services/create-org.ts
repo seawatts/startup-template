@@ -3,6 +3,8 @@ import {
   type Organization,
   type User,
 } from '@clerk/nextjs/server';
+import { db } from '@seawatts/db/client';
+import { ApiKeys, Orgs, Users } from '@seawatts/db/schema';
 import { generateRandomName } from '@seawatts/id';
 import {
   BILLING_INTERVALS,
@@ -13,8 +15,6 @@ import {
 } from '@seawatts/stripe';
 import { eq } from 'drizzle-orm';
 import type Stripe from 'stripe';
-import { db } from '../client';
-import { ApiKeys, Orgs, Users } from '../schema';
 
 type Transaction = Parameters<Parameters<typeof db.transaction>[0]>[0];
 

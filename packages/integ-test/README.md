@@ -60,7 +60,7 @@ The tests support the following environment variables:
 - `USE_LOCAL_DB=true` - Use local Supabase instance instead of test containers
 - `CI=true` - Run in CI mode with appropriate reporters
 - `DATABASE_URL` - Override default database URL
-- `SUPABASE_URL` - Override default Supabase URL
+- `NEXT_PUBLIC_SUPABASE_URL` - Override default Supabase URL
 - `SUPABASE_ANON_KEY` - Override default Supabase anon key
 - `SUPABASE_SERVICE_ROLE_KEY` - Override default Supabase service role key
 
@@ -130,7 +130,7 @@ jobs:
           CI: true
           USE_LOCAL_DB: true
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test
-          SUPABASE_URL: http://localhost:54321
+          NEXT_PUBLIC_SUPABASE_URL: http://localhost:54321
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
 

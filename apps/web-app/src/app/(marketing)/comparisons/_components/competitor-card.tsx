@@ -79,7 +79,6 @@ export function CompetitorCard({ competitor, index }: CompetitorCardProps) {
                   rel="noopener noreferrer"
                   target="_blank"
                 >
-                  {/** biome-ignore lint/performance/noImgElement: no need*/}
                   <img
                     alt={`${competitor.name} logo`}
                     className="rounded-lg"

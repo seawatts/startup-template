@@ -2,7 +2,7 @@
   "compilerOptions": {
     "outDir": "dist",
     "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json",
-    "types": ["vitest/globals", "node", "ws"]
+    "types": ["vitest/globals", "node"]
   },
   "exclude": ["node_modules"],
   "extends": "@seawatts/tsconfig/node.json",

@@ -1,10 +1,10 @@
 import { clerkClient } from '@clerk/nextjs/server';
-import { upsertOrg } from '@seawatts/db';
 import { db } from '@seawatts/db/client';
 import { AuthCodes } from '@seawatts/db/schema';
 import { TRPCError } from '@trpc/server';
 import { and, eq, gte, isNull } from 'drizzle-orm';
 import { z } from 'zod';
+import { upsertOrg } from '../services';
 import { protectedProcedure, publicProcedure } from '../trpc';
 
 export const authRouter = {

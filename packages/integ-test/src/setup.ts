@@ -20,7 +20,7 @@ beforeAll(async () => {
   // Set global test environment variables
   process.env.DATABASE_URL = testDb.connectionString;
   process.env.POSTGRES_URL = testDb.connectionString;
-  process.env.SUPABASE_URL = testDb.supabaseUrl;
+  process.env.NEXT_PUBLIC_SUPABASE_URL = testDb.supabaseUrl;
   process.env.SUPABASE_ANON_KEY = testDb.supabaseAnonKey;
   process.env.SUPABASE_SERVICE_ROLE_KEY = testDb.supabaseServiceRoleKey;
 

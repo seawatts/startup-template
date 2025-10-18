@@ -81,7 +81,9 @@ async function isTableInPublication(tableName: string): Promise<boolean> {
       AND tablename = ${tableName}
     ) as exists;
   `);
-  return result.rows[0]?.exists ?? false;
+  return Array.isArray(result)
+    ? (result[0]?.exists ?? false)
+    : (result.rows[0]?.exists ?? false);
 }
 
 async function enableRealtimeForTable(tableName: string) {
@@ -110,7 +112,9 @@ async function isPolicyExists(policyName: string): Promise<boolean> {
       AND tablename = 'messages'
     ) as exists;
   `);
-  return result.rows[0]?.exists ?? false;
+  return Array.isArray(result)
+    ? (result[0]?.exists ?? false)
+    : (result.rows[0]?.exists ?? false);
 }
 
 async function createRealtimePolicy(policy: (typeof realtimePolicies)[0]) {

@@ -23,10 +23,7 @@ export async function handleSessionCreated(event: WebhookEvent) {
       lastLoggedInAt: new Date(),
     })
     .where(eq(Users.clerkId, sessionData.user_id))
-    .returning({
-      email: Users.email,
-      id: Users.id,
-    });
+    .returning();
 
   if (!user) {
     return new Response('User not found on session.created', { status: 400 });

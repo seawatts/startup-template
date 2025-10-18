@@ -1,21 +1,44 @@
 {
+  "catalog": {
+    "@clerk/nextjs": "6.33.7",
+    "@supabase/supabase-js": "2.75.1",
+    "@t3-oss/env-core": "0.13.8",
+    "@t3-oss/env-nextjs": "0.13.8",
+    "@tanstack/react-query": "5.90.5",
+    "@trpc/client": "11.6.0",
+    "@trpc/react-query": "11.6.0",
+    "@trpc/server": "11.6.0",
+    "@types/bun": "1.2.23",
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2",
+    "date-fns": "4.1.0",
+    "drizzle-orm": "0.44.6",
+    "drizzle-zod": "0.8.3",
+    "next": "15.5.6",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "stripe": "19.1.0",
+    "superjson": "2.2.2",
+    "tailwindcss": "4.1.14",
+    "typescript": "5.9.3",
+    "zod": "4.1.12",
+    "zustand": "5.0.8"
+  },
   "commitlint": {
     "extends": [
       "@seawatts/commitlint-config"
     ]
   },
   "devDependencies": {
-    "@biomejs/biome": "2.2.5",
+    "@biomejs/biome": "2.2.6",
     "@changesets/changelog-github": "0.5.1",
     "@changesets/cli": "2.29.7",
     "@commitlint/cli": "20.1.0",
     "@seawatts/commitlint-config": "workspace:*",
     "@testing-library/react": "16.3.0",
-    "@turbo/gen": "2.5.8",
-    "@types/bun": "1.3.0",
-    "bun": "1.3.0",
-    "checkly": "6.7.0",
-    "knip": "5.64.3",
+    "@types/bun": "1.2.23",
+    "checkly": "6.8.1",
+    "knip": "5.66.0",
     "lefthook": "1.13.6",
     "turbo": "2.5.8",
     "typescript": "5.9.3",
@@ -28,7 +51,7 @@
   "overrides": {
     "@types/vscode": "1.96.0"
   },
-  "packageManager": "bun@1.2.20",
+  "packageManager": "bun@1.2.23",
   "private": true,
   "scripts": {
     "build": "turbo run build",
@@ -55,7 +78,7 @@
     "format": "biome check",
     "format:ci": "biome ci",
     "format:fix": "biome check --write",
-    "knip": "knip --include files,dependencies",
+    "knip": "knip --include dependencies",
     "lint:ws": "bunx sherif@latest",
     "postinstall": "bun lint:ws",
     "publish": "turbo run build --filter=./apps/cli... --filter=./packages/client... --filter=./apps/vscode-extension... && changeset publish",

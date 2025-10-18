@@ -35,10 +35,7 @@ export async function handleOrganizationMembershipUpdated(event: WebhookEvent) {
       role: membershipData.role === 'admin' ? 'admin' : 'user',
     })
     .where(and(eq(OrgMembers.userId, user.id), eq(OrgMembers.orgId, org.id)))
-    .returning({
-      id: OrgMembers.id,
-      role: OrgMembers.role,
-    });
+    .returning();
 
   if (!member) {
     return new Response('Organization membership not found on update', {

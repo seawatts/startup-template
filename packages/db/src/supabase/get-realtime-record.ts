@@ -366,5 +366,5 @@ export async function getRealtimeSubscriptionsByWebhookId(
     ORDER BY created_at DESC
   `);
 
-  return result.rows;
+  return Array.isArray(result) ? result : result.rows;
 }

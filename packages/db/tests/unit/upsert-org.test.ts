@@ -209,14 +209,14 @@ mock.module('../../src/schema', () => {
   };
 });
 
+// Import after all mocks are set up
+import { upsertOrg } from '@seawatts/api/services';
 import type {
   ApiKeyType,
   OrgMembersType,
   OrgType,
   UserType,
 } from '../../src/schema';
-// Import after all mocks are set up
-import { upsertOrg } from '../../src/utils/upsert-org';
 
 describe('upsertOrg', () => {
   beforeEach(() => {

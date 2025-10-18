@@ -38,9 +38,7 @@ export async function handleUserCreated(event: WebhookEvent) {
       },
       target: Users.clerkId,
     })
-    .returning({
-      id: Users.id,
-    });
+    .returning();
 
   if (!user) {
     return new Response('User not found on user.created', { status: 400 });

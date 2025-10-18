@@ -20,15 +20,23 @@ export const userRouter = {
     }),
   create: protectedProcedure
     .input(CreateUserSchema)
-    .mutation(({ ctx, input }) => {
-      return ctx.db.insert(Users).values({ ...input, id: crypto.randomUUID() });
+    .mutation(async ({ ctx, input }) => {
+      const [user] = await ctx.db
+        .insert(Users)
+        .values({ ...input, id: crypto.randomUUID() })
+        .returning();
+      return user;
     }),
   current: protectedProcedure.query(({ ctx }) => {
     return ctx.db.query.Users.findFirst({
       where: eq(Users.id, ctx.auth.userId),
     });
   }),
-  delete: publicProcedure.input(z.string()).mutation(({ input, ctx }) => {
-    return ctx.db.delete(Users).where(eq(Users.id, input));
+  delete: publicProcedure.input(z.string()).mutation(async ({ input, ctx }) => {
+    const result = await ctx.db
+      .delete(Users)
+      .where(eq(Users.id, input))
+      .returning();
+    return result[0];
   }),
 } satisfies TRPCRouterRecord;

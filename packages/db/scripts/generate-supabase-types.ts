@@ -9,8 +9,18 @@ const FINAL_FILE = join('src', 'supabase', 'types.generated.ts');
 
 async function main() {
   try {
+    // Use database URL if project ID is not available
+    const projectId = process.env.SUPABASE_PROJECT_ID;
+    const dbUrl = process.env.POSTGRES_URL || process.env.DATABASE_URL;
+
     // Generate types
-    await $`npx supabase gen types typescript --project-id ${process.env.SUPABASE_PROJECT_ID} --schema public > ${TEMP_FILE}`;
+    if (projectId?.trim()) {
+      await $`npx supabase gen types typescript --project-id ${projectId} --schema public > ${TEMP_FILE}`;
+    } else if (dbUrl) {
+      await $`npx supabase gen types typescript --db-url ${dbUrl} --schema public > ${TEMP_FILE}`;
+    } else {
+      throw new Error('Either SUPABASE_PROJECT_ID or POSTGRES_URL must be set');
+    }
 
     // Read the generated types
     const generatedTypes = await fs.readFile(TEMP_FILE, 'utf-8');

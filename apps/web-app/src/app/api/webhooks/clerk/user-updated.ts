@@ -21,10 +21,7 @@ export async function handleUserUpdated(event: WebhookEvent) {
       lastName: userData.last_name,
     })
     .where(eq(Users.clerkId, userData.id))
-    .returning({
-      email: Users.email,
-      id: Users.id,
-    });
+    .returning();
 
   if (!user) {
     return new Response('User not found on user.update', { status: 400 });

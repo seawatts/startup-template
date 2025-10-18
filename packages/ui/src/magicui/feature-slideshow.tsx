@@ -250,7 +250,6 @@ export const Feature = ({
           />
 
           {/* Main Image */}
-          {/** biome-ignore lint/performance/noImgElement: we need to use img for the image */}
           <motion.img
             alt={currentItem.title}
             animate={{
@@ -408,7 +407,6 @@ export const Feature = ({
                 )}
                 {item.image && (
                   <div className="w-full h-48 rounded-lg border border-border overflow-hidden">
-                    {/** biome-ignore lint/performance/noImgElement: we need to use img for the image */}
                     <img
                       alt={item.title}
                       className="w-full h-full object-cover"

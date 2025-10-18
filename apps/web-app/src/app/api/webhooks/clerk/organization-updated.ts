@@ -14,10 +14,7 @@ export async function handleOrganizationUpdated(event: WebhookEvent) {
       name: orgData.name,
     })
     .where(eq(Orgs.clerkOrgId, orgData.id))
-    .returning({
-      id: Orgs.id,
-      name: Orgs.name,
-    });
+    .returning();
 
   if (!org) {
     return new Response('Organization not found on organization.updated', {

@@ -38,9 +38,7 @@ export async function handleOrganizationCreated(event: WebhookEvent) {
       },
       target: Orgs.clerkOrgId,
     })
-    .returning({
-      id: Orgs.id,
-    });
+    .returning();
 
   if (!org) {
     return new Response('Failed to create organization', { status: 400 });

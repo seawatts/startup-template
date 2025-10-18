@@ -1,13 +1,15 @@
 {
   "dependencies": {
-    "@clerk/backend": "2.17.2",
+    "@clerk/backend": "2.18.3",
     "@seawatts/db": "workspace:*",
     "@seawatts/id": "workspace:*",
-    "drizzle-orm": "0.44.6"
+    "@t3-oss/env-nextjs": "catalog:",
+    "drizzle-orm": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@seawatts/tsconfig": "workspace:*",
-    "typescript": "5.9.3"
+    "typescript": "catalog:"
   },
   "exports": {
     ".": "./src/index.ts"

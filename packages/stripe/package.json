@@ -1,14 +1,22 @@
 {
   "dependencies": {
+    "@clerk/nextjs": "catalog:",
     "@seawatts/analytics": "workspace:*",
-    "@t3-oss/env-core": "0.13.8",
-    "next": "15.5.4",
-    "stripe": "19.1.0",
-    "zod": "4.1.12"
+    "@seawatts/db": "workspace:*",
+    "@t3-oss/env-core": "catalog:",
+    "drizzle-orm": "catalog:",
+    "next": "catalog:",
+    "next-safe-action": "8.0.11",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "stripe": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@seawatts/tsconfig": "workspace:*",
-    "typescript": "5.9.3"
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "typescript": "catalog:"
   },
   "exports": {
     ".": "./src/index.ts",
