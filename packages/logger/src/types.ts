@@ -27,6 +27,7 @@ export interface LoggerProps {
   defaultNamespace?: string;
   destinations?: LogDestination[];
   enabledNamespaces?: Set<string>;
+  minLogLevel?: LogLevel; // Minimum log level to output (default: 'info')
 }
 
 export interface ILogger {

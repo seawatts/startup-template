@@ -1,5 +1,5 @@
-import { appendFile, mkdir, rename } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
+import { appendFile, mkdir, rename, unlink } from 'node:fs/promises';
+import { basename, dirname, extname, join } from 'node:path';
 import type { LogDestination, LogMessage } from '../types';
 import { formatLogArgs } from '../utils';
 
@@ -48,7 +48,7 @@ export class RollingFileDestination implements LogDestination {
     this.filepath = props.filepath;
     this.maxSize = props.maxSize ?? 10 * 1024 * 1024; // 10MB default
     this.maxFiles = props.maxFiles ?? 5;
-    this.rotationInterval = props.rotationInterval ?? 24 * 60 * 60 * 1000; // 24 hours default
+    this.rotationInterval = props.rotationInterval ?? 1 * 60 * 60 * 1000; // 1 hour default
 
     if (props.createDirectory !== false) {
       mkdir(dirname(this.filepath), { recursive: true }).catch((error) => {
@@ -80,38 +80,82 @@ export class RollingFileDestination implements LogDestination {
   }
 
   private async rotate(): Promise<void> {
-    // Shift existing log files
-    for (let i = this.maxFiles - 1; i >= 0; i--) {
-      const source = i === 0 ? this.filepath : this.getBackupPath(i);
-      const target = this.getBackupPath(i + 1);
+    // Create a timestamped backup of the current log file
+    const timestamp = new Date()
+      .toISOString()
+      .replace(/[:.]/g, '-')
+      .slice(0, 19);
+    const backupPath = this.getBackupPath(timestamp);
 
-      try {
-        const sourceFile = Bun.file(source);
-        if (await sourceFile.exists()) {
-          await rename(source, target);
-        }
-      } catch (error) {
-        console.error(
-          `Failed to rotate log file from ${source} to ${target}:`,
-          error,
-        );
+    try {
+      const sourceFile = Bun.file(this.filepath);
+      if (await sourceFile.exists()) {
+        await rename(this.filepath, backupPath);
       }
+    } catch (error) {
+      console.error(
+        `Failed to rotate log file from ${this.filepath} to ${backupPath}:`,
+        error,
+      );
     }
+
+    // Clean up old log files if we exceed maxFiles
+    await this.cleanupOldLogs();
 
     this.currentSize = 0;
     this.lastRotation = Date.now();
   }
 
-  private getBackupPath(index: number): string {
+  private async cleanupOldLogs(): Promise<void> {
+    try {
+      const dir = dirname(this.filepath);
+      const ext = extname(this.filepath);
+      const base = basename(this.filepath, ext);
+
+      // Get all log files matching the pattern
+      const dirHandle = await Bun.file(dir).exists();
+      if (!dirHandle) return;
+
+      // Read directory and filter for backup log files
+      const files: string[] = [];
+      for await (const entry of new Bun.Glob(`${base}.*${ext}`).scan(dir)) {
+        if (entry !== basename(this.filepath)) {
+          files.push(join(dir, entry));
+        }
+      }
+
+      // Sort by modification time (oldest first)
+      const filesWithStats = await Promise.all(
+        files.map(async (file) => {
+          const stat = await Bun.file(file).stat();
+          return { file, mtime: stat.mtime };
+        }),
+      );
+
+      filesWithStats.sort((a, b) => a.mtime.getTime() - b.mtime.getTime());
+
+      // Delete oldest files if we exceed maxFiles
+      const filesToDelete = filesWithStats.slice(
+        0,
+        Math.max(0, filesWithStats.length - this.maxFiles + 1),
+      );
+      for (const { file } of filesToDelete) {
+        try {
+          await unlink(file);
+        } catch (error) {
+          console.error(`Failed to delete old log file ${file}:`, error);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to cleanup old logs:', error);
+    }
+  }
+
+  private getBackupPath(timestamp: string): string {
     const dir = dirname(this.filepath);
-    const ext = this.filepath.includes('.')
-      ? this.filepath.split('.').pop()
-      : '';
-    const base = this.filepath.substring(
-      this.filepath.lastIndexOf('/') + 1,
-      ext ? -ext.length - 1 : undefined,
-    );
-    return join(dir, `${base}.${index}${ext ? `.${ext}` : ''}`);
+    const ext = extname(this.filepath);
+    const base = basename(this.filepath, ext);
+    return join(dir, `${base}.${timestamp}${ext}`);
   }
 
   private async checkRotation(messageSize: number): Promise<void> {

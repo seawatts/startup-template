@@ -9,6 +9,7 @@ export interface LoggerProps {
   useColors?: boolean;
   destinations?: LogDestination[];
   flushInterval?: number;
+  minLogLevel?: LogLevel; // Minimum log level to output (default: 'info')
 }
 
 // Store original console methods
@@ -20,7 +21,9 @@ export const originalConsole: Record<ConsoleMethod, typeof console.log> = {
   warn: console.warn,
 };
 
-const isBrowser = typeof window !== 'undefined';
+const isBrowser =
+  typeof globalThis !== 'undefined' &&
+  typeof (globalThis as { window?: unknown }).window !== 'undefined';
 
 function formatMessage(message: string, ...args: unknown[]): string {
   if (args.length === 0) return message;
@@ -45,7 +48,15 @@ interface BufferedLogMessage extends LogMessage {
   sequence: number;
 }
 
-export class SeawattsLogger {
+// Log level hierarchy (lower number = higher priority)
+const LOG_LEVEL_PRIORITY: Record<LogLevel, number> = {
+  debug: 0,
+  error: 3,
+  info: 1,
+  warn: 2,
+};
+
+export class Logger {
   private enabledNamespaces: Set<string>;
   private defaultNamespace: string;
   private useColors: boolean;
@@ -54,6 +65,7 @@ export class SeawattsLogger {
   private flushInterval: number;
   private flushTimer: NodeJS.Timeout | null = null;
   private sequence = 0;
+  private minLogLevel: LogLevel;
 
   constructor(props: LoggerProps = {}) {
     this.enabledNamespaces = new Set(props.enabledNamespaces);
@@ -61,12 +73,20 @@ export class SeawattsLogger {
     this.useColors = props.useColors ?? isBrowser;
     this.destinations = new Set(props.destinations || []);
     this.flushInterval = props.flushInterval ?? 50; // Default 50ms
+    this.minLogLevel = props.minLogLevel ?? 'info'; // Default to info level
 
     // Start the flush timer
     this.startFlushTimer();
 
     // Intercept console methods
     // this.interceptConsole();
+  }
+
+  /**
+   * Check if a log level should be written based on minLogLevel
+   */
+  private shouldLog(level: LogLevel): boolean {
+    return LOG_LEVEL_PRIORITY[level] >= LOG_LEVEL_PRIORITY[this.minLogLevel];
   }
 
   private startFlushTimer(): void {
@@ -147,8 +167,8 @@ export class SeawattsLogger {
   private isNamespaceEnabled(namespace: string): boolean {
     if (this.enabledNamespaces.has('*')) return true;
 
-    // Support wildcard patterns like 'seawatts:*'
-    for (const pattern of this.enabledNamespaces) {
+    // Support wildcard patterns like 'cove:*'
+    for (const pattern of Array.from(this.enabledNamespaces)) {
       if (pattern.endsWith('*') && namespace.startsWith(pattern.slice(0, -1))) {
         return true;
       }
@@ -258,13 +278,52 @@ export class SeawattsLogger {
     this.enabledNamespaces.delete(namespace);
   }
 
+  // Change minimum log level at runtime
+  setMinLogLevel(level: LogLevel): void {
+    this.minLogLevel = level;
+  }
+
   // Create a debug function for a specific namespace
   debug(namespace: string): (...args: unknown[]) => Promise<void> {
     return async (...args: unknown[]) => {
       if (!this.isNamespaceEnabled(namespace)) return;
+      if (!this.shouldLog('debug')) return;
 
       // Write to destinations with metadata
       this.writeToDestinations('debug', namespace, args);
+    };
+  }
+
+  // Create an info function for a specific namespace
+  info(namespace: string): (...args: unknown[]) => Promise<void> {
+    return async (...args: unknown[]) => {
+      if (!this.isNamespaceEnabled(namespace)) return;
+      if (!this.shouldLog('info')) return;
+
+      // Write to destinations with metadata
+      this.writeToDestinations('info', namespace, args);
+    };
+  }
+
+  // Create a warn function for a specific namespace
+  warn(namespace: string): (...args: unknown[]) => Promise<void> {
+    return async (...args: unknown[]) => {
+      if (!this.isNamespaceEnabled(namespace)) return;
+      if (!this.shouldLog('warn')) return;
+
+      // Write to destinations with metadata
+      this.writeToDestinations('warn', namespace, args);
+    };
+  }
+
+  // Create an error function for a specific namespace
+  error(namespace: string): (...args: unknown[]) => Promise<void> {
+    return async (...args: unknown[]) => {
+      if (!this.isNamespaceEnabled(namespace)) return;
+      if (!this.shouldLog('error')) return;
+
+      // Write to destinations with metadata
+      this.writeToDestinations('error', namespace, args);
     };
   }
 
