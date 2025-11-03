@@ -4,7 +4,9 @@ import { withPostHogConfig } from '@posthog/nextjs-config';
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // dynamicIO: true,
-  eslint: { ignoreDuringBuilds: true },
+  // Note: eslint configuration is no longer supported in next.config.ts
+  // Use next lint options or .eslintrc instead
+  enablePrerenderSourceMaps: true,
   experimental: {
     // Forward browser logs to the terminal for easier debugging
     browserDebugInfoInTerminal: true,
@@ -14,11 +16,6 @@ const nextConfig = {
     // Activate new client-side router improvements
     clientSegmentCache: true, // will be renamed to cacheComponents in Next.js 16
 
-    // Explore route composition and segment overrides via DevTools
-    devtoolSegmentExplorer: true,
-    // Enable new caching and pre-rendering behavior
-
-    enablePrerenderSourceMaps: true,
     // Enable support for `global-not-found`, which allows you to more easily define a global 404 page.
     globalNotFound: true,
     scrollRestoration: true,
@@ -58,8 +55,12 @@ const nextConfig = {
     '@seawatts/id',
     '@seawatts/ui',
     '@seawatts/logger',
-    '@seawatts/stripe',
+    '@seawatts/zustand',
   ],
+  turbopack: {
+    // Set the workspace root to silence the lockfile warning
+    root: '../..',
+  },
   typescript: { ignoreBuildErrors: true },
 };
 
