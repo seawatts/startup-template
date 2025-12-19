@@ -1,7 +1,7 @@
 'use client';
 
 import { MetricLink } from '@seawatts/analytics/components';
-import { api } from '@seawatts/api/react';
+import { useTRPC } from '@seawatts/api/react';
 import {
   signOut,
   useActiveOrganization,
@@ -28,6 +28,7 @@ import {
   IconCheck,
   IconCurrencyDollar,
 } from '@tabler/icons-react';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   ArrowLeftFromLine,
   ChevronsUpDown,
@@ -44,6 +45,7 @@ import { useState } from 'react';
 import { NewOrgDialog } from './new-org-dialog';
 
 export function NavUser() {
+  const api = useTRPC();
   const pathname = usePathname();
   const isOnboarding = pathname?.startsWith('/app/onboarding');
   const { setTheme, theme } = useTheme();
@@ -55,7 +57,7 @@ export function NavUser() {
 
   const [newOrgDialogOpen, setNewOrgDialogOpen] = useState(false);
 
-  const apiUtils = api.useUtils();
+  const queryClient = useQueryClient();
 
   const handleOrgChange = async (orgId: string) => {
     // Switch active organization via Better Auth
@@ -64,7 +66,7 @@ export function NavUser() {
       headers: { 'Content-Type': 'application/json' },
       method: 'POST',
     });
-    await apiUtils.invalidate();
+    await queryClient.invalidateQueries(api.pathFilter());
     router.refresh();
   };
 

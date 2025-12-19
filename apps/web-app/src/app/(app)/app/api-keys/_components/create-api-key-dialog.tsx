@@ -1,7 +1,7 @@
 'use client';
 
 import { MetricButton } from '@seawatts/analytics/components';
-import { api } from '@seawatts/api/react';
+import { useTRPC } from '@seawatts/api/react';
 import { Icons } from '@seawatts/ui/custom/icons';
 import {
   Dialog,
@@ -14,17 +14,23 @@ import {
 } from '@seawatts/ui/dialog';
 import { Input } from '@seawatts/ui/input';
 import { IconPlus } from '@tabler/icons-react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import posthog from 'posthog-js';
 import { useState } from 'react';
 
 export function CreateApiKeyDialog() {
-  const apiUtils = api.useUtils();
+  const api = useTRPC();
+  const queryClient = useQueryClient();
 
-  const createApiKey = api.apiKeys.create.useMutation({
-    onSuccess: () => {
-      apiUtils.apiKeys.allWithLastUsage.invalidate();
-    },
-  });
+  const createApiKey = useMutation(
+    api.apiKeys.create.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries(
+          api.apiKeys.allWithLastUsage.pathFilter(),
+        );
+      },
+    }),
+  );
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
 

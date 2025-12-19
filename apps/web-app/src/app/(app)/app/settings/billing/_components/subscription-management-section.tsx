@@ -1,7 +1,7 @@
 'use client';
 
 import { MetricButton } from '@seawatts/analytics/components';
-import { api } from '@seawatts/api/react';
+import { useTRPC } from '@seawatts/api/react';
 import { useHasActiveSubscription } from '@seawatts/stripe/guards/client';
 import {
   Card,
@@ -13,24 +13,28 @@ import {
 import { Icons } from '@seawatts/ui/custom/icons';
 import { P } from '@seawatts/ui/custom/typography';
 import { IconAlertTriangle, IconCheck, IconRefresh } from '@tabler/icons-react';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 export function SubscriptionManagementSection() {
+  const api = useTRPC();
   const hasActiveSubscription = useHasActiveSubscription();
 
   // Get subscription details
-  const { data: subscriptionDetails, isLoading: isLoadingDetails } =
-    api.billing.getSubscriptionDetails.useQuery(undefined, {
+  const { data: subscriptionDetails, isLoading: isLoadingDetails } = useQuery(
+    api.billing.getSubscriptionDetails.queryOptions(undefined, {
       enabled: hasActiveSubscription,
-    });
+    }),
+  );
 
   // Get subscription status
-  const { refetch: refetchStatus } =
-    api.billing.getSubscriptionStatus.useQuery();
+  const { refetch: refetchStatus } = useQuery(
+    api.billing.getSubscriptionStatus.queryOptions(),
+  );
 
   // Mutations for subscription management
-  const { mutate: cancelSubscription, isPending: isCanceling } =
-    api.billing.cancelSubscription.useMutation({
+  const { mutate: cancelSubscription, isPending: isCanceling } = useMutation(
+    api.billing.cancelSubscription.mutationOptions({
       onError: (error) => {
         toast.error(`Failed to cancel subscription: ${error.message}`);
       },
@@ -40,18 +44,21 @@ export function SubscriptionManagementSection() {
         );
         refetchStatus();
       },
-    });
+    }),
+  );
 
   const { mutate: reactivateSubscription, isPending: isReactivating } =
-    api.billing.reactivateSubscription.useMutation({
-      onError: (error) => {
-        toast.error(`Failed to reactivate subscription: ${error.message}`);
-      },
-      onSuccess: () => {
-        toast.success('Subscription has been reactivated');
-        refetchStatus();
-      },
-    });
+    useMutation(
+      api.billing.reactivateSubscription.mutationOptions({
+        onError: (error) => {
+          toast.error(`Failed to reactivate subscription: ${error.message}`);
+        },
+        onSuccess: () => {
+          toast.success('Subscription has been reactivated');
+          refetchStatus();
+        },
+      }),
+    );
 
   const handleCancelSubscription = () => {
     if (

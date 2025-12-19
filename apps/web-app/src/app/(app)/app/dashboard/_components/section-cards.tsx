@@ -1,6 +1,6 @@
 'use client';
 
-import { api } from '@seawatts/api/react';
+import { useTRPC } from '@seawatts/api/react';
 import {
   Card,
   CardDescription,
@@ -10,14 +10,16 @@ import {
 } from '@seawatts/ui/card';
 import { CopyButton } from '@seawatts/ui/custom/copy-button';
 import { Skeleton } from '@seawatts/ui/skeleton';
+import { useQuery } from '@tanstack/react-query';
 import { env } from '~/env.client';
 import { maskApiKey } from '~/lib/mask-api-key';
 
 export function SectionCards() {
-  const apiKeys = api.apiKeys.allWithLastUsage.useQuery();
+  const api = useTRPC();
+  const apiKeys = useQuery(api.apiKeys.allWithLastUsage.queryOptions());
   // TODO: Re-enable when webhooks are re-implemented
   // const webhooks = api.webhooks.all.useQuery();
-  const org = api.org.current.useQuery();
+  const org = useQuery(api.org.current.queryOptions());
 
   // TODO: Re-enable when webhooks are re-implemented
   // const webhook = webhooks.data?.[0];

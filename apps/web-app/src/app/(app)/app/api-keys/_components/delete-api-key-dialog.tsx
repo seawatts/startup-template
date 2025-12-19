@@ -1,7 +1,7 @@
 'use client';
 
 import { MetricButton } from '@seawatts/analytics/components';
-import { api } from '@seawatts/api/react';
+import { useTRPC } from '@seawatts/api/react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,6 +15,7 @@ import {
 } from '@seawatts/ui/alert-dialog';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@seawatts/ui/tooltip';
 import { IconLoader2, IconTrash } from '@tabler/icons-react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import posthog from 'posthog-js';
 import { useState } from 'react';
 
@@ -29,16 +30,21 @@ export function DeleteApiKeyDialog({
   apiKeyName,
   onDelete,
 }: DeleteApiKeyDialogProps) {
-  const apiUtils = api.useUtils();
-  const deleteApiKey = api.apiKeys.delete.useMutation({
-    onSettled: () => {
-      setDeleting(false);
-    },
-    onSuccess: () => {
-      apiUtils.apiKeys.allWithLastUsage.invalidate();
-      onDelete?.();
-    },
-  });
+  const api = useTRPC();
+  const queryClient = useQueryClient();
+  const deleteApiKey = useMutation(
+    api.apiKeys.delete.mutationOptions({
+      onSettled: () => {
+        setDeleting(false);
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries(
+          api.apiKeys.allWithLastUsage.pathFilter(),
+        );
+        onDelete?.();
+      },
+    }),
+  );
   const [isOpen, setIsOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
 

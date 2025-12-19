@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { api } from '@seawatts/api/react';
+import { useTRPC } from '@seawatts/api/react';
 import { useActiveOrganization, useSession } from '@seawatts/auth/client';
 import {
   Card,
@@ -24,6 +24,7 @@ import { Input } from '@seawatts/ui/components/input';
 import { Icons } from '@seawatts/ui/custom/icons';
 import { cn } from '@seawatts/ui/lib/utils';
 import { toast } from '@seawatts/ui/sonner';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -188,6 +189,7 @@ export function OnboardingForm({
   redirectTo,
   source,
 }: OnboardingFormProps) {
+  const api = useTRPC();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { data: activeOrg } = useActiveOrganization();
@@ -208,7 +210,7 @@ export function OnboardingForm({
   const webhookName = watch('webhookName');
 
   // Use tRPC utils for API calls
-  const apiUtils = api.useUtils();
+  const queryClient = useQueryClient();
 
   // Validation hooks
   const orgNameValidation = useNameValidation(
@@ -216,11 +218,13 @@ export function OnboardingForm({
     3,
     useCallback(
       (name) =>
-        apiUtils.org.checkNameAvailability.fetch({
-          excludeOrgId: activeOrg?.id,
-          name,
-        }),
-      [apiUtils.org.checkNameAvailability, activeOrg?.id],
+        queryClient.fetchQuery(
+          api.org.checkNameAvailability.queryOptions({
+            excludeOrgId: activeOrg?.id,
+            name,
+          }),
+        ),
+      [api, activeOrg?.id, queryClient],
     ),
   );
 
@@ -242,7 +246,9 @@ export function OnboardingForm({
     return `${baseUrl}/${orgName}/${webhookName}`;
   })();
 
-  const { mutateAsync: createOrganization } = api.org.upsert.useMutation();
+  const { mutateAsync: createOrganization } = useMutation(
+    api.org.upsert.mutationOptions(),
+  );
 
   const handleSubmit = async (data: OnboardingFormData) => {
     if (!user) {

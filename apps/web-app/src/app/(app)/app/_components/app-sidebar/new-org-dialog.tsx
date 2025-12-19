@@ -1,7 +1,7 @@
 'use client';
 
 import { MetricButton, MetricLink } from '@seawatts/analytics/components';
-import { api } from '@seawatts/api/react';
+import { useTRPC } from '@seawatts/api/react';
 import { useListOrganizations, useSession } from '@seawatts/auth/client';
 import {
   Entitled,
@@ -21,6 +21,7 @@ import {
 import { Input } from '@seawatts/ui/input';
 import { Label } from '@seawatts/ui/label';
 import { IconLoader2 } from '@tabler/icons-react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { env } from '~/env.client';
@@ -31,6 +32,7 @@ interface NewOrgDialogProps {
 }
 
 export function NewOrgDialog({ open, onOpenChange }: NewOrgDialogProps) {
+  const api = useTRPC();
   const [name, setName] = useState('');
   const [webhookName, setWebhookName] = useState('');
   const { refetch: refetchOrganizations } = useListOrganizations();
@@ -48,11 +50,11 @@ export function NewOrgDialog({ open, onOpenChange }: NewOrgDialogProps) {
     message: string;
   }>({ available: null, checking: false, message: '' });
 
-  const apiUtils = api.useUtils();
+  const queryClient = useQueryClient();
 
   // API mutations
   const { mutateAsync: createOrganization, isPending: isCreatingOrg } =
-    api.org.upsert.useMutation();
+    useMutation(api.org.upsert.mutationOptions());
   const isCreatingWebhook = false;
 
   const isLoading = isCreatingOrg || isCreatingWebhook;
@@ -153,7 +155,7 @@ export function NewOrgDialog({ open, onOpenChange }: NewOrgDialogProps) {
       setErrors([]);
 
       // Invalidate queries to refresh data
-      apiUtils.invalidate();
+      queryClient.invalidateQueries(api.pathFilter());
       refetchOrganizations();
       router.refresh();
     } catch (error) {

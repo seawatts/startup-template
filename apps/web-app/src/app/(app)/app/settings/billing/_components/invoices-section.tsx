@@ -1,7 +1,7 @@
 'use client';
 
 import { MetricButton } from '@seawatts/analytics/components';
-import { api } from '@seawatts/api/react';
+import { useTRPC } from '@seawatts/api/react';
 import { useHasActiveSubscription } from '@seawatts/stripe/guards/client';
 import { Badge } from '@seawatts/ui/badge';
 import {
@@ -15,7 +15,10 @@ import { Icons } from '@seawatts/ui/custom/icons';
 import { P } from '@seawatts/ui/custom/typography';
 import { Skeleton } from '@seawatts/ui/skeleton';
 
+import { useQuery } from '@tanstack/react-query';
+
 export function InvoicesSection() {
+  const api = useTRPC();
   const hasActiveSubscription = useHasActiveSubscription();
 
   // Use tRPC to fetch invoices
@@ -23,11 +26,13 @@ export function InvoicesSection() {
     data: invoices,
     isLoading,
     error,
-  } = api.billing.getInvoices.useQuery(
-    { limit: 20 },
-    {
-      enabled: hasActiveSubscription, // Only fetch if user has an active subscription
-    },
+  } = useQuery(
+    api.billing.getInvoices.queryOptions(
+      { limit: 20 },
+      {
+        enabled: hasActiveSubscription, // Only fetch if user has an active subscription
+      },
+    ),
   );
 
   const formatCurrency = (amount: number, currency: string) => {

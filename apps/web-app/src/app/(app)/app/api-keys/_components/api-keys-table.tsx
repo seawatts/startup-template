@@ -1,7 +1,7 @@
 'use client';
 
 import { MetricButton } from '@seawatts/analytics/components';
-import { api } from '@seawatts/api/react';
+import { useTRPC } from '@seawatts/api/react';
 import { CopyButton } from '@seawatts/ui/custom/copy-button';
 import { TimezoneDisplay } from '@seawatts/ui/custom/timezone-display';
 import * as Editable from '@seawatts/ui/diceui/editable-input';
@@ -18,6 +18,7 @@ import {
 } from '@seawatts/ui/table';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@seawatts/ui/tooltip';
 import { IconEye, IconEyeOff, IconPencil } from '@tabler/icons-react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import posthog from 'posthog-js';
 import { useState } from 'react';
 import { maskApiKey } from '~/lib/mask-api-key';
@@ -50,13 +51,18 @@ function SkeletonRow() {
 }
 
 export function ApiKeysTable() {
-  const apiKeys = api.apiKeys.allWithLastUsage.useQuery();
-  const apiUtils = api.useUtils();
-  const updateApiKey = api.apiKeys.update.useMutation({
-    onSuccess: () => {
-      apiUtils.apiKeys.allWithLastUsage.invalidate();
-    },
-  });
+  const api = useTRPC();
+  const apiKeys = useQuery(api.apiKeys.allWithLastUsage.queryOptions());
+  const queryClient = useQueryClient();
+  const updateApiKey = useMutation(
+    api.apiKeys.update.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries(
+          api.apiKeys.allWithLastUsage.pathFilter(),
+        );
+      },
+    }),
+  );
   const [showKeys, setShowKeys] = useState<Record<string, boolean>>({});
 
   const toggleKeyVisibility = (id: string) => {

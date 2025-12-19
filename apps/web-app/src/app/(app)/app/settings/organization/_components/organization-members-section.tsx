@@ -1,7 +1,7 @@
 'use client';
 
 import { MetricButton } from '@seawatts/analytics/components';
-import { api } from '@seawatts/api/react';
+import { useTRPC } from '@seawatts/api/react';
 import { useActiveOrganization, useSession } from '@seawatts/auth/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@seawatts/ui/card';
 import {
@@ -13,20 +13,21 @@ import {
 } from '@seawatts/ui/select';
 import { Skeleton } from '@seawatts/ui/skeleton';
 import { toast } from '@seawatts/ui/sonner';
+import { useQuery } from '@tanstack/react-query';
 import { useAction } from 'next-safe-action/hooks';
 import { useState } from 'react';
 import { removeMemberAction, updateMemberRoleAction } from '../actions';
 import { RemoveMemberDialog } from './remove-member-dialog';
 
 export function OrganizationMembersSection() {
+  const api = useTRPC();
   const { data: session } = useSession();
   const user = session?.user;
   const { data: activeOrg } = useActiveOrganization();
 
   // Fetch members using orgMembers router
-  const { data: members, isLoading: loading } = api.orgMembers.all.useQuery(
-    undefined,
-    { enabled: !!activeOrg?.id },
+  const { data: members, isLoading: loading } = useQuery(
+    api.orgMembers.all.queryOptions(undefined, { enabled: !!activeOrg?.id }),
   );
 
   // State for remove member dialog
