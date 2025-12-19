@@ -10,6 +10,7 @@
     "@trpc/client": "catalog:",
     "@trpc/react-query": "catalog:",
     "@trpc/server": "catalog:",
+    "@trpc/tanstack-react-query": "^11.8.0",
     "drizzle-orm": "catalog:",
     "next": "catalog:",
     "react": "catalog:",
