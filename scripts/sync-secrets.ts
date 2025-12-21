@@ -12,6 +12,7 @@
 
 import { parseArgs } from 'node:util';
 
+import { readInfisicalConfig } from './clone-project/config';
 import {
   getInfisicalToken,
   getOrSelectInfisicalOrg,
@@ -44,11 +45,15 @@ Options:
                               Available: supabase,posthog,vercel
   --posthog-api-key <key>     PostHog personal API key (required for PostHog)
   --posthog-region <us|eu>    PostHog region (default: us)
-  --infisical-org-id <id>     Use specific Infisical org
+  --infisical-org-id <id>     Use specific Infisical org (not needed with machine identity)
+  --infisical-project-id <id> Use specific Infisical project (required with machine identity)
   --dry-run                   Preview changes without applying
   --no-interactive            Skip interactive prompts
   --verbose, -v               Show detailed output
   --help                      Show this help message
+
+Environment Variables:
+  INFISICAL_TOKEN             Machine identity token (skips org/project selection)
 
 Examples:
   # Interactive mode - prompts for everything
@@ -59,6 +64,9 @@ Examples:
 
   # Sync PostHog with API key
   bun scripts/sync-secrets.ts --services posthog --posthog-api-key phx_xxx
+
+  # With machine identity token
+  INFISICAL_TOKEN=xxx bun scripts/sync-secrets.ts --infisical-project-id <project-id> --services supabase
 `;
 
 interface CliOptions {
@@ -66,6 +74,7 @@ interface CliOptions {
   posthogApiKey?: string;
   posthogRegion: PostHogRegion;
   infisicalOrgId?: string;
+  infisicalProjectId?: string;
   dryRun: boolean;
   noInteractive: boolean;
   verbose: boolean;
@@ -78,6 +87,7 @@ function parseCliOptions(): CliOptions {
       'dry-run': { default: false, type: 'boolean' },
       help: { default: false, type: 'boolean' },
       'infisical-org-id': { type: 'string' },
+      'infisical-project-id': { type: 'string' },
       'no-interactive': { default: false, type: 'boolean' },
       'posthog-api-key': { type: 'string' },
       'posthog-region': { default: 'us', type: 'string' },
@@ -100,6 +110,7 @@ function parseCliOptions(): CliOptions {
   return {
     dryRun: values['dry-run'] ?? false,
     infisicalOrgId: values['infisical-org-id'],
+    infisicalProjectId: values['infisical-project-id'],
     noInteractive: values['no-interactive'] ?? false,
     posthogApiKey: values['posthog-api-key'],
     posthogRegion,
@@ -218,23 +229,50 @@ async function main() {
       'Authenticated with Infisical',
     );
 
-    // Step 2: Select Infisical org
-    const infisicalOrg = await getOrSelectInfisicalOrg(
-      infisicalToken,
-      options.infisicalOrgId,
-      options.noInteractive,
-    );
+    // Step 2: Get target project ID
+    let targetProjectId: string;
+    let targetProjectName: string;
 
-    // Step 3: Select target Infisical project
-    const targetProject = await selectInfisicalProject(
-      infisicalToken,
-      infisicalOrg.id,
-      options.noInteractive,
-    );
+    if (options.infisicalProjectId) {
+      // Use CLI-provided project ID
+      targetProjectId = options.infisicalProjectId;
+      targetProjectName = options.infisicalProjectId;
+      p.log.success(`Using project from CLI: ${targetProjectId}`);
+    } else {
+      // Try to read from .infisical.json first
+      try {
+        const config = await readInfisicalConfig();
+        if (config.workspaceId) {
+          targetProjectId = config.workspaceId;
+          targetProjectName = config.workspaceId;
+          p.log.success(
+            `Using project from .infisical.json: ${targetProjectId}`,
+          );
+        } else {
+          throw new Error('No workspaceId in config');
+        }
+      } catch {
+        // Fall back to org/project selection (requires org-level access)
+        p.log.info('No project ID found, selecting from organization...');
+        const infisicalOrg = await getOrSelectInfisicalOrg(
+          infisicalToken,
+          options.infisicalOrgId,
+          options.noInteractive,
+        );
 
-    p.log.success(`Target: ${targetProject.name} (${targetProject.id})`);
+        const targetProject = await selectInfisicalProject(
+          infisicalToken,
+          infisicalOrg.id,
+          options.noInteractive,
+        );
 
-    // Step 4: Select services to sync
+        targetProjectId = targetProject.id;
+        targetProjectName = targetProject.name;
+        p.log.success(`Target: ${targetProjectName} (${targetProjectId})`);
+      }
+    }
+
+    // Step 3: Select services to sync
     const selectedServices = await promptForServices(
       options.services,
       options.noInteractive,
@@ -246,7 +284,7 @@ async function main() {
       return;
     }
 
-    // Step 5: Get PostHog API key if needed
+    // Step 4: Get PostHog API key if needed
     const needsPostHog = selectedServices.includes('posthog');
     const posthogApiKey = await getPostHogApiKey(
       options.posthogApiKey,
@@ -254,14 +292,14 @@ async function main() {
       needsPostHog,
     );
 
-    // Step 6: Sync each service
+    // Step 5: Sync each service
     const results = await syncSecretsToInfisical({
       dryRun: options.dryRun,
       noInteractive: options.noInteractive,
       posthogApiKey,
       posthogRegion: options.posthogRegion,
       services: selectedServices,
-      targetProjectId: targetProject.id,
+      targetProjectId,
     });
 
     // Done!
@@ -273,7 +311,7 @@ async function main() {
     // Show link to Infisical project
     if (!options.dryRun && results.length > 0) {
       p.note(
-        `https://app.infisical.com/project/${targetProject.id}/secrets/overview`,
+        `https://app.infisical.com/project/${targetProjectId}/secrets/overview`,
         '🔐 View in Infisical',
       );
     }

@@ -177,3 +177,11 @@ export interface FetchedSecrets {
   /** Secrets for staging/prod environments */
   production: Record<string, string>;
 }
+
+/** Secret info for selection UI */
+export interface SecretInfo {
+  key: string;
+  value: string;
+  service: SyncService;
+  hasValue: boolean;
+}

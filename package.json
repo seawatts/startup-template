@@ -87,6 +87,8 @@
     "lint:ws": "bunx sherif@latest",
     "postinstall": "bun lint:ws",
     "publish": "turbo run build --filter=./apps/cli... --filter=./packages/client... --filter=./apps/vscode-extension... && changeset publish",
+    "scripts": "bun run scripts/run.ts",
+    "sync-secrets": "bun run scripts/sync-secrets.ts",
     "test": "bun test",
     "test:integ": "turbo run test --filter=@seawatts/integ-test",
     "test:integ:ci": "turbo run test:ci --filter=@seawatts/integ-test",

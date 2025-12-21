@@ -53,10 +53,12 @@ import {
   getSupabaseApiKeys,
   waitForProjectReady,
 } from './supabase';
+import { promptForSecretSelection } from './sync';
 import {
   ENVIRONMENTS,
   type Environment,
   type PostHogRegion,
+  type SecretInfo,
   type SupabaseApiKey,
 } from './types';
 import {
@@ -653,7 +655,7 @@ async function cloneSecrets(
       )
     : {};
 
-  // Export and import secrets
+  // Export secrets from source project
   const secretsByEnv: Record<Environment, Record<string, string>> = {
     dev: {},
     prod: {},
@@ -661,8 +663,8 @@ async function cloneSecrets(
   };
 
   await withSpinner(
-    'Cloning secrets from source project...',
-    async (update) => {
+    'Fetching secrets from source project...',
+    async () => {
       for (const env of ENVIRONMENTS) {
         const secrets = await exportInfisicalSecrets(sourceProjectId, env);
         secretsByEnv[env] = Object.fromEntries(
@@ -676,27 +678,73 @@ async function cloneSecrets(
         Object.assign(secretsByEnv.staging, supabaseCreds);
         Object.assign(secretsByEnv.prod, supabaseCreds);
       }
-
-      if (options.dryRun) {
-        return;
-      }
-
-      for (const env of ENVIRONMENTS) {
-        update(`Importing secrets to ${env}...`);
-        await importInfisicalSecrets(targetProjectId, env, secretsByEnv[env]);
-      }
     },
-    options.dryRun
-      ? 'Would clone secrets to new project'
-      : 'Cloned secrets to new project',
+    'Fetched secrets from source project',
   );
 
-  if (options.dryRun) {
-    for (const env of ENVIRONMENTS) {
-      p.log.info(
-        `  Would import ${Object.keys(secretsByEnv[env]).length} secrets to ${env}`,
-      );
+  // Build list of all secrets for selection
+  const allSecrets: SecretInfo[] = [];
+  const seenKeys = new Set<string>();
+
+  // Add secrets from all environments
+  for (const env of ENVIRONMENTS) {
+    for (const [key, value] of Object.entries(secretsByEnv[env])) {
+      if (!seenKeys.has(key)) {
+        seenKeys.add(key);
+        allSecrets.push({
+          hasValue: !!value,
+          key,
+          service: 'supabase', // Generic - these are from Infisical
+          value,
+        });
+      }
     }
+  }
+
+  // Sort alphabetically
+  allSecrets.sort((a, b) => a.key.localeCompare(b.key));
+
+  // Prompt for secret selection
+  const selectedKeys = await promptForSecretSelection(
+    allSecrets,
+    options.noInteractive,
+  );
+
+  if (selectedKeys.length === 0) {
+    p.log.warn('No secrets selected to clone');
+    return;
+  }
+
+  p.log.success(`Selected ${selectedKeys.length} secrets to clone`);
+
+  // Filter secrets to only selected ones
+  const selectedKeySet = new Set(selectedKeys);
+  for (const env of ENVIRONMENTS) {
+    secretsByEnv[env] = Object.fromEntries(
+      Object.entries(secretsByEnv[env]).filter(([key]) =>
+        selectedKeySet.has(key),
+      ),
+    );
+  }
+
+  // Import to target project
+  if (options.dryRun) {
+    p.log.info('Dry run - would import:');
+    for (const env of ENVIRONMENTS) {
+      const keys = Object.keys(secretsByEnv[env]);
+      p.log.info(`  ${env}: ${keys.length} secrets`);
+    }
+  } else {
+    await withSpinner(
+      'Importing secrets to target project...',
+      async (update) => {
+        for (const env of ENVIRONMENTS) {
+          update(`Importing secrets to ${env}...`);
+          await importInfisicalSecrets(targetProjectId, env, secretsByEnv[env]);
+        }
+      },
+      'Cloned secrets to new project',
+    );
   }
 
   // Update .infisical.json

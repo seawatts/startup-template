@@ -96,7 +96,51 @@ export async function getInfisicalSecret(
 // Authentication
 // ============================================================================
 
+/**
+ * Get access token using Universal Auth (Client ID + Client Secret)
+ */
+async function getUniversalAuthToken(
+  clientId: string,
+  clientSecret: string,
+): Promise<string> {
+  const response = await fetch(
+    `${INFISICAL_API_URL}/v1/auth/universal-auth/login`,
+    {
+      body: JSON.stringify({
+        clientId,
+        clientSecret,
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+    },
+  );
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`Universal Auth login failed: ${error}`);
+  }
+
+  const data = (await response.json()) as { accessToken: string };
+  return data.accessToken;
+}
+
 export async function getInfisicalToken(): Promise<string> {
+  // Option 1: Universal Auth (Client ID + Client Secret)
+  const clientId = process.env.INFISICAL_CLIENT_ID;
+  const clientSecret = process.env.INFISICAL_CLIENT_SECRET;
+  if (clientId && clientSecret) {
+    return getUniversalAuthToken(clientId, clientSecret);
+  }
+
+  // Option 2: Direct access token (Token Auth)
+  const envToken = process.env.INFISICAL_TOKEN;
+  if (envToken) {
+    return envToken;
+  }
+
+  // Option 3: Fall back to CLI (user login)
   const { stdout, exitCode } = await runCommand(
     ['infisical', 'token', '--silent'],
     { silent: true },
@@ -104,7 +148,10 @@ export async function getInfisicalToken(): Promise<string> {
 
   if (exitCode !== 0 || !stdout.trim()) {
     throw new Error(
-      'Failed to get Infisical token. Please run "infisical login" first.',
+      'Failed to get Infisical token. Options:\n' +
+        '  1. Run "infisical login"\n' +
+        '  2. Set INFISICAL_TOKEN (Token Auth access token)\n' +
+        '  3. Set INFISICAL_CLIENT_ID and INFISICAL_CLIENT_SECRET (Universal Auth)',
     );
   }
 
