@@ -3,8 +3,7 @@ import { relations } from 'drizzle-orm';
 import {
   boolean,
   json,
-  pgEnum,
-  pgTable,
+  pgSchema,
   text,
   timestamp,
   unique,
@@ -14,26 +13,41 @@ import { createInsertSchema, createUpdateSchema } from 'drizzle-zod';
 import { z } from 'zod';
 
 // ============================================================================
+// DATABASE SCHEMA
+// ============================================================================
+
+export const schema = pgSchema('startup_template');
+
+// ============================================================================
 // ENUMS
 // ============================================================================
 
-export const userRoleEnum = pgEnum('userRole', ['admin', 'owner', 'member']);
-export const localConnectionStatusEnum = pgEnum('localConnectionStatus', [
+export const userRoleEnum = schema.enum('userRole', [
+  'admin',
+  'owner',
+  'member',
+]);
+export const localConnectionStatusEnum = schema.enum('localConnectionStatus', [
   'connected',
   'disconnected',
 ]);
-export const stripeSubscriptionStatusEnum = pgEnum('stripeSubscriptionStatus', [
-  'active',
-  'canceled',
-  'incomplete',
-  'incomplete_expired',
-  'past_due',
-  'paused',
-  'trialing',
-  'unpaid',
+export const stripeSubscriptionStatusEnum = schema.enum(
+  'stripeSubscriptionStatus',
+  [
+    'active',
+    'canceled',
+    'incomplete',
+    'incomplete_expired',
+    'past_due',
+    'paused',
+    'trialing',
+    'unpaid',
+  ],
+);
+export const apiKeyUsageTypeEnum = schema.enum('apiKeyUsageType', [
+  'mcp-server',
 ]);
-export const apiKeyUsageTypeEnum = pgEnum('apiKeyUsageType', ['mcp-server']);
-export const invitationStatusEnum = pgEnum('invitationStatus', [
+export const invitationStatusEnum = schema.enum('invitationStatus', [
   'pending',
   'accepted',
   'rejected',
@@ -57,7 +71,7 @@ export const InvitationStatusType = z.enum(
 // ============================================================================
 
 // Users table - Better Auth compatible
-export const Users = pgTable('user', {
+export const Users = schema.table('user', {
   createdAt: timestamp('createdAt', {
     mode: 'date',
     withTimezone: true,
@@ -96,7 +110,7 @@ export const CreateUserSchema = createInsertSchema(Users).omit({
 });
 
 // Sessions table - Better Auth required
-export const Sessions = pgTable('session', {
+export const Sessions = schema.table('session', {
   // Organization context - Better Auth organization plugin
   activeOrganizationId: varchar('activeOrganizationId', {
     length: 128,
@@ -141,7 +155,7 @@ export const SessionsRelations = relations(Sessions, ({ one }) => ({
 export type SessionType = typeof Sessions.$inferSelect;
 
 // Accounts table - Better Auth OAuth providers
-export const Accounts = pgTable('account', {
+export const Accounts = schema.table('account', {
   accessToken: text('accessToken'),
   accessTokenExpiresAt: timestamp('accessTokenExpiresAt', {
     mode: 'date',
@@ -186,7 +200,7 @@ export const AccountsRelations = relations(Accounts, ({ one }) => ({
 export type AccountType = typeof Accounts.$inferSelect;
 
 // Verifications table - Better Auth email verification
-export const Verifications = pgTable('verification', {
+export const Verifications = schema.table('verification', {
   createdAt: timestamp('createdAt', {
     mode: 'date',
     withTimezone: true,
@@ -216,7 +230,7 @@ export type VerificationType = typeof Verifications.$inferSelect;
 // ============================================================================
 
 // Organizations table - Better Auth organization plugin compatible
-export const Orgs = pgTable('organization', {
+export const Orgs = schema.table('organization', {
   createdAt: timestamp('createdAt', {
     mode: 'date',
     withTimezone: true,
@@ -261,7 +275,7 @@ export const OrgsRelations = relations(Orgs, ({ many }) => ({
 }));
 
 // Organization Members table - Better Auth organization plugin compatible
-export const OrgMembers = pgTable(
+export const OrgMembers = schema.table(
   'member',
   {
     createdAt: timestamp('createdAt', {
@@ -302,7 +316,7 @@ export const OrgMembersRelations = relations(OrgMembers, ({ one }) => ({
 }));
 
 // Invitations table - Better Auth organization plugin
-export const Invitations = pgTable('invitation', {
+export const Invitations = schema.table('invitation', {
   createdAt: timestamp('createdAt', {
     mode: 'date',
     withTimezone: true,
@@ -346,7 +360,7 @@ export const InvitationsRelations = relations(Invitations, ({ one }) => ({
 // ============================================================================
 
 // Auth Codes table (for CLI authentication)
-export const AuthCodes = pgTable('authCodes', {
+export const AuthCodes = schema.table('authCodes', {
   createdAt: timestamp('createdAt', {
     mode: 'date',
     withTimezone: true,
@@ -394,7 +408,7 @@ export const AuthCodesRelations = relations(AuthCodes, ({ one }) => ({
 }));
 
 // API Keys Table
-export const ApiKeys = pgTable('apiKeys', {
+export const ApiKeys = schema.table('apiKeys', {
   createdAt: timestamp('createdAt', {
     mode: 'date',
     withTimezone: true,
@@ -463,7 +477,7 @@ export const ApiKeysRelations = relations(ApiKeys, ({ one, many }) => ({
 }));
 
 // API Key Usage Table
-export const ApiKeyUsage = pgTable('apiKeyUsage', {
+export const ApiKeyUsage = schema.table('apiKeyUsage', {
   apiKeyId: varchar('apiKeyId', { length: 128 })
     .references(() => ApiKeys.id, { onDelete: 'cascade' })
     .notNull(),
@@ -517,7 +531,7 @@ export const ApiKeyUsageRelations = relations(ApiKeyUsage, ({ one }) => ({
 }));
 
 // Short URLs Table
-export const ShortUrls = pgTable('shortUrls', {
+export const ShortUrls = schema.table('shortUrls', {
   code: varchar('code', { length: 128 }).notNull(),
   createdAt: timestamp('createdAt', {
     mode: 'date',
