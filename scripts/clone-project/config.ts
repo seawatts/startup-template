@@ -67,9 +67,10 @@ export async function updateSupabaseProjectId(
 }
 
 // ============================================================================
-// Drizzle Schema Config
+// Drizzle Config
 // ============================================================================
 
+const DRIZZLE_CONFIG_PATH = 'packages/db/drizzle.config.ts';
 const DRIZZLE_SCHEMA_PATH = 'packages/db/src/schema.ts';
 
 /**
@@ -81,6 +82,42 @@ export function sanitizeSchemaName(name: string): string {
     .toLowerCase()
     .replace(/-/g, '_')
     .replace(/[^a-z0-9_]/g, '');
+}
+
+/**
+ * Update the drizzle.config.ts to use a custom PostgreSQL schema.
+ * This adds migrations config and schemaFilter for the custom schema.
+ */
+export async function updateDrizzleConfig(projectName: string): Promise<void> {
+  const file = Bun.file(DRIZZLE_CONFIG_PATH);
+
+  if (!(await file.exists())) {
+    throw new Error(`Drizzle config not found at ${DRIZZLE_CONFIG_PATH}`);
+  }
+
+  const schemaName = sanitizeSchemaName(projectName);
+
+  // Generate the new drizzle.config.ts content
+  const newContent = `import type { Config } from 'drizzle-kit';
+
+import { env } from './src/env';
+
+const nonPoolingUrl = (env.POSTGRES_URL ?? '').replace(':6543', ':5432');
+
+export default {
+  dbCredentials: { url: nonPoolingUrl },
+  dialect: 'postgresql',
+  migrations: {
+    schema: '${schemaName}', // Store migrations table in our schema
+    table: '__drizzle_migrations',
+  },
+  out: './drizzle',
+  schema: './src/schema.ts',
+  schemaFilter: ['${schemaName}'], // Only manage tables in this schema
+} satisfies Config;
+`;
+
+  await Bun.write(DRIZZLE_CONFIG_PATH, newContent);
 }
 
 /**
@@ -146,9 +183,10 @@ export async function updateDrizzleSchema(projectName: string): Promise<void> {
 }
 
 /**
- * Update both Supabase config and Drizzle schema with the project name
+ * Update Supabase config, Drizzle schema, and Drizzle config with the project name
  */
 export async function updateProjectConfigs(projectName: string): Promise<void> {
   await updateSupabaseProjectId(projectName);
   await updateDrizzleSchema(projectName);
+  await updateDrizzleConfig(projectName);
 }

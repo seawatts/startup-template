@@ -755,7 +755,7 @@ async function cloneSecrets(
     p.log.success('Updated .infisical.json');
   }
 
-  // Update supabase config.toml and drizzle schema with project name
+  // Update supabase config.toml, drizzle schema, and drizzle config with project name
   const dbSchemaName = sanitizeSchemaName(projectName);
   if (options.dryRun) {
     p.log.info(
@@ -764,11 +764,17 @@ async function cloneSecrets(
     p.log.info(
       `Would update drizzle schema to use PostgreSQL schema: ${dbSchemaName}`,
     );
+    p.log.info(
+      `Would update drizzle.config.ts to use PostgreSQL schema: ${dbSchemaName}`,
+    );
   } else {
     await updateProjectConfigs(projectName);
     p.log.success(`Updated supabase config.toml (project_id: ${projectName})`);
     p.log.success(
       `Updated drizzle schema (PostgreSQL schema: ${dbSchemaName})`,
+    );
+    p.log.success(
+      `Updated drizzle.config.ts (PostgreSQL schema: ${dbSchemaName})`,
     );
   }
 }
