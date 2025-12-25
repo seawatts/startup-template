@@ -13,7 +13,7 @@ runs:
           ${{ runner.os }}-turbo-
     - uses: oven-sh/setup-bun@v2
       with:
-        bun-version: 1.2.23
+        bun-version: 1.3.5
 
     - shell: bash
-      run: bun install
+      run: bun install --frozen-lockfile

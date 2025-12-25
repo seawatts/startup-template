@@ -8,6 +8,7 @@ const config: KnipConfig = {
     'lefthook',
     '@vercel/speed-insights',
     'react-dom',
+    '@better-auth/expo',
     'vitest',
     '@tailwindcss/typography',
     '@trpc/react-query',
