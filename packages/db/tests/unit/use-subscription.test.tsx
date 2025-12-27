@@ -37,7 +37,7 @@ mock.module('../../src/supabase/client', () => ({
 describe.skip('useSubscription Unit Tests', () => {
   const mockToken = 'test-token';
   const mockUrl = 'https://test.supabase.co';
-  const mockTable: TableName = 'events';
+  const mockTable: TableName = 'users';
   const mockCallback = mock(() => {});
 
   beforeEach(() => {
