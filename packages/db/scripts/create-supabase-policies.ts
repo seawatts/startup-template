@@ -36,6 +36,8 @@ const createRequestingUserIdFunction = async () => {
 };
 
 // Create the requesting_org_id function for consistency
+// Note: Better Auth organization plugin uses 'organization_id' as the JWT claim name
+// This matches the schema which uses 'organizationId' columns
 const createRequestingOrgIdFunction = async () => {
   console.log('Creating requesting_org_id function...');
   await db.execute(sql`
@@ -47,7 +49,7 @@ const createRequestingOrgIdFunction = async () => {
     SET search_path = ''
     AS $$
       SELECT NULLIF(
-        current_setting('request.jwt.claims', true)::json->>'org_id',
+        current_setting('request.jwt.claims', true)::json->>'organization_id',
         ''
       )::text;
     $$;
@@ -57,15 +59,10 @@ const createRequestingOrgIdFunction = async () => {
 
 // Common policy conditions using the requesting_user_id function
 const policyConditions = {
-  orgOwnership: (columnName = 'orgId') =>
+  orgOwnership: (columnName = 'organizationId') =>
     `(SELECT requesting_org_id()) = ("${columnName}")::text`,
   userOwnership: (columnName = 'userId') =>
     `(SELECT requesting_user_id()) = ("${columnName}")::text`,
-  webhookOwnership: `EXISTS (
-    SELECT 1 FROM webhooks
-    WHERE webhooks.id = requests."webhookId"
-    AND webhooks."orgId" = (SELECT requesting_org_id())
-  )`,
 } as const;
 
 // Helper to create a policy for user ownership

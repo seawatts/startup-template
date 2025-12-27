@@ -6,68 +6,15 @@ const tablesToEnableRealtime = [
 ] as const;
 
 // RLS policies for realtime authorization
-const realtimePolicies = [
-  // Policy for authenticated users to read postgres changes on events table
-  {
-    condition: `
-      realtime.messages.extension = 'postgres_changes'
-      AND realtime.topic() LIKE 'events-%'
-      AND EXISTS (
-        SELECT 1 FROM public.events e
-        WHERE e."webhookId" = split_part(realtime.topic(), '-', 2)
-        AND e."webhookId" IN (
-          SELECT w.id FROM public.webhooks w
-          WHERE w."orgId" = (SELECT requesting_org_id())
-        )
-      )
-    `,
-    name: 'authenticated_can_read_events_changes',
-    operation: 'select',
-    table: 'realtime.messages',
-    target: 'authenticated',
-  },
-  // Policy for authenticated users to read postgres changes on requests table
-  {
-    condition: `
-      realtime.messages.extension = 'postgres_changes'
-      AND realtime.topic() LIKE 'requests-%'
-      AND EXISTS (
-        SELECT 1 FROM public.requests r
-        WHERE r."webhookId" = split_part(realtime.topic(), '-', 2)
-        AND r."webhookId" IN (
-          SELECT w.id FROM public.webhooks w
-          WHERE w."orgId" = (SELECT requesting_org_id())
-        )
-      )
-    `,
-    name: 'authenticated_can_read_requests_changes',
-    operation: 'select',
-    table: 'realtime.messages',
-    target: 'authenticated',
-  },
-  // Policy for authenticated users to send broadcast messages
-  {
-    condition: `
-      realtime.messages.extension = 'broadcast'
-      AND realtime.topic() LIKE 'events-%' OR realtime.topic() LIKE 'requests-%'
-    `,
-    name: 'authenticated_can_send_broadcast',
-    operation: 'insert',
-    table: 'realtime.messages',
-    target: 'authenticated',
-  },
-  // Policy for authenticated users to read broadcast messages
-  {
-    condition: `
-      realtime.messages.extension = 'broadcast'
-      AND realtime.topic() LIKE 'events-%' OR realtime.topic() LIKE 'requests-%'
-    `,
-    name: 'authenticated_can_read_broadcast',
-    operation: 'select',
-    table: 'realtime.messages',
-    target: 'authenticated',
-  },
-];
+// Note: Removed obsolete policies that referenced non-existent tables (events, webhooks, requests)
+// These tables were removed in the new schema. Add new policies here as needed for realtime tables.
+const realtimePolicies: Array<{
+  condition: string;
+  name: string;
+  operation: string;
+  table: string;
+  target: string;
+}> = [];
 
 async function tableExists(tableName: string): Promise<boolean> {
   const result = await db.execute<{ exists: boolean }>(sql`
