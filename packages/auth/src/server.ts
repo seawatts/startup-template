@@ -120,17 +120,17 @@ export const auth = betterAuth({
     google: {
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
-      // Required for OAuth proxy to work - must match what's registered in Google Cloud Console
+      // Required for OAuth proxy - must match what's registered in Google Cloud Console
       redirectURI: `${productionUrl}/api/auth/callback/google`,
     },
   },
 
   // Trusted origins for CORS and deep linking
-  // These must be trusted on PRODUCTION since that's where the OAuth callback lands
+  // IMPORTANT: These must be trusted on PRODUCTION since that's where the OAuth callback lands
   trustedOrigins: [
-    // startup-template:// matches your app.config.ts scheme
+    // Your app's custom scheme (for production builds)
     'startup-template://',
-    // exp:// is used by Expo Go during development
+    // exp:// is used by Expo Go during development - must be on production too!
     'exp://',
   ],
 });

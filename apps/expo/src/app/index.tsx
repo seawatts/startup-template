@@ -19,7 +19,7 @@ function MobileAuth({ theme }: { theme: (typeof colors)['light'] }) {
   return (
     <View style={styles.authContainer}>
       <Text style={[styles.authStatus, { color: theme.foreground }]}>
-        {session?.user.name ? `Hello, ${session.user.name}` : 'Not logged in'}
+        {session?.user?.name ? `Hello, ${session.user.name}` : 'Not logged in'}
       </Text>
       <Pressable
         onPress={async () => {

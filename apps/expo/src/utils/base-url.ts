@@ -31,6 +31,7 @@ export function getBaseUrl(): string {
 
   // Return local Next.js server URL (port 3000)
   const url = `http://${localhost}:3000`;
+  // const url = 'http://localhost:8081'
   console.log('[AUTH BASE URL] Using local URL:', url);
   return url;
 }
