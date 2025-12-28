@@ -99,3 +99,11 @@ export function initAuth<
 
 export type Auth = ReturnType<typeof initAuth>;
 export type Session = Auth['$Infer']['Session'];
+
+// Re-export middleware utilities
+export {
+  type AuthMiddlewareOptions,
+  createAuthMiddleware,
+  getAuthHeaders,
+  getSessionFromRequest,
+} from './middleware';
