@@ -37,7 +37,8 @@ export const userRouter = {
     .input(z.string())
     .mutation(async ({ input, ctx }) => {
       // Users can only delete themselves
-      if (ctx.auth.userId !== input) {
+      // Explicitly check userId exists for defense-in-depth
+      if (!ctx.auth.userId || ctx.auth.userId !== input) {
         throw new Error('You can only delete your own account');
       }
       const result = await ctx.db
