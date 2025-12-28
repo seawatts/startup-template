@@ -126,18 +126,12 @@ export const auth = betterAuth({
   },
 
   // Trusted origins for CORS and deep linking
-  // The expo:// scheme is used by the Expo client to redirect back after OAuth
+  // These must be trusted on PRODUCTION since that's where the OAuth callback lands
   trustedOrigins: [
-    'startup-template://',
-
-    // Development mode - Expo's exp:// scheme with local IP ranges
-    ...(process.env.NODE_ENV === 'development'
-      ? [
-          'exp://', // Trust all Expo URLs (prefix matching)
-          'exp://**', // Trust all Expo URLs (wildcard matching)
-          'exp://192.168.*.*:*/**', // Trust 192.168.x.x IP range with any port and path
-        ]
-      : []),
+    // expo:// matches your app.config.ts scheme: 'expo'
+    'expo://',
+    // exp:// is used by Expo Go during development
+    'exp://',
   ],
 });
 
