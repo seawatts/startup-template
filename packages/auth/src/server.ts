@@ -119,13 +119,16 @@ export const auth = betterAuth({
     },
   },
 
-  trustedOrigins: (request) => {
-    const origin = request?.headers.get('origin');
-    // Allow expo schemes and dynamic exp:// origins from Expo Go
-    if (origin?.startsWith('exp://') || origin?.startsWith('expo://')) {
-      return [origin];
+  // Allow any exp:// or expo:// origin for mobile apps
+  trustedOrigins: async (request) => {
+    const origin = request?.headers?.get('origin') ?? '';
+    // Always allow expo schemes
+    const allowed = ['expo://', 'exp://'];
+    // If origin starts with exp:// or expo://, add it to allowed list
+    if (origin.startsWith('exp://') || origin.startsWith('expo://')) {
+      allowed.push(origin);
     }
-    return ['expo://', 'exp://'];
+    return allowed;
   },
 });
 
