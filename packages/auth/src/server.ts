@@ -128,8 +128,8 @@ export const auth = betterAuth({
   // Trusted origins for CORS and deep linking
   // These must be trusted on PRODUCTION since that's where the OAuth callback lands
   trustedOrigins: [
-    // expo:// matches your app.config.ts scheme: 'expo'
-    'expo://',
+    // startup-template:// matches your app.config.ts scheme
+    'startup-template://',
     // exp:// is used by Expo Go during development
     'exp://',
   ],
