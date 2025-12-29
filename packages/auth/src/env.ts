@@ -27,6 +27,9 @@ export const env = createEnv({
    */
   server: {
     BETTER_AUTH_SECRET: z.string().min(32),
+    // Optional: Override the base URL for local development
+    // Set this to your local IP (e.g., http://192.168.0.19:3000) for Expo Go OAuth
+    BETTER_AUTH_URL: z.url().optional(),
     GOOGLE_CLIENT_ID: z.string(),
     GOOGLE_CLIENT_SECRET: z.string(),
     NODE_ENV: z

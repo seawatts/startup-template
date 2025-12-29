@@ -5,7 +5,7 @@ import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query';
 import superjson from 'superjson';
 
 import { authClient } from './auth';
-import { getBaseUrl } from './base-url';
+import { getApiBaseUrl } from './base-url';
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -39,7 +39,7 @@ export const trpc = createTRPCOptionsProxy<AppRouter>({
           return headers;
         },
         transformer: superjson,
-        url: `${getBaseUrl()}/api/trpc`,
+        url: `${getApiBaseUrl()}/api/trpc`,
       }),
     ],
   }),

@@ -8,7 +8,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       foregroundImage: './assets/icon-light.png',
     },
     edgeToEdgeEnabled: true,
-    package: 'com.seawatts.startup-template',
+    package: 'com.seawatts.startuptemplate',
   },
   assetBundlePatterns: ['**/*'],
   // extra: {
@@ -24,14 +24,14 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   icon: './assets/icon-light.png',
   ios: {
-    bundleIdentifier: 'com.seawatts.startup-template',
+    bundleIdentifier: 'com.seawatts.startuptemplate',
     icon: {
       dark: './assets/icon-dark.png',
       light: './assets/icon-light.png',
     },
     supportsTablet: true,
   },
-  name: 'startup-template',
+  name: 'startuptemplate',
   newArchEnabled: true,
   orientation: 'portrait',
   plugins: [
@@ -50,8 +50,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       },
     ],
   ],
-  scheme: 'startup-template',
-  slug: 'startup-template',
+  scheme: 'startuptemplate',
+  slug: 'startuptemplate',
   updates: {
     fallbackToCacheTimeout: 0,
   },

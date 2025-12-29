@@ -20,12 +20,16 @@ import { env } from './env';
 const FALLBACK_PRODUCTION_URL = 'https://startup-template-mu.vercel.app';
 
 // Determine the base URL based on environment
+// Priority: BETTER_AUTH_URL > Vercel env vars > localhost
 const baseUrl =
-  env.VERCEL_ENV === 'production'
+  env.BETTER_AUTH_URL ??
+  (env.VERCEL_ENV === 'production'
     ? `https://${env.VERCEL_PROJECT_PRODUCTION_URL}`
     : env.VERCEL_ENV === 'preview'
       ? `https://${env.VERCEL_URL}`
-      : 'http://localhost:3000';
+      : 'http://localhost:3000');
+
+console.log('[AUTH SERVER] Using baseURL:', baseUrl);
 
 // Production URL for OAuth proxy - always use the production deployment
 // This allows OAuth to work from mobile devices even during local development
@@ -120,18 +124,29 @@ export const auth = betterAuth({
     google: {
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
-      // Required for OAuth proxy - must match what's registered in Google Cloud Console
-      redirectURI: `${productionUrl}/api/auth/callback/google`,
+      // NOTE: Commented out for now to get expo locally working. However, we might add this back later because it might be required for OAuth proxy to work - must match what's registered in Google Cloud Console
+      // redirectURI: `${productionUrl}/api/auth/callback/google`,
     },
   },
 
   // Trusted origins for CORS and deep linking
-  // IMPORTANT: These must be trusted on PRODUCTION since that's where the OAuth callback lands
+  // Must include wildcards for path matching
   trustedOrigins: [
-    // Your app's custom scheme (for production builds)
-    'startup-template://',
-    // exp:// is used by Expo Go during development - must be on production too!
+    // Production app scheme (with wildcard for any path)
+    'startuptemplate://',
+    'startuptemplate://*',
+    'startuptemplate://**',
+
+    // Expo Go development - MUST be included even in production
+    // because Expo Go on a device talks to the production server
     'exp://',
+    'exp://*',
+    'exp://**',
+
+    // Local development servers
+    ...(process.env.NODE_ENV === 'development'
+      ? ['http://192.168.*.*:*', 'http://localhost:3000']
+      : []),
   ],
 });
 
