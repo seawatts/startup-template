@@ -1,5 +1,18 @@
 import type { ConfigContext, ExpoConfig } from 'expo/config';
 
+const APP_ENV = process.env.APP_ENV ?? 'development';
+const IS_PRODUCTION = APP_ENV === 'production';
+
+const APP_NAME = IS_PRODUCTION
+  ? 'Startup Template'
+  : `Startup Template (${APP_ENV.toUpperCase()})`;
+const BUNDLE_ID = IS_PRODUCTION
+  ? 'com.seawatts.startuptemplate'
+  : `com.seawatts.startuptemplate.${APP_ENV}`;
+const APP_SCHEME = IS_PRODUCTION
+  ? 'startuptemplate'
+  : `startuptemplate-${APP_ENV}`;
+
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   android: {
@@ -8,30 +21,34 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       foregroundImage: './assets/icon-light.png',
     },
     edgeToEdgeEnabled: true,
-    package: 'com.seawatts.startuptemplate',
+    package: BUNDLE_ID,
   },
   assetBundlePatterns: ['**/*'],
-  // extra: {
-  //   eas: {
-  //     projectId: "your-eas-project-id",
-  //   },
-  // },
   experiments: {
     reactCanary: true,
     reactCompiler: true,
     tsconfigPaths: true,
     typedRoutes: true,
   },
+  extra: {
+    APP_ENV,
+    eas: {
+      projectId: '4480eeb4-797b-46af-a5fe-8c30bd6e2df5',
+    },
+  },
   icon: './assets/icon-light.png',
   ios: {
-    bundleIdentifier: 'com.seawatts.startuptemplate',
+    bundleIdentifier: BUNDLE_ID,
     icon: {
       dark: './assets/icon-dark.png',
       light: './assets/icon-light.png',
     },
+    infoPlist: {
+      ITSAppUsesNonExemptEncryption: false,
+    },
     supportsTablet: true,
   },
-  name: 'startuptemplate',
+  name: APP_NAME,
   newArchEnabled: true,
   orientation: 'portrait',
   plugins: [
@@ -50,10 +67,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       },
     ],
   ],
-  scheme: 'startuptemplate',
+  scheme: APP_SCHEME,
   slug: 'startuptemplate',
   updates: {
     fallbackToCacheTimeout: 0,
+    url: 'https://u.expo.dev/4480eeb4-797b-46af-a5fe-8c30bd6e2df5',
   },
   userInterfaceStyle: 'automatic',
   version: '0.1.0',

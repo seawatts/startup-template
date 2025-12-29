@@ -1,32 +1,69 @@
 {
   "build": {
     "base": {
+      "android": {
+        "resourceClass": "medium"
+      },
       "ios": {
         "resourceClass": "m-medium"
       },
       "node": "22.12.0"
     },
     "development": {
+      "channel": "development",
       "developmentClient": true,
       "distribution": "internal",
-      "extends": "base"
+      "env": {
+        "APP_ENV": "development"
+      },
+      "extends": "base",
+      "ios": {
+        "simulator": false
+      }
     },
     "preview": {
+      "channel": "preview",
       "distribution": "internal",
+      "env": {
+        "APP_ENV": "preview"
+      },
+      "extends": "base"
+    },
+    "production": {
+      "autoIncrement": true,
+      "channel": "production",
+      "env": {
+        "APP_ENV": "production"
+      },
+      "extends": "base"
+    },
+    "simulator": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "APP_ENV": "development"
+      },
       "extends": "base",
       "ios": {
         "simulator": true
       }
-    },
-    "production": {
-      "extends": "base"
     }
   },
   "cli": {
     "appVersionSource": "remote",
-    "version": ">= 4.1.2"
+    "promptToConfigurePushNotifications": false,
+    "version": ">=16.28.0"
   },
   "submit": {
-    "production": {}
+    "production": {
+      "android": {
+        "releaseStatus": "completed",
+        "track": "internal"
+      },
+      "ios": {
+        "appleId": "chris.watts.t@gmail.com",
+        "ascAppId": "your-app-store-connect-app-id"
+      }
+    }
   }
 }

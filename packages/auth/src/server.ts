@@ -132,10 +132,20 @@ export const auth = betterAuth({
   // Trusted origins for CORS and deep linking
   // Must include wildcards for path matching
   trustedOrigins: [
-    // Production app scheme (with wildcard for any path)
+    // Production app scheme
     'startuptemplate://',
     'startuptemplate://*',
     'startuptemplate://**',
+
+    // Development app scheme (different bundle ID)
+    'startuptemplate-development://',
+    'startuptemplate-development://*',
+    'startuptemplate-development://**',
+
+    // Preview app scheme (different bundle ID)
+    'startuptemplate-preview://',
+    'startuptemplate-preview://*',
+    'startuptemplate-preview://**',
 
     // Expo Go development - MUST be included even in production
     // because Expo Go on a device talks to the production server
