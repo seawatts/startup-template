@@ -1,6 +1,6 @@
 import { createNativeClient, type NativeApiClient } from '@seawatts/api/native';
+import type { AppRouter } from '@seawatts/api/types';
 import { QueryClient } from '@tanstack/react-query';
-import type { AnyRouter } from '@trpc/server';
 import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query';
 
 import { authClient } from './auth';
@@ -13,17 +13,6 @@ export const queryClient = new QueryClient({
     },
   },
 });
-
-/**
- * AppRouter type placeholder for Expo
- *
- * This uses AnyRouter to avoid importing the actual router implementation
- * which would pull in Node.js-only dependencies (postgres, fs, os, etc.)
- *
- * Type safety is maintained through the server's API contract.
- * For full type inference, ensure your API endpoints are well-typed on the server.
- */
-type AppRouter = AnyRouter;
 
 /**
  * Vanilla tRPC client for imperative calls (non-React context).

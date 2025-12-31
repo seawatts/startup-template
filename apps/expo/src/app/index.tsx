@@ -35,8 +35,7 @@ function MobileAuth({ theme }: { theme: (typeof colors)['light'] }) {
       try {
         console.log('[DEV SYNC] Syncing user to local database...');
         const user = newSession.data.user;
-        // biome-ignore lint/suspicious/noExplicitAny: AnyRouter doesn't expose procedure types
-        await (api as any).auth.syncFromProduction.mutate({
+        await api.auth.syncFromProduction.mutate({
           user: {
             email: user.email,
             emailVerified: user.emailVerified,

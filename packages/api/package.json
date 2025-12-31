@@ -30,7 +30,8 @@
     "./native": "./src/native.ts",
     "./react": "./src/react/client-exports.ts",
     "./server": "./src/react/server-exports.ts",
-    "./services": "./src/services/index.ts"
+    "./services": "./src/services/index.ts",
+    "./types": "./src/types.ts"
   },
   "license": "MIT",
   "name": "@seawatts/api",
