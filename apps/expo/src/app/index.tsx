@@ -1,3 +1,4 @@
+import Constants from 'expo-constants';
 import * as WebBrowser from 'expo-web-browser';
 import {
   Pressable,
@@ -27,7 +28,11 @@ function MobileAuth({ theme }: { theme: (typeof colors)['light'] }) {
             await authClient.signOut();
           } else {
             console.log('[AUTH] Starting sign in...');
+            console.log('[AUTH] Using scheme:', Constants.expoConfig?.scheme);
+            // Let the expo plugin handle URL construction by passing a path starting with "/"
+            // The plugin will convert "/" to the proper deep link like "startuptemplate-development://"
             const result = await authClient.signIn.social({
+              callbackURL: '/',
               provider: 'google',
             });
             console.log(
