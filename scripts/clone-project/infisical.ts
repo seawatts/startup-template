@@ -230,6 +230,35 @@ export async function exportInfisicalSecrets(
   return JSON.parse(stdout) as Secret[];
 }
 
+/**
+ * Fetch secrets from Infisical via API (no CLI required).
+ * This is the preferred method for non-interactive environments.
+ */
+export async function fetchInfisicalSecretsViaApi(
+  token: string,
+  projectId: string,
+  env: Environment,
+): Promise<Secret[]> {
+  interface ApiSecret {
+    id: string;
+    secretKey: string;
+    secretValue: string;
+    type: string;
+  }
+
+  const data = await apiFetch<{ secrets: ApiSecret[] }>(
+    `${INFISICAL_API_URL}/v3/secrets/raw?workspaceId=${projectId}&environment=${env}`,
+    token,
+  );
+
+  return data.secrets.map((s) => ({
+    key: s.secretKey,
+    type: s.type,
+    value: s.secretValue,
+    workspace: projectId,
+  }));
+}
+
 export async function importInfisicalSecrets(
   projectId: string,
   env: Environment,

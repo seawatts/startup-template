@@ -27,6 +27,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./client": "./src/client.ts",
+    "./native": "./src/native.ts",
     "./react": "./src/react/client-exports.ts",
     "./server": "./src/react/server-exports.ts",
     "./services": "./src/services/index.ts"
