@@ -124,7 +124,7 @@ export async function getOrSelectSupabaseOrg(
       defaultValue: defaultOrgName,
       message: 'Enter a name for the new organization:',
       placeholder: defaultOrgName || 'my-organization',
-      validate: (value) => {
+      validate: (value: string) => {
         if (!value?.trim()) return 'Organization name is required';
       },
     });

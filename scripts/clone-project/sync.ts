@@ -63,7 +63,7 @@ export async function promptForManualSecrets(
     const value = await p.text({
       message: `Enter ${key}:`,
       placeholder: hint || `Enter value for ${key}`,
-      validate: (v) => {
+      validate: (v: string) => {
         if (!v?.trim()) return `${key} is required`;
       },
     });
@@ -95,7 +95,7 @@ export async function syncSupabase(
   const dbPassword = await p.text({
     message: 'Enter the database password for this project:',
     placeholder: 'The password used when the project was created',
-    validate: (v) => {
+    validate: (v: string) => {
       if (!v?.trim()) return 'Database password is required';
     },
   });

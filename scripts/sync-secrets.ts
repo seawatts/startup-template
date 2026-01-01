@@ -190,7 +190,7 @@ async function getPostHogApiKey(
     message: 'Enter your PostHog personal API key:',
     placeholder:
       'phx_xxx (create at https://us.posthog.com/settings/user-api-keys)',
-    validate: (v) => {
+    validate: (v: string) => {
       if (!v?.trim()) return 'PostHog API key is required';
       if (!v.startsWith('phx_'))
         return 'PostHog API key should start with "phx_"';

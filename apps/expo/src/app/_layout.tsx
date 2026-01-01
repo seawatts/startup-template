@@ -18,6 +18,13 @@ export default function RootLayout() {
             sf={{ default: 'house', selected: 'house.fill' }}
           />
         </NativeTabs.Trigger>
+        <NativeTabs.Trigger name="piano">
+          <Label>Piano</Label>
+          <Icon
+            drawable={Platform.OS === 'android' ? 'ic_media_play' : undefined}
+            sf={{ default: 'pianokeys', selected: 'pianokeys' }}
+          />
+        </NativeTabs.Trigger>
         <NativeTabs.Trigger name="settings">
           <Label>Settings</Label>
           <Icon

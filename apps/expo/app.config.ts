@@ -45,6 +45,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     },
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
+      NSBluetoothAlwaysUsageDescription:
+        'This app uses Bluetooth to connect to MIDI devices.',
+      NSBluetoothPeripheralUsageDescription:
+        'This app uses Bluetooth to connect to MIDI devices.',
     },
     supportsTablet: true,
   },
@@ -66,6 +70,14 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         image: './assets/icon-light.png',
       },
     ],
+    [
+      'react-native-ble-plx',
+      {
+        isBackgroundEnabled: false,
+        modes: ['peripheral', 'central'],
+      },
+    ],
+    'expo-audio',
   ],
   runtimeVersion: {
     policy: 'appVersion',

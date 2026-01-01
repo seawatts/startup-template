@@ -22,8 +22,9 @@
       }
     },
     "preview": {
+      "autoIncrement": true,
       "channel": "preview",
-      "distribution": "internal",
+      "distribution": "store",
       "env": {
         "APP_ENV": "preview"
       },
@@ -55,6 +56,12 @@
     "version": ">=16.28.0"
   },
   "submit": {
+    "preview": {
+      "ios": {
+        "appleId": "chris.watts.t@gmail.com",
+        "ascAppId": "6757142302"
+      }
+    },
     "production": {
       "android": {
         "releaseStatus": "completed",

@@ -224,7 +224,7 @@ async function promptForProjectName(noInteractive: boolean): Promise<string> {
   const nameInput = await p.text({
     message: 'What would you like to name your project?',
     placeholder: 'my-awesome-project',
-    validate: (value) => {
+    validate: (value: string) => {
       if (!value?.trim()) return 'Project name is required';
       if (!/^[\w-]+$/.test(value)) {
         return 'Project name can only contain letters, numbers, underscores, and hyphens';
