@@ -159,11 +159,10 @@ class PianoAudioService {
       }
 
       // Check for sustain events before this note
-      while (
-        sustainEventIndex < sortedSustainEvents.length &&
-        sortedSustainEvents[sustainEventIndex].timestamp <= note.timestamp
-      ) {
+      while (sustainEventIndex < sortedSustainEvents.length) {
         const sustainEvent = sortedSustainEvents[sustainEventIndex];
+        if (sustainEvent === undefined) break;
+        if (sustainEvent.timestamp > note.timestamp) break;
         currentSustainActive = sustainEvent.isActive;
 
         // If sustain is released, stop all sustained notes
@@ -208,6 +207,7 @@ class PianoAudioService {
     // Process remaining sustain events
     while (sustainEventIndex < sortedSustainEvents.length) {
       const sustainEvent = sortedSustainEvents[sustainEventIndex];
+      if (sustainEvent === undefined) break;
       const sustainDelay = sustainEvent.timestamp - (Date.now() - startTime);
       if (sustainDelay > 0) {
         await new Promise((resolve) => setTimeout(resolve, sustainDelay));

@@ -38,7 +38,11 @@ function getIntervals(notes: number[]): number[] {
   if (notes.length < 2) return [];
   const intervals: number[] = [];
   for (let i = 1; i < notes.length; i++) {
-    intervals.push((notes[i] - notes[i - 1] + 12) % 12);
+    const current = notes[i];
+    const previous = notes[i - 1];
+    if (current !== undefined && previous !== undefined) {
+      intervals.push((current - previous + 12) % 12);
+    }
   }
   return intervals;
 }
@@ -82,6 +86,7 @@ function findBestChordMatch(normalizedNotes: number[]): string | null {
   // Try each note as the root
   for (let rootOffset = 0; rootOffset < normalizedNotes.length; rootOffset++) {
     const root = normalizedNotes[rootOffset];
+    if (root === undefined) continue;
     const rotatedNotes = [
       ...normalizedNotes.slice(rootOffset),
       ...normalizedNotes.slice(0, rootOffset).map((n) => n + 12),
@@ -102,6 +107,7 @@ export function detectChord(pressedKeys: Set<number>): string | null {
   if (pressedKeys.size === 1) {
     // Single note - just show the note name
     const midiNumber = Array.from(pressedKeys)[0];
+    if (midiNumber === undefined) return null;
     return midiToNoteName(midiNumber);
   }
 
@@ -117,10 +123,13 @@ export function detectChord(pressedKeys: Set<number>): string | null {
 
   // If no chord pattern matches, show the lowest note as root with other notes
   if (normalizedNotes.length >= 2) {
-    const root = midiToNoteName(midiNumbers[0]);
+    const firstMidi = midiNumbers[0];
+    if (firstMidi === undefined) return null;
+    const root = midiToNoteName(firstMidi);
     const otherNotes = normalizedNotes
       .slice(1)
-      .map((n) => NOTE_NAMES[n])
+      .map((n) => NOTE_NAMES[n] ?? '?')
+      .filter((n) => n !== '?')
       .join('/');
     return `${root}(${otherNotes})`;
   }
