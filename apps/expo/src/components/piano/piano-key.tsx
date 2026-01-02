@@ -3,6 +3,7 @@ import {
   type GestureResponderEvent,
   Pressable,
   StyleSheet,
+  Text,
   useColorScheme,
 } from 'react-native';
 import Animated, {
@@ -19,6 +20,7 @@ interface PianoKeyProps {
   isPressed: boolean;
   onPressIn: (midiNumber: number) => void;
   onPressOut: (midiNumber: number) => void;
+  showKeyName?: boolean; // Whether to show the note name on the key
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -45,6 +47,7 @@ export function PianoKey({
   isPressed,
   onPressIn,
   onPressOut,
+  showKeyName = false,
 }: PianoKeyProps) {
   const colorScheme = useColorScheme();
   const pressedValue = useSharedValue(0);
@@ -133,16 +136,29 @@ export function PianoKey({
         },
       ];
 
+  // Get note name without octave for display
+  const displayNote = note.replace(/\d+$/, '');
+  const isDark = colorScheme === 'dark';
+
   return (
     <AnimatedPressable
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       style={[keyStyle, animatedStyle]}
     >
-      {/* Optional: Add note label for debugging */}
-      {/* <Text style={isBlackKey ? styles.blackKeyLabel : styles.whiteKeyLabel}>
-        {note}
-      </Text> */}
+      {showKeyName && (
+        <Text
+          style={[
+            isBlackKey ? styles.blackKeyLabel : styles.whiteKeyLabel,
+            isDark &&
+              (isBlackKey
+                ? styles.blackKeyLabelDark
+                : styles.whiteKeyLabelDark),
+          ]}
+        >
+          {displayNote}
+        </Text>
+      )}
     </AnimatedPressable>
   );
 }
@@ -166,10 +182,14 @@ const styles = StyleSheet.create({
   blackKeyLabel: {
     bottom: 8,
     color: '#FFFFFF',
-    fontSize: 8,
+    fontSize: 9,
+    fontWeight: '600',
     position: 'absolute',
     textAlign: 'center',
     width: '100%',
+  },
+  blackKeyLabelDark: {
+    color: '#FFFFFF',
   },
   whiteKey: {
     backgroundColor: '#FFFFFF',
@@ -187,10 +207,14 @@ const styles = StyleSheet.create({
   whiteKeyLabel: {
     bottom: 8,
     color: '#333333',
-    fontSize: 10,
+    fontSize: 11,
+    fontWeight: '600',
     position: 'absolute',
     textAlign: 'center',
     width: '100%',
+  },
+  whiteKeyLabelDark: {
+    color: '#1A1A1A',
   },
 });
 

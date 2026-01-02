@@ -44,58 +44,58 @@ export const siteConfig = {
     {
       id: 1,
       image: '/Device-6.png',
-      text: 'Test webhooks locally without exposing your development environment.',
+      text: 'Production-ready monorepo with 6 applications and 12 shared packages.',
     },
     {
       id: 2,
       image: '/Device-7.png',
-      text: 'Share webhook URLs across your team while maintaining individual environments.',
+      text: 'AI-first architecture optimized for code generation workflows.',
     },
     {
       id: 3,
       image: '/Device-8.png',
-      text: 'Debug faster with real-time monitoring and payload inspection.',
+      text: 'Modern stack: Next.js 15, React 19, tRPC, Drizzle, Supabase.',
     },
     {
       id: 4,
       image: '/Device-1.png',
-      text: 'Collaborate with your team seamlessly.',
+      text: 'Cross-platform support: web, mobile, CLI, extensions, and iOS.',
     },
   ],
   bentoSection: {
     description:
-      'Test webhooks locally, share URLs with your team, and monitor everything in real-time.',
+      'Everything you need to build and scale your startup, from day one to production.',
     items: [
       {
         content: <FirstBentoAnimation />,
         description:
-          'Inspect webhook events in real-time. Inspect payloads, headers, and routing information.',
+          'Build for web, mobile, desktop, and browser extensions from a single codebase. Shared packages ensure consistency across all platforms.',
         id: 1,
-        title: 'Inspect Webhook Events',
+        title: 'Cross-Platform Development',
       },
       {
         content: <SecondBentoAnimation />,
         description:
-          'Built-in support for major webhook providers like Stripe, GitHub, and Clerk. Easy to extend for custom providers.',
+          'BAML integration provides structured AI templates for consistent LLM interactions. Type-safe APIs ensure AI generates correct code every time.',
         id: 2,
-        title: 'Provider Integrations',
+        title: 'AI-First Architecture',
       },
       {
         content: <ThirdBentoAnimation />,
         description:
-          'Automatically route webhooks to local development environments based on routing rules.',
+          'End-to-end TypeScript with tRPC ensures type safety from database to UI. Shared context helps AI understand your entire codebase.',
         id: 3,
-        title: 'Local Event Routing',
+        title: 'Type-Safe by Default',
       },
       {
         content: <FourthBentoAnimation once={false} />,
         description:
-          'Replay webhook events to test your webhooks in different scenarios.',
+          'Production-ready with authentication, payments, analytics, email, and more. Deploy to Vercel, EAS, and npm with built-in tooling.',
         id: 4,
-        title: 'Replay Webhook Events',
+        title: 'Production Ready',
       },
     ],
-    title: 'Empower Your Webhook Development',
+    title: 'Build Your Startup Faster',
   },
   companyShowcase: {
     companyLogos: [
@@ -180,121 +180,114 @@ export const siteConfig = {
   ctaSection: {
     backgroundImage: '/agent-cta-background.png',
     button: {
-      href: '/app/onboarding?utm_source=marketing-site&utm_medium=cta-button',
-      text: 'Install Extension Today',
+      href: 'https://github.com/seawatts-sh/startup-template',
+      text: 'Clone Template',
     },
     id: 'cta',
-    subtext: 'Start testing webhooks in minutes',
-    title: 'Test AI Agent Workflows Locally',
+    subtext: 'Start building your startup today',
+    title: 'Ready to Build Your Startup?',
   },
-  description: 'Secure webhook testing and development platform.',
+  description:
+    'Production-ready monorepo template for building startups with AI-powered development workflows.',
   faqSection: {
     description:
-      "Answers to common questions about Seawatts and its features. If you have any other questions, please don't hesitate to contact us.",
+      "Answers to common questions about the startup template. If you have any other questions, please don't hesitate to contact us.",
     faQitems: [
       {
         answer:
-          'Seawatts is a modern webhook development platform that enables teams to test webhooks locally while sharing URLs across the team. It provides real-time monitoring, payload inspection, and team collaboration features to streamline the webhook testing process.',
+          'This is a production-ready monorepo template optimized for AI code generation workflows. It includes 6 applications (web app, mobile, CLI, Chrome extension, VS Code extension, iOS) and 12 shared packages (database, API, UI, AI, analytics, payments, etc.) built with modern technologies like Next.js 15, React 19, tRPC, Drizzle, and Supabase.',
         id: 1,
-        question: 'What is Seawatts?',
+        question: 'What is this startup template?',
       },
       {
         answer:
-          'Seawatts works by creating shareable webhook URLs that route to your local development environment. Team members can then test these webhooks by sending requests to these URLs. Seawatts provides a web dashboard for real-time monitoring and payload inspection, allowing you to see who is accessing your webhooks and what data is being sent.',
+          'The monorepo structure allows AI to understand your entire codebase context. Shared packages mean AI can generate code that works across all platforms. Type-safe APIs ensure AI generates correct code, and consistent patterns make it easy for AI to extend existing functionality.',
         id: 2,
-        question: 'How does Seawatts work?',
+        question: 'How does this template help with AI code generation?',
       },
       {
         answer:
-          'Yes, Seawatts uses end-to-end encryption for all webhook traffic. We do not store webhook payload data permanently, and all data is encrypted in transit. Your API keys and sensitive information are protected with industry-standard security measures.',
+          'Yes! The template is open source and free to use. You can clone it, modify it, and use it for any project. All the code is available on GitHub under the MIT license.',
         id: 3,
-        question: 'Is my data secure?',
+        question: 'Is this template free to use?',
       },
       {
         answer:
-          'Simply click on any webhook event in the Seawatts sidebar, then use the "Replay Event" button. The extension will resend the webhook to your local development server, making it easy to test and debug.',
+          'The template includes authentication (via Supabase), payments (Stripe integration), analytics (PostHog), email (Resend), database (Drizzle ORM with Supabase), and more. Everything is set up and ready to use, so you can focus on building your product features instead of infrastructure.',
         id: 4,
-        question: 'How do I replay webhook events from VS Code?',
+        question: 'What features are included?',
       },
       {
         answer:
-          'Yes, the VS Code extension is completely free to use. You can view webhook events, replay requests, and collaborate with your team at no cost. Premium features like advanced analytics are available with paid plans.',
+          'The template supports web (Next.js), mobile (React Native with Expo), CLI (cross-platform), Chrome extension, VS Code extension, and iOS. All apps share common packages, so you can build features once and use them across all platforms with full type safety.',
         id: 5,
-        question: 'Is the extension free to use?',
+        question: 'What platforms does this template support?',
       },
       {
         answer:
-          'Seawatts is perfect for testing webhooks triggered by AI agents using MCP (Model Context Protocol) servers. When your AI agent calls an MCP tool that triggers a webhook, Seawatts captures it for inspection and replay. This helps you debug AI workflows and validate that your agentic systems are working correctly.',
+          'The template uses BAML (Binary AI Markup Language) for structured AI templates, ensuring consistent LLM interactions. The monorepo structure provides shared context, and end-to-end TypeScript ensures AI generates type-safe code that works correctly across all platforms.',
         id: 6,
-        question: 'How can I test AI calls with MCP servers?',
+        question: 'How is this optimized for AI workflows?',
       },
       {
         answer:
-          'MCP (Model Context Protocol) is a standard for connecting AI models to external data sources and tools. Many MCP servers trigger webhooks when AI agents perform actions. Seawatts helps you test these AI-triggered webhooks, making it easier to debug agentic systems and validate AI-driven automations.',
+          'Yes! The template is designed to scale. The monorepo structure makes it easy to add new features and packages. You can deploy the web app to Vercel, mobile apps via EAS, and publish CLI tools to npm. All the deployment tooling is included.',
         id: 7,
-        question: 'What is MCP and how does it relate to webhook testing?',
+        question: 'Can I use this for production?',
       },
       {
         answer:
-          'Yes! Seawatts provides one shared webhook URL that your entire team can use across all services like Stripe, GitHub, and Clerk. The same URL intelligently routes webhooks to the active developer, eliminating the need for individual URLs.',
+          'Simply clone the repository, install dependencies with `bun install`, set up your environment variables, and run `bun dev` to start all applications. The README includes detailed setup instructions and all the commands you need to get started.',
         id: 8,
-        question: 'Can my entire team use the same webhook URL?',
+        question: 'How do I get started?',
       },
       {
         answer:
-          'Create an seawatts.config.json file in your repository with your shared webhook URLs. When team members check out the code, they automatically get access to the same webhook configuration. No more manual URL sharing or setup for new team members.',
+          'The template uses Bun as the package manager and runtime, Turborepo for monorepo orchestration, Biome for code formatting, and includes comprehensive tooling for development, testing, and deployment. All modern best practices are built in.',
         id: 9,
-        question: 'How do I share webhook configuration with my team?',
+        question: 'What tools and technologies are used?',
       },
     ],
     title: 'Frequently Asked Questions',
   },
   featureSection: {
     description:
-      'Discover how Seawatts transforms webhook testing in four easy steps',
+      'Everything you need to build and launch your startup, from day one to production.',
     items: [
       {
         content:
-          'Real-time monitoring through our web dashboard for webhook inspection and debugging.',
+          'Build for web, mobile, CLI, and extensions from a single codebase. Shared packages ensure consistency across all platforms.',
         id: 1,
         image:
           'https://images.unsplash.com/photo-1720378042271-60aff1e1c538?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwxMHx8fGVufDB8fHx8fA%3D%3D',
-        title: 'VS Code Extension',
+        title: 'Web App',
       },
       {
         content:
-          'Create shareable webhook URLs that route to your local environment. Perfect for team collaboration.',
+          'React Native with Expo SDK 51 for iOS and Android. Share components and logic with your web app.',
         id: 2,
         image:
           'https://images.unsplash.com/photo-1720371300677-ba4838fa0678?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        title: 'JetBrains Plugin (coming soon)',
+        title: 'Mobile App',
       },
       {
         content:
-          'Share webhook URLs across your team while maintaining individual developer environments.',
+          'Cross-platform CLI tool built with TypeScript. Perfect for automation, scripts, and developer tooling.',
         id: 3,
         image:
           'https://images.unsplash.com/photo-1666882990322-e7f3b8df4f75?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDF8fHxlbnwwfHx8fHw%3D',
-        title: 'MCP Server',
+        title: 'CLI Tool',
       },
       {
         content:
-          'Create shareable webhook URLs that route to your local environment. Perfect for team collaboration.',
+          'Chrome extension and VS Code extension included. Build browser and editor integrations with shared code.',
         id: 4,
         image:
           'https://images.unsplash.com/photo-1720371300677-ba4838fa0678?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        title: 'Seawatts CLI',
+        title: 'Browser & Editor Extensions',
       },
-
-      // {
-      //   component: <SeawattsConfigDemo />,
-      //   content:
-      //     "Webhooks are securely routed to the appropriate developer's machine based on active sessions.",
-      //   id: 2,
-      //   title: 'Individual Repo Configuration',
-      // },
     ],
-    title: 'Simple. Secure. Collaborative.',
+    title: 'Build Once, Deploy Everywhere.',
   },
   footerLinks: [
     {
@@ -308,89 +301,54 @@ export const siteConfig = {
       links: [
         {
           id: 12,
-          title: 'VS Code Extension',
-          url: 'https://marketplace.visualstudio.com/items?itemName=seawatts.seawatts-vscode',
+          title: 'Web App',
+          url: '#',
         },
         {
           id: 13,
-          title: 'JetBrains Plugin',
-          url: 'https://plugins.jetbrains.com/plugin/24002-seawatts',
+          title: 'Mobile App',
+          url: '#',
         },
         {
           id: 14,
-          title: 'MCP Server',
-          url: 'https://docs.seawatts.sh/mcp-integration',
+          title: 'CLI',
+          url: '#',
         },
         {
           id: 15,
-          title: 'Seawatts CLI',
-          url: 'https://www.npmjs.com/package/@seawatts/cli',
+          title: 'Extensions',
+          url: '#',
         },
       ],
-      title: 'Products',
+      title: 'Applications',
     },
     {
       links: [
         {
           id: 16,
-          title: 'Changelog',
-          url: 'https://github.com/seawatts-sh/seawatts/releases',
+          title: 'GitHub',
+          url: 'https://github.com/seawatts-sh/startup-template',
         },
-        // { id: 17, title: 'Blog', url: '/blog' },
-        { id: 18, title: 'Docs', url: 'https://docs.seawatts.sh' },
+        {
+          id: 18,
+          title: 'Documentation',
+          url: 'https://github.com/seawatts-sh/startup-template#readme',
+        },
         { id: 19, title: 'OSS Friends', url: '/oss-friends' },
-        { id: 20, title: 'Glossary', url: '/glossary' },
       ],
       title: 'Resources',
     },
-    {
-      links: [
-        { id: 3, title: 'All Comparisons', url: '/comparisons' },
-        { id: 4, title: 'vs ngrok', url: '/comparisons#ngrok' },
-        { id: 5, title: 'vs Webhook.site', url: '/comparisons#webhook-site' },
-        { id: 6, title: 'vs Beeceptor', url: '/comparisons#beeceptor' },
-        { id: 7, title: 'vs Localtunnel', url: '/comparisons#localtunnel' },
-        { id: 8, title: 'vs Smee.io', url: '/comparisons#smee' },
-        {
-          id: 9,
-          title: 'vs Cloudflare Tunnel',
-          url: '/comparisons#cloudflare-tunnel',
-        },
-        { id: 10, title: 'vs Hookdeck', url: '/comparisons#hookdeck' },
-        { id: 11, title: 'vs Svix', url: '/comparisons#svix' },
-      ],
-      title: 'Compare',
-    },
-
-    // {
-    //   title: 'Products',
-    //   links: [
-    //     { id: 5, title: 'Company', url: '#' },
-    //     { id: 6, title: 'Product', url: '#' },
-    //     { id: 7, title: 'Press', url: '#' },
-    //     { id: 8, title: 'More', url: '#' },
-    //   ],
-    // },
-    // {
-    //   title: 'Resources',
-    //   links: [
-    //     { id: 9, title: 'Press', url: '#' },
-    //     { id: 10, title: 'Careers', url: '#' },
-    //     { id: 11, title: 'Newsletters', url: '#' },
-    //     { id: 12, title: 'More', url: '#' },
-    //   ],
-    // },
   ],
   growthSection: {
     description:
-      'Where advanced security meets team collaboration—designed to protect your webhooks and empower your development.',
+      'Optimized for AI code generation workflows. The monorepo structure helps AI understand your entire codebase and generate consistent, type-safe code.',
     items: [
       {
         content: <SecurityShieldBackground />,
         description:
-          'Debug webhooks without leaving your editor. Keep your focus on code while monitoring webhook events in real-time.',
+          'Shared packages and consistent patterns mean AI can generate code that works across all platforms. Type safety ensures correctness from the start.',
         id: 1,
-        title: 'Seamless Workflow Integration',
+        title: 'AI-Optimized Structure',
       },
       {
         content: (
@@ -399,38 +357,39 @@ export const siteConfig = {
           </div>
         ),
         description:
-          'Works with VS Code, JetBrains IDEs, Cursor, and other editors. Compatible with all major webhook providers and development environments.',
+          'Start with 6 applications and 12 packages. Add features once, use everywhere. The monorepo structure scales with your team and product.',
         id: 2,
-        title: 'Universal Compatibility',
+        title: 'Scale from Day One',
       },
     ],
-    title: 'Built for Secure Development',
+    title: 'Built for Rapid Development',
   },
   hero: {
-    badge: 'Free During Beta',
-    badgeIcon: <span>🔥</span>,
-    badgeUrl:
-      // 'https://marketplace.visualstudio.com/items?itemName=seawatts.seawatts-vscode',
-      'https://seawatts.sh/app/onboarding?utm_source=marketing-site&utm_medium=hero-cta',
+    badge: 'Open Source',
+    badgeIcon: <span>🚀</span>,
+    badgeUrl: 'https://github.com/seawatts-sh/startup-template',
     cta: {
       primary: {
-        href: '/app/onboarding?utm_source=marketing-site&utm_medium=hero-cta',
-        text: 'Install Extension',
+        href: 'https://github.com/seawatts-sh/startup-template',
+        text: 'Get Started',
       },
       secondary: {
-        href: 'https://docs.seawatts.sh',
-        text: 'View Docs',
+        href: '#bento',
+        text: 'Learn More',
       },
     },
     description:
-      'Open source toolkit for webhook development. Install the extension in your editor to test, debug, and monitor webhooks with your team - all from your local environment.',
-    title: 'AI-Powered Webhook Development',
+      'Production-ready monorepo template optimized for AI code generation. Build web, mobile, CLI, and extensions from a single codebase with end-to-end type safety.',
+    title: 'AI-Powered Startup Template',
   },
   keywords: [
-    'Webhook Testing',
-    'Local Development',
-    'Team Collaboration',
-    'API Testing',
+    'Startup Template',
+    'Monorepo',
+    'AI Code Generation',
+    'Full-Stack Template',
+    'Next.js Template',
+    'React Template',
+    'TypeScript Template',
   ],
   links: {
     discord: 'https://discord.gg/seawattssh',
@@ -438,29 +397,16 @@ export const siteConfig = {
     github: 'https://github.com/seawatts-sh',
     twitter: 'https://twitter.com/seawattssh',
   },
-  name: 'Seawatts',
+  name: 'Startup Template',
   nav: {
     links: [
       { href: '#hero', id: 1, name: 'Home' },
+      { href: '#bento', id: 2, name: 'Features' },
+      { href: '#faq', id: 3, name: 'FAQ' },
       {
-        href: 'https://marketplace.visualstudio.com/items?itemName=seawatts.seawatts-vscode',
-        id: 3,
-        name: 'VS Code Extension',
-      },
-      {
-        href: 'https://plugins.jetbrains.com/plugin/24002-seawatts',
+        href: 'https://github.com/seawatts-sh/startup-template',
         id: 4,
-        name: 'JetBrains Plugin',
-      },
-      {
-        href: 'https://docs.seawatts.sh/mcp-integration',
-        id: 5,
-        name: 'MCP Server',
-      },
-      {
-        href: 'https://www.npmjs.com/package/@seawatts/cli',
-        id: 6,
-        name: 'Seawatts CLI',
+        name: 'GitHub',
       },
       // { id: 5, name: 'Features', href: '#features' },
       // { id: 6, name: 'Pricing', href: '#pricing' },
@@ -548,10 +494,10 @@ export const siteConfig = {
     author: {
       image: 'https://randomuser.me/api/portraits/women/12.jpg',
       name: 'Sarah Chen',
-      role: 'Lead Developer, TechFlow',
+      role: 'Founder, TechFlow',
     },
     quote:
-      'Seawatts has transformed our webhook development process. What used to be a complex coordination effort is now seamless collaboration.',
+      'This template saved us months of setup time. We went from idea to production in weeks, not months. The AI-optimized structure makes code generation incredibly effective.',
   },
   testimonials: [
     {

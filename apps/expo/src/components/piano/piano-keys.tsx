@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ScrollView, StyleSheet, useColorScheme, View } from 'react-native';
-
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  useColorScheme,
+  View,
+} from 'react-native';
+import { detectChord } from '~/utils/chord-detection';
 import { PIANO_KEYS, pianoAudio } from '~/utils/piano-audio';
 import type { PianoNote } from '~/utils/piano-storage';
 
@@ -10,12 +16,14 @@ interface PianoKeysProps {
   isRecording: boolean;
   onNotePlay?: (note: PianoNote) => void;
   externalPressedKeys?: Set<number>; // Keys pressed from MIDI input
+  showKeyNames?: boolean; // Whether to show note names on keys
 }
 
 export function PianoKeys({
   isRecording,
   onNotePlay,
   externalPressedKeys,
+  showKeyNames = false,
 }: PianoKeysProps) {
   const colorScheme = useColorScheme();
   const [touchPressedKeys, setTouchPressedKeys] = useState<Set<number>>(
@@ -110,10 +118,13 @@ export function PianoKeys({
         if (startTime) {
           const keyInfo = PIANO_KEYS.find((k) => k.midiNumber === midiNumber);
           if (keyInfo) {
+            const endTime = Date.now();
             const note: PianoNote = {
-              duration: Date.now() - startTime,
+              duration: endTime - startTime,
               midiNumber,
               note: keyInfo.note,
+              noteOffTime: endTime,
+              noteOnTime: startTime,
               timestamp: startTime - recordingStartTime.current,
             };
             onNotePlay(note);
@@ -127,8 +138,22 @@ export function PianoKeys({
 
   const isDark = colorScheme === 'dark';
 
+  // Detect chord from pressed keys
+  const chordName = useMemo(() => {
+    if (pressedKeys.size === 0) return null;
+    return detectChord(pressedKeys);
+  }, [pressedKeys]);
+
   return (
     <View style={[styles.container, isDark && styles.containerDark]}>
+      {/* Chord Display - Always visible */}
+      <View
+        style={[styles.chordContainer, isDark && styles.chordContainerDark]}
+      >
+        <Text style={[styles.chordText, isDark && styles.chordTextDark]}>
+          {chordName || ''}
+        </Text>
+      </View>
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         horizontal
@@ -147,6 +172,7 @@ export function PianoKeys({
                 note={key.note}
                 onPressIn={handlePressIn}
                 onPressOut={handlePressOut}
+                showKeyName={showKeyNames}
               />
             ))}
           </View>
@@ -167,6 +193,7 @@ export function PianoKeys({
                 note={key.note}
                 onPressIn={handlePressIn}
                 onPressOut={handlePressOut}
+                showKeyName={showKeyNames}
               />
             </View>
           ))}
@@ -181,6 +208,28 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     zIndex: 10,
+  },
+  chordContainer: {
+    alignItems: 'center',
+    backgroundColor: '#3A3A3C',
+    borderRadius: 8,
+    justifyContent: 'center',
+    marginBottom: 12,
+    minHeight: 56,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+  },
+  chordContainerDark: {
+    backgroundColor: '#2C2C2E',
+  },
+  chordText: {
+    color: '#007AFF',
+    fontSize: 32,
+    fontWeight: '700',
+    letterSpacing: 1,
+  },
+  chordTextDark: {
+    color: '#0A84FF',
   },
   container: {
     backgroundColor: '#2C2C2E',

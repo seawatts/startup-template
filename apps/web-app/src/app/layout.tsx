@@ -16,19 +16,21 @@ import { Suspense } from 'react';
 import { env } from '~/env';
 
 export const metadata: Metadata = {
-  description: 'Seawatts is a tool for developers to manage their webhooks',
+  description:
+    'Production-ready monorepo template for building startups with AI-powered development workflows.',
   metadataBase: new URL(
     env.VERCEL_ENV === 'production'
       ? 'https://seawatts.sh'
       : 'http://localhost:3000',
   ),
   openGraph: {
-    description: 'Seawatts is a tool for developers to manage their webhooks',
-    siteName: 'Seawatts',
-    title: 'Seawatts',
+    description:
+      'Production-ready monorepo template for building startups with AI-powered development workflows.',
+    siteName: 'Startup Template',
+    title: 'AI-Powered Startup Template',
     url: 'https://seawatts.sh',
   },
-  title: 'Seawatts',
+  title: 'AI-Powered Startup Template',
   twitter: {
     card: 'summary_large_image',
     creator: '@seawatts',

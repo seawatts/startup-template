@@ -53,8 +53,10 @@ export function createNativeClient<TRouter extends AnyRouter>(
     links: [
       loggerLink({
         enabled: (op) =>
-          process.env.NODE_ENV === 'development' ||
-          (op.direction === 'down' && op.result instanceof Error),
+          // Only log errors in development, not all requests
+          process.env.NODE_ENV === 'development' &&
+          op.direction === 'down' &&
+          op.result instanceof Error,
       }),
       // Type assertion needed because TRouter is generic and we can't prove
       // SuperJSON matches the router's transformer at compile time

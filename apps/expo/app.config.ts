@@ -49,6 +49,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         'This app uses Bluetooth to connect to MIDI devices.',
       NSBluetoothPeripheralUsageDescription:
         'This app uses Bluetooth to connect to MIDI devices.',
+      NSMIDIUsageDescription:
+        'This app uses MIDI to connect to musical instruments.',
     },
     supportsTablet: true,
   },

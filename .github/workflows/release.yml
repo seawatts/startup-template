@@ -3,14 +3,6 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
-      version_bump:
-        description: 'Version bump type'
-        required: true
-        type: choice
-        options:
-          - patch
-          - minor
-          - major
       packages:
         description: 'Packages to release'
         required: true
@@ -21,12 +13,6 @@ on:
           - cli
           - client
           - vscode
-          - expo
-      include_commits:
-        description: 'Include detailed commit list in changelog'
-        required: false
-        type: boolean
-        default: false
 
 permissions:
   contents: write
@@ -66,33 +52,22 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Setup Expo and EAS
-        if: inputs.packages == 'expo' || inputs.packages == 'all'
-        uses: expo/expo-github-action@v8
-        with:
-          eas-version: latest
-          token: ${{ secrets.EXPO_TOKEN }}
-
       - name: Run Release Script
         run: |
-          INCLUDE_COMMITS_FLAG=""
-          if [ "${{ inputs.include_commits }}" = "true" ]; then
-            INCLUDE_COMMITS_FLAG="--include-commits"
-          fi
-          bun scripts/release/index.ts --bump ${{ inputs.version_bump }} --packages ${{ inputs.packages }} --ci $INCLUDE_COMMITS_FLAG
+          bun scripts/release/index.ts --packages ${{ inputs.packages }} --ci
         env:
-          # OpenRouter integration for Claude Code CLI
+          # OpenRouter integration for Claude Code CLI and version bump analysis
           # @see https://openrouter.ai/docs/guides/guides/claude-code-integration
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           ANTHROPIC_BASE_URL: https://openrouter.ai/api
           ANTHROPIC_AUTH_TOKEN: ${{ secrets.OPENROUTER_API_KEY }}
           ANTHROPIC_API_KEY: '' # Must be explicitly empty
           ANTHROPIC_MODEL: anthropic/claude-3.5-haiku
+          # AI SDK for version bump analysis (uses OpenRouter)
+          AI_MODEL: ${{ vars.AI_MODEL || '' }}
           # VSCode extension publishing
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
           OVSX_PAT: ${{ secrets.OVSX_PAT }}
-          # Expo/EAS publishing
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
           # Build environment
           NODE_ENV: production
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}

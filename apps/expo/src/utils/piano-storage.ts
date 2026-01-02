@@ -4,8 +4,16 @@ import { Directory, File, Paths } from 'expo-file-system';
 export interface PianoNote {
   note: string; // e.g., "C4", "F#5"
   midiNumber: number;
+  timestamp: number; // ms from recording start (note-on time)
+  duration: number; // ms (calculated from note-off time)
+  noteOnTime?: number; // Absolute timestamp when note was pressed
+  noteOffTime?: number; // Absolute timestamp when note was released
+  sustainActive?: boolean; // Whether sustain pedal was active when note ended
+}
+
+export interface SustainEvent {
   timestamp: number; // ms from recording start
-  duration: number; // ms
+  isActive: boolean; // true = pedal down, false = pedal up
 }
 
 export interface Recording {
@@ -13,6 +21,7 @@ export interface Recording {
   name: string;
   createdAt: string;
   notes: PianoNote[];
+  sustainEvents?: SustainEvent[]; // Optional array of sustain pedal events
 }
 
 // Storage directory for recordings
@@ -81,6 +90,7 @@ class PianoStorageService {
   async saveRecording(
     name: string,
     notes: PianoNote[],
+    sustainEvents?: SustainEvent[],
   ): Promise<Recording | null> {
     await this.initialize();
 
@@ -90,6 +100,8 @@ class PianoStorageService {
         id: this.generateId(),
         name: name.trim() || `Recording ${new Date().toLocaleString()}`,
         notes,
+        sustainEvents:
+          sustainEvents && sustainEvents.length > 0 ? sustainEvents : undefined,
       };
 
       // Read existing recordings
@@ -182,7 +194,11 @@ class PianoStorageService {
       }
 
       // Save with new ID and timestamp
-      return this.saveRecording(data.name || 'Imported Recording', data.notes);
+      return this.saveRecording(
+        data.name || 'Imported Recording',
+        data.notes,
+        data.sustainEvents,
+      );
     } catch (error) {
       console.error('Failed to import recording:', error);
       return null;

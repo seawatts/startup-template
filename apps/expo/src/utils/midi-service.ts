@@ -22,6 +22,7 @@ const MIDI_CHARACTERISTIC_UUID = '7772e5db-3868-4112-a1a9-f2669d106bf3';
 // MIDI message types
 const MIDI_NOTE_ON = 0x90;
 const MIDI_NOTE_OFF = 0x80;
+const MIDI_CONTROL_CHANGE = 0xb0;
 
 // Bluetooth states (matching react-native-ble-plx State enum)
 const BLE_STATE_POWERED_ON = 'PoweredOn';
@@ -32,6 +33,13 @@ export interface MidiNote {
   velocity: number; // Velocity (0-127)
   timestamp: number; // Timestamp in ms
   type: 'noteOn' | 'noteOff';
+}
+
+export interface MidiControlChange {
+  channel: number;
+  ccNumber: number;
+  value: number;
+  timestamp: number;
 }
 
 export interface MidiDevice {
@@ -97,12 +105,60 @@ function parseBLEMidiPacket(data: Uint8Array): MidiNote[] {
         notes.push({ note, timestamp, type: 'noteOff', velocity });
       }
       i += 3;
+    } else if (messageType === MIDI_CONTROL_CHANGE && i + 2 < data.length) {
+      // Control Change message - skip for now, will be handled separately
+      i += 3;
     } else {
       i++;
     }
   }
 
   return notes;
+}
+
+// Parse BLE MIDI packet to extract Control Change messages
+function parseBLEMidiControlChange(data: Uint8Array): MidiControlChange | null {
+  const timestamp = Date.now();
+  let i = 0;
+
+  // Skip header byte
+  const firstByte = data[0];
+  if (data.length > 0 && firstByte !== undefined && (firstByte & 0x80) !== 0) {
+    i++;
+  }
+
+  while (i < data.length) {
+    const currentByte = data[i];
+    if (currentByte === undefined) break;
+
+    // Check for timestamp byte
+    if ((currentByte & 0x80) !== 0) {
+      i++;
+      continue;
+    }
+
+    const status = currentByte;
+    const messageType = status & 0xf0;
+
+    if (messageType === MIDI_CONTROL_CHANGE && i + 2 < data.length) {
+      const ccNumber = data[i + 1];
+      const value = data[i + 2];
+
+      if (ccNumber !== undefined && value !== undefined) {
+        return {
+          ccNumber,
+          channel: status & 0x0f,
+          timestamp,
+          value,
+        };
+      }
+      i += 3;
+    } else {
+      i++;
+    }
+  }
+
+  return null;
 }
 
 // Convert base64 to Uint8Array
@@ -115,7 +171,10 @@ function base64ToUint8Array(base64: string): Uint8Array {
   return bytes;
 }
 
-export function useMidiService(onNoteEvent?: (note: MidiNote) => void) {
+export function useMidiService(
+  onNoteEvent?: (note: MidiNote) => void,
+  onControlChange?: (cc: MidiControlChange) => void,
+) {
   const bleManager = useRef<BleManagerType | null>(null);
   const [state, setState] = useState<MidiServiceState>({
     availableDevices: [],
@@ -289,6 +348,7 @@ export function useMidiService(onNoteEvent?: (note: MidiNote) => void) {
             if (characteristic?.value) {
               const data = base64ToUint8Array(characteristic.value);
               const midiNotes = parseBLEMidiPacket(data);
+              const controlChange = parseBLEMidiControlChange(data);
 
               for (const note of midiNotes) {
                 setState((prev) => {
@@ -302,6 +362,11 @@ export function useMidiService(onNoteEvent?: (note: MidiNote) => void) {
                 });
 
                 onNoteEvent?.(note);
+              }
+
+              // Handle control change
+              if (controlChange) {
+                onControlChange?.(controlChange);
               }
             }
           },
@@ -333,7 +398,7 @@ export function useMidiService(onNoteEvent?: (note: MidiNote) => void) {
         Alert.alert('Connection Failed', 'Could not connect to MIDI device.');
       }
     },
-    [stopScanning, onNoteEvent],
+    [stopScanning, onNoteEvent, onControlChange],
   );
 
   // Disconnect from current device

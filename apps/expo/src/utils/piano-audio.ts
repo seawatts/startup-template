@@ -118,19 +118,126 @@ class PianoAudioService {
   }
 
   async playSequence(
-    notes: Array<{ midiNumber: number; timestamp: number; duration: number }>,
+    notes: Array<{
+      midiNumber: number;
+      timestamp: number;
+      duration: number;
+      sustainActive?: boolean;
+    }>,
+    sustainEvents?: Array<{ timestamp: number; isActive: boolean }>,
   ): Promise<void> {
     if (notes.length === 0) return;
 
     const startTime = Date.now();
+    const activeNotes = new Map<number, ReturnType<typeof setTimeout>>(); // Track active notes with their stop timers
+    let currentSustainActive = false;
+    const sustainedNotes = new Set<number>(); // Notes held by sustain pedal
 
-    for (const note of notes) {
-      const delay = note.timestamp - (Date.now() - startTime);
-      if (delay > 0) {
-        await new Promise((resolve) => setTimeout(resolve, delay));
+    // Sort sustain events by timestamp
+    const sortedSustainEvents = sustainEvents
+      ? [...sustainEvents].sort((a, b) => a.timestamp - b.timestamp)
+      : [];
+    let sustainEventIndex = 0;
+
+    // Helper to stop a note
+    const stopNote = (midiNumber: number) => {
+      const timeout = activeNotes.get(midiNumber);
+      if (timeout) {
+        clearTimeout(timeout);
+        activeNotes.delete(midiNumber);
       }
+      sustainedNotes.delete(midiNumber);
+      this.stopNote(midiNumber);
+    };
+
+    // Process all notes
+    for (const note of notes) {
+      // Wait until it's time to play this note
+      const noteOnDelay = note.timestamp - (Date.now() - startTime);
+      if (noteOnDelay > 0) {
+        await new Promise((resolve) => setTimeout(resolve, noteOnDelay));
+      }
+
+      // Check for sustain events before this note
+      while (
+        sustainEventIndex < sortedSustainEvents.length &&
+        sortedSustainEvents[sustainEventIndex].timestamp <= note.timestamp
+      ) {
+        const sustainEvent = sortedSustainEvents[sustainEventIndex];
+        currentSustainActive = sustainEvent.isActive;
+
+        // If sustain is released, stop all sustained notes
+        if (!sustainEvent.isActive) {
+          for (const sustainedNote of sustainedNotes) {
+            stopNote(sustainedNote);
+          }
+          sustainedNotes.clear();
+        }
+
+        sustainEventIndex++;
+      }
+
+      // Play the note
       await this.playNote(note.midiNumber);
+
+      // Calculate when to stop this note
+      const noteOffTime = note.timestamp + note.duration;
+      const stopDelay = noteOffTime - (Date.now() - startTime);
+
+      if (stopDelay > 0) {
+        const timeout = setTimeout(() => {
+          // If sustain is active, keep the note playing
+          if (currentSustainActive && note.sustainActive) {
+            sustainedNotes.add(note.midiNumber);
+            activeNotes.delete(note.midiNumber); // Remove from active, but keep in sustained
+          } else {
+            stopNote(note.midiNumber);
+          }
+        }, stopDelay);
+        activeNotes.set(note.midiNumber, timeout);
+      } else {
+        // Note should stop immediately (or already past)
+        if (!currentSustainActive || !note.sustainActive) {
+          stopNote(note.midiNumber);
+        } else {
+          sustainedNotes.add(note.midiNumber);
+        }
+      }
     }
+
+    // Process remaining sustain events
+    while (sustainEventIndex < sortedSustainEvents.length) {
+      const sustainEvent = sortedSustainEvents[sustainEventIndex];
+      const sustainDelay = sustainEvent.timestamp - (Date.now() - startTime);
+      if (sustainDelay > 0) {
+        await new Promise((resolve) => setTimeout(resolve, sustainDelay));
+      }
+
+      currentSustainActive = sustainEvent.isActive;
+
+      // If sustain is released, stop all sustained notes
+      if (!sustainEvent.isActive) {
+        for (const sustainedNote of sustainedNotes) {
+          stopNote(sustainedNote);
+        }
+        sustainedNotes.clear();
+      }
+
+      sustainEventIndex++;
+    }
+
+    // Clean up any remaining active notes
+    for (const [midiNumber, timeout] of activeNotes) {
+      clearTimeout(timeout);
+      this.stopNote(midiNumber);
+    }
+    activeNotes.clear();
+
+    // Clean up any remaining sustained notes
+    for (const sustainedNote of sustainedNotes) {
+      this.stopNote(sustainedNote);
+    }
+    sustainedNotes.clear();
   }
 
   async cleanup(): Promise<void> {

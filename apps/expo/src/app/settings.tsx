@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useState } from 'react';
 import {
   Pressable,
   ScrollView,
@@ -8,7 +9,11 @@ import {
   View,
 } from 'react-native';
 
+import { MidiConnection } from '~/components/piano';
 import { authClient } from '~/utils/auth';
+import { useMidiService } from '~/utils/midi-service';
+import { getShowKeyNames, setShowKeyNames } from '~/utils/piano-settings';
+import { useUsbMidi } from '~/utils/usb-midi-service';
 
 const colors = {
   dark: {
@@ -33,6 +38,22 @@ export default function Settings() {
   const colorScheme = useColorScheme();
   const theme = colors[colorScheme === 'dark' ? 'dark' : 'light'];
   const { data: session } = authClient.useSession();
+  const [showKeyNames, setShowKeyNamesState] = useState(false);
+
+  // Initialize MIDI services (no event handlers needed for settings page)
+  const bleMidi = useMidiService();
+  const usbMidi = useUsbMidi();
+
+  // Load show key names setting on mount
+  useEffect(() => {
+    getShowKeyNames().then(setShowKeyNamesState);
+  }, []);
+
+  // Handle show key names toggle
+  const handleShowKeyNamesChange = useCallback(async (value: boolean) => {
+    setShowKeyNamesState(value);
+    await setShowKeyNames(value);
+  }, []);
 
   return (
     <ScrollView
@@ -95,6 +116,45 @@ export default function Settings() {
             }
             theme={theme}
           />
+          <View style={[styles.divider, { backgroundColor: theme.border }]} />
+          <SettingRow
+            label="Show Key Names"
+            rightElement={
+              <Switch
+                onValueChange={handleShowKeyNamesChange}
+                trackColor={{ false: theme.border, true: '#007AFF' }}
+                value={showKeyNames}
+              />
+            }
+            theme={theme}
+          />
+        </View>
+      </View>
+
+      {/* MIDI Debug Section */}
+      <View style={styles.sectionContainer}>
+        <Text style={[styles.sectionTitle, { color: theme.mutedForeground }]}>
+          MIDI
+        </Text>
+        <View style={[styles.section, { backgroundColor: theme.muted }]}>
+          <View style={styles.midiDebugContainer}>
+            <MidiConnection
+              availableDevices={bleMidi.availableDevices}
+              bluetoothState={bleMidi.bluetoothState}
+              connectedDevice={bleMidi.connectedDevice}
+              isAvailable={bleMidi.isAvailable}
+              isConnected={bleMidi.isConnected}
+              isScanning={bleMidi.isScanning}
+              onConnectToDevice={bleMidi.connectToDevice}
+              onDisconnect={bleMidi.disconnect}
+              onStartScanning={bleMidi.startScanning}
+              onStopScanning={bleMidi.stopScanning}
+              // USB MIDI props
+              usbMidiConnectedDevices={usbMidi.connectedDevices}
+              usbMidiIsAvailable={usbMidi.isAvailable}
+              usbMidiIsListening={usbMidi.isListening}
+            />
+          </View>
         </View>
       </View>
 
@@ -205,6 +265,9 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     marginLeft: 16,
+  },
+  midiDebugContainer: {
+    padding: 8,
   },
   profileEmail: {
     fontSize: 14,

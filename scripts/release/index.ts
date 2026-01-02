@@ -1,27 +1,25 @@
 #!/usr/bin/env bun
 /**
- * Release script for @unhook/cli, @unhook/client, unhook-vscode, and @seawatts/expo
+ * Release script for @unhook/cli, @unhook/client, unhook-vscode
  *
  * Interactive mode (default):
  *   bun scripts/release
  *
  * Non-interactive mode (for CI):
- *   bun scripts/release --bump patch --packages all --ci
- *   bun scripts/release --bump minor --packages cli --dry-run
- *   bun scripts/release --bump patch --packages vscode --ci
- *   bun scripts/release --bump patch --packages expo --ci
- *   bun scripts/release --bump patch --packages all --include-commits
+ *   bun scripts/release --packages all --ci
+ *   bun scripts/release --packages cli --dry-run
+ *   bun scripts/release --packages vscode --ci
+ *   bun scripts/release --packages all --bump patch (manual override)
  *
  * Environment variables:
- *   OPENROUTER_API_KEY - Optional, for AI-generated changelogs
+ *   OPENROUTER_API_KEY - Required for AI-generated changelogs and version bump analysis
+ *   AI_MODEL - Optional, model name (default: "openai/gpt-4o-mini" for OpenRouter)
  *   DRY_RUN - If set to "true", skips npm publish and git push
  *   CLI_CHANGELOG - Pre-generated changelog for CLI (from GitHub Action)
  *   CLIENT_CHANGELOG - Pre-generated changelog for client (from GitHub Action)
  *   VSCODE_CHANGELOG - Pre-generated changelog for VSCode extension (from GitHub Action)
- *   EXPO_CHANGELOG - Pre-generated changelog for Expo app (from GitHub Action)
  *   VSCE_PAT - Personal Access Token for VS Marketplace (required for VSCode)
  *   OVSX_PAT - Personal Access Token for Open VSX Registry (required for VSCode)
- *   EXPO_TOKEN - Expo access token for EAS (required for Expo)
  *   CI - If set, defaults to non-interactive mode
  */
 
@@ -30,7 +28,6 @@ import { parseArgs } from 'node:util';
 import * as p from '@clack/prompts';
 import pc from 'picocolors';
 import { generateChangelog, updateChangelogFile } from './changelog';
-import { publishExpoApp, updateExpoVersion } from './expo';
 import {
   commitVersionChanges,
   createGitHubRelease,
@@ -45,6 +42,7 @@ import {
   getCurrentVersion,
   updatePackageVersion,
 } from './version';
+import { analyzeVersionBump } from './version-analysis';
 import { publishVscodeExtension } from './vscode';
 
 async function runInteractive(): Promise<ReleaseConfig> {
@@ -54,7 +52,7 @@ async function runInteractive(): Promise<ReleaseConfig> {
     message: 'Which packages do you want to release?',
     options: [
       {
-        hint: '@unhook/cli + @unhook/client + vscode + expo',
+        hint: '@unhook/cli + @unhook/client + vscode',
         label: 'All packages',
         value: 'all',
       },
@@ -64,11 +62,6 @@ async function runInteractive(): Promise<ReleaseConfig> {
         hint: 'unhook-vscode',
         label: 'VSCode Extension only',
         value: 'vscode',
-      },
-      {
-        hint: '@seawatts/expo (EAS Build + App Store)',
-        label: 'Expo App only',
-        value: 'expo',
       },
     ],
   });
@@ -80,9 +73,7 @@ async function runInteractive(): Promise<ReleaseConfig> {
 
   // Show current versions
   const packagesToRelease =
-    packages === 'all'
-      ? ['cli', 'client', 'vscode', 'expo']
-      : [packages as string];
+    packages === 'all' ? ['cli', 'client', 'vscode'] : [packages as string];
   for (const pkgKey of packagesToRelease) {
     const pkg = PACKAGES[pkgKey];
     if (pkg) {
@@ -91,44 +82,10 @@ async function runInteractive(): Promise<ReleaseConfig> {
     }
   }
 
-  const bumpType = await p.select({
-    message: 'What type of version bump?',
-    options: [
-      { hint: '0.0.x - Bug fixes', label: 'Patch', value: 'patch' },
-      { hint: '0.x.0 - New features', label: 'Minor', value: 'minor' },
-      { hint: 'x.0.0 - Breaking changes', label: 'Major', value: 'major' },
-    ],
-  });
-
-  if (p.isCancel(bumpType)) {
-    p.cancel('Release cancelled');
-    process.exit(0);
-  }
-
-  // Show what the new versions will be
-  const versionInfo: string[] = [];
-  for (const pkgKey of packagesToRelease) {
-    const pkg = PACKAGES[pkgKey];
-    if (pkg) {
-      const currentVersion = getCurrentVersion(pkg);
-      const newVersion = bumpVersion(
-        currentVersion,
-        bumpType as 'patch' | 'minor' | 'major',
-      );
-      versionInfo.push(`${pkg.name}: v${currentVersion} → v${newVersion}`);
-    }
-  }
-  p.note(versionInfo.join('\n'), 'Version changes');
-
-  const includeCommitList = await p.confirm({
-    initialValue: false,
-    message: 'Include detailed commit list in changelog?',
-  });
-
-  if (p.isCancel(includeCommitList)) {
-    p.cancel('Release cancelled');
-    process.exit(0);
-  }
+  p.note(
+    'Version bumps will be automatically determined by AI analysis of changelogs.',
+    'Version bump',
+  );
 
   const dryRun = await p.confirm({
     initialValue: false,
@@ -153,11 +110,9 @@ async function runInteractive(): Promise<ReleaseConfig> {
   }
 
   return {
-    bumpType: bumpType as 'patch' | 'minor' | 'major',
     dryRun: dryRun as boolean,
-    includeCommitList: includeCommitList as boolean,
     interactive: true,
-    packages: packages as 'all' | 'cli' | 'client' | 'vscode' | 'expo',
+    packages: packages as 'all' | 'cli' | 'client' | 'vscode',
   };
 }
 
@@ -167,7 +122,7 @@ function parseCliArgs(): ReleaseConfig {
     args: process.argv.slice(2),
     options: {
       bump: {
-        default: 'patch',
+        default: undefined,
         short: 'b',
         type: 'string',
       },
@@ -176,10 +131,6 @@ function parseCliArgs(): ReleaseConfig {
         type: 'boolean',
       },
       'dry-run': {
-        default: false,
-        type: 'boolean',
-      },
-      'include-commits': {
         default: false,
         type: 'boolean',
       },
@@ -201,11 +152,13 @@ function parseCliArgs(): ReleaseConfig {
     process.env.CI || values.ci ? false : (values.interactive as boolean);
 
   return {
-    bumpType: values.bump as 'patch' | 'minor' | 'major',
+    bumpType:
+      values.bump && ['patch', 'minor', 'major'].includes(values.bump as string)
+        ? (values.bump as 'patch' | 'minor' | 'major')
+        : undefined,
     dryRun: (values['dry-run'] as boolean) || process.env.DRY_RUN === 'true',
-    includeCommitList: values['include-commits'] as boolean,
     interactive: isInteractive,
-    packages: values.packages as 'all' | 'cli' | 'client' | 'vscode' | 'expo',
+    packages: values.packages as 'all' | 'cli' | 'client' | 'vscode',
   };
 }
 
@@ -217,9 +170,8 @@ async function releasePackage(
   const pkg = PACKAGES[pkgKey];
   if (!pkg) throw new Error(`Unknown package: ${pkgKey}`);
 
-  // Get current and new version
+  // Get current version
   const currentVersion = getCurrentVersion(pkg);
-  const newVersion = bumpVersion(currentVersion, config.bumpType);
 
   spinner.message(`${pkg.name}: Checking git history...`);
 
@@ -234,20 +186,41 @@ async function releasePackage(
   // Check for pre-generated changelog from GitHub Action
   const preGeneratedChangelog = process.env[pkg.changelogEnvVar];
 
-  // Generate changelog
+  // Generate changelog first (always include commit list)
   const changes = await generateChangelog(
     commits,
     pkg.name,
     latestTag,
     pkg.path, // Path filter for git commands
-    { includeCommitList: config.includeCommitList },
+    { includeCommitList: true },
     preGeneratedChangelog,
   );
+
+  // Determine version bump type
+  let bumpType: 'patch' | 'minor' | 'major';
+  if (config.bumpType) {
+    // Use provided bump type (for backward compatibility or manual override)
+    bumpType = config.bumpType;
+    spinner.message(`${pkg.name}: Using provided bump type: ${bumpType}`);
+  } else {
+    // Use AI to analyze changelog and determine bump type
+    spinner.message(
+      `${pkg.name}: Analyzing changelog to determine version bump...`,
+    );
+    const analysis = await analyzeVersionBump(changes, pkg.name);
+    bumpType = analysis.bumpType;
+    spinner.message(
+      `${pkg.name}: AI determined ${bumpType} bump - ${analysis.reasoning}`,
+    );
+  }
+
+  // Calculate new version
+  const newVersion = bumpVersion(currentVersion, bumpType);
 
   spinner.message(`${pkg.name}: Updating files...`);
 
   // Update changelog file
-  updateChangelogFile(pkg, newVersion, changes, config.bumpType);
+  updateChangelogFile(pkg, newVersion, changes, bumpType);
 
   // Update package.json version
   updatePackageVersion(pkg, newVersion);
@@ -267,27 +240,21 @@ async function main() {
     config = cliArgs;
 
     // Validate in non-interactive mode
-    if (!['patch', 'minor', 'major'].includes(config.bumpType)) {
-      console.error('Invalid bump type. Use: patch, minor, or major');
-      process.exit(1);
-    }
-
-    if (!['all', 'cli', 'client', 'vscode', 'expo'].includes(config.packages)) {
-      console.error('Invalid packages. Use: all, cli, client, vscode, or expo');
+    if (!['all', 'cli', 'client', 'vscode'].includes(config.packages)) {
+      console.error('Invalid packages. Use: all, cli, client, vscode');
       process.exit(1);
     }
 
     console.log('🚀 Starting release process');
-    console.log(`   Bump type: ${config.bumpType}`);
+    console.log(
+      `   Bump type: ${config.bumpType || 'AI-determined (from changelog)'}`,
+    );
     console.log(`   Packages: ${config.packages}`);
     console.log(`   Dry run: ${config.dryRun}`);
-    console.log(`   Include commits: ${config.includeCommitList}`);
   }
 
   const packagesToRelease =
-    config.packages === 'all'
-      ? ['cli', 'client', 'vscode', 'expo']
-      : [config.packages];
+    config.packages === 'all' ? ['cli', 'client', 'vscode'] : [config.packages];
   const releases: ReleaseResult[] = [];
 
   // Release each package
@@ -401,42 +368,6 @@ async function main() {
       );
     } catch (error) {
       vscodeSpinner.stop('Failed to publish VSCode extension');
-      throw error;
-    }
-  }
-
-  // Publish Expo app via EAS Build and Submit
-  const expoReleases = releases.filter((r) => r.pkg === 'expo');
-
-  if (expoReleases.length > 0) {
-    const expoSpinner = p.spinner();
-    expoSpinner.start('Publishing Expo app...');
-    try {
-      for (const release of expoReleases) {
-        const pkg = PACKAGES[release.pkg];
-        if (pkg) {
-          // Update app.config.ts version
-          expoSpinner.message(
-            `Updating ${pkg.name} version in app.config.ts...`,
-          );
-          await updateExpoVersion(pkg, release.version);
-
-          // Build and submit via EAS
-          expoSpinner.message(`Building ${pkg.name} via EAS...`);
-          await publishExpoApp(pkg, release.version, config.dryRun, {
-            platform: 'ios',
-            submit: true,
-            wait: false,
-          });
-        }
-      }
-      expoSpinner.stop(
-        config.dryRun
-          ? '🏃 [DRY RUN] Would build and submit to App Store via EAS'
-          : '📤 EAS Build started and submission queued',
-      );
-    } catch (error) {
-      expoSpinner.stop('Failed to publish Expo app');
       throw error;
     }
   }
