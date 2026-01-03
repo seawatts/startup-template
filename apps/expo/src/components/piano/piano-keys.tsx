@@ -1,31 +1,31 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
-import { detectChord } from '~/utils/chord-detection';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { StyleSheet, View } from 'react-native';
 import { PIANO_KEYS, pianoAudio } from '~/utils/piano-audio';
 import type { PianoNote } from '~/utils/piano-storage';
-
-import { PianoKey, WHITE_KEY_WIDTH } from './piano-key';
+import { GRID_BACKGROUND, KEY_GAP, WHITE_KEY_WIDTH } from './constants';
+import { PianoKey } from './piano-key';
 
 interface PianoKeysProps {
   isRecording: boolean;
   onNotePlay?: (note: PianoNote) => void;
   externalPressedKeys?: Set<number>; // Keys pressed from MIDI input
   showKeyNames?: boolean; // Whether to show note names on keys
+  landingNotes?: Set<number>; // Notes currently "landing" (for visual effect)
 }
 
-export function PianoKeys({
+export const PianoKeys = React.memo(function PianoKeys({
   isRecording,
   onNotePlay,
   externalPressedKeys,
   showKeyNames = false,
+  landingNotes,
 }: PianoKeysProps) {
-  const colorScheme = useColorScheme();
   const [touchPressedKeys, setTouchPressedKeys] = useState<Set<number>>(
     new Set(),
   );
@@ -58,12 +58,19 @@ export function PianoKeys({
     }
   }, [isRecording]);
 
+  // Show all 88 keys (full piano range: A0 to C8) for scrolling
+  const visibleKeys = useMemo(() => {
+    return PIANO_KEYS.filter(
+      (key) => key.midiNumber >= 21 && key.midiNumber <= 108,
+    ).sort((a, b) => a.midiNumber - b.midiNumber);
+  }, []);
+
   // Separate white and black keys for proper layering
   const { whiteKeys, blackKeys } = useMemo(() => {
-    const white = PIANO_KEYS.filter((key) => !key.isBlackKey);
-    const black = PIANO_KEYS.filter((key) => key.isBlackKey);
+    const white = visibleKeys.filter((key) => !key.isBlackKey);
+    const black = visibleKeys.filter((key) => key.isBlackKey);
     return { blackKeys: black, whiteKeys: white };
-  }, []);
+  }, [visibleKeys]);
 
   // Create a mapping of white key index for positioning black keys
   const whiteKeyIndices = useMemo(() => {
@@ -83,7 +90,9 @@ export function PianoKeys({
 
       if (whiteIndex !== undefined) {
         // Position at the right edge of the white key before
-        return whiteIndex * WHITE_KEY_WIDTH + WHITE_KEY_WIDTH * 0.65;
+        return (
+          whiteIndex * (WHITE_KEY_WIDTH + KEY_GAP) + WHITE_KEY_WIDTH * 0.65
+        );
       }
 
       return 0;
@@ -136,72 +145,52 @@ export function PianoKeys({
     [isRecording, onNotePlay],
   );
 
-  const isDark = colorScheme === 'dark';
-
-  // Detect chord from pressed keys
-  const chordName = useMemo(() => {
-    if (pressedKeys.size === 0) return null;
-    return detectChord(pressedKeys);
-  }, [pressedKeys]);
+  // Calculate total keyboard width
+  const totalWidth = whiteKeys.length * (WHITE_KEY_WIDTH + KEY_GAP) - KEY_GAP;
 
   return (
-    <View style={[styles.container, isDark && styles.containerDark]}>
-      {/* Chord Display - Always visible */}
-      <View
-        style={[styles.chordContainer, isDark && styles.chordContainerDark]}
-      >
-        <Text style={[styles.chordText, isDark && styles.chordTextDark]}>
-          {chordName || ''}
-        </Text>
+    <View style={[styles.keysContainer, { width: totalWidth }]}>
+      {/* White keys layer */}
+      <View style={styles.whiteKeysRow}>
+        {whiteKeys.map((key) => (
+          <PianoKey
+            isBlackKey={false}
+            isLanding={landingNotes?.has(key.midiNumber)}
+            isPressed={pressedKeys.has(key.midiNumber)}
+            key={key.midiNumber}
+            midiNumber={key.midiNumber}
+            note={key.note}
+            onPressIn={handlePressIn}
+            onPressOut={handlePressOut}
+            showKeyName={showKeyNames}
+          />
+        ))}
       </View>
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.scrollView}
-      >
-        <View style={styles.keysContainer}>
-          {/* White keys layer */}
-          <View style={styles.whiteKeysRow}>
-            {whiteKeys.map((key) => (
-              <PianoKey
-                isBlackKey={false}
-                isPressed={pressedKeys.has(key.midiNumber)}
-                key={key.midiNumber}
-                midiNumber={key.midiNumber}
-                note={key.note}
-                onPressIn={handlePressIn}
-                onPressOut={handlePressOut}
-                showKeyName={showKeyNames}
-              />
-            ))}
-          </View>
 
-          {/* Black keys layer (absolute positioned) */}
-          {blackKeys.map((key) => (
-            <View
-              key={key.midiNumber}
-              style={[
-                styles.blackKeyWrapper,
-                { left: getBlackKeyPosition(key.midiNumber) },
-              ]}
-            >
-              <PianoKey
-                isBlackKey={true}
-                isPressed={pressedKeys.has(key.midiNumber)}
-                midiNumber={key.midiNumber}
-                note={key.note}
-                onPressIn={handlePressIn}
-                onPressOut={handlePressOut}
-                showKeyName={showKeyNames}
-              />
-            </View>
-          ))}
+      {/* Black keys layer (absolute positioned) */}
+      {blackKeys.map((key) => (
+        <View
+          key={key.midiNumber}
+          style={[
+            styles.blackKeyWrapper,
+            { left: getBlackKeyPosition(key.midiNumber) },
+          ]}
+        >
+          <PianoKey
+            isBlackKey={true}
+            isLanding={landingNotes?.has(key.midiNumber)}
+            isPressed={pressedKeys.has(key.midiNumber)}
+            midiNumber={key.midiNumber}
+            note={key.note}
+            onPressIn={handlePressIn}
+            onPressOut={handlePressOut}
+            showKeyName={showKeyNames}
+          />
         </View>
-      </ScrollView>
+      ))}
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   blackKeyWrapper: {
@@ -209,36 +198,11 @@ const styles = StyleSheet.create({
     top: 0,
     zIndex: 10,
   },
-  chordContainer: {
-    alignItems: 'center',
-    backgroundColor: '#3A3A3C',
-    borderRadius: 8,
-    justifyContent: 'center',
-    marginBottom: 12,
-    minHeight: 56,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-  },
-  chordContainerDark: {
-    backgroundColor: '#2C2C2E',
-  },
-  chordText: {
-    color: '#007AFF',
-    fontSize: 32,
-    fontWeight: '700',
-    letterSpacing: 1,
-  },
-  chordTextDark: {
-    color: '#0A84FF',
-  },
   container: {
-    backgroundColor: '#2C2C2E',
-    borderRadius: 12,
+    backgroundColor: GRID_BACKGROUND,
+    borderTopColor: '#3A3A3C',
+    borderTopWidth: 2,
     overflow: 'hidden',
-    padding: 8,
-  },
-  containerDark: {
-    backgroundColor: '#1C1C1E',
   },
   keysContainer: {
     flexDirection: 'row',
@@ -246,12 +210,13 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 4,
+    paddingVertical: 4,
   },
   scrollView: {
     flexGrow: 0,
   },
   whiteKeysRow: {
     flexDirection: 'row',
-    gap: 2,
+    gap: KEY_GAP,
   },
 });
