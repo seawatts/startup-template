@@ -1,4 +1,4 @@
-import { Icon, Label, NativeTabs } from 'expo-router/unstable-native-tabs';
+import { NativeTabs } from 'expo-router/unstable-native-tabs';
 import { Platform } from 'react-native';
 
 // Tab layout for Home and Settings screens
@@ -7,15 +7,15 @@ export default function TabLayout() {
   return (
     <NativeTabs>
       <NativeTabs.Trigger name="index">
-        <Label>Home</Label>
-        <Icon
+        <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon
           drawable={Platform.OS === 'android' ? 'ic_menu_home' : undefined}
           sf={{ default: 'house', selected: 'house.fill' }}
         />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="settings">
-        <Label>Settings</Label>
-        <Icon
+        <NativeTabs.Trigger.Label>Settings</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon
           drawable={
             Platform.OS === 'android' ? 'ic_menu_preferences' : undefined
           }

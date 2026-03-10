@@ -3,7 +3,7 @@ import { TRPCReactProvider } from '@seawatts/api/react';
 import { debug } from '@seawatts/logger';
 import { Box, Text } from 'ink';
 import { type FC, useEffect, useRef } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
+import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
 import { Ascii } from '~/components/ascii';
 import { Router } from '~/components/router';
 import { AuthProvider } from '~/context/auth-context';
@@ -23,15 +23,15 @@ import { useRouterStore } from '~/stores/router-store';
 
 const log = debug('seawatts:cli:layout');
 
-function ErrorFallback({ error }: { error: Error }) {
-  // Call resetErrorBoundary() to reset the error boundary and retry the render.
-  log('An error occurred:', error);
-  captureException(error);
+function ErrorFallback({ error }: FallbackProps) {
+  const err = error instanceof Error ? error : new Error(String(error));
+  log('An error occurred:', err);
+  captureException(err);
 
   return (
     <Box>
       <Text color="red">Error</Text>
-      <Text color="red">{error.message}</Text>
+      <Text color="red">{err.message}</Text>
     </Box>
   );
 }

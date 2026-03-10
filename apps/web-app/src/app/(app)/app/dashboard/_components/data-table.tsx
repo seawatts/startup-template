@@ -702,9 +702,13 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                         indicator="dot"
                         payload={[
                           {
+                            dataKey: 'mobile',
+                            graphicalItemId: 'mobile',
+                            name: 'mobile',
                             payload: {
                               month: 'January',
                             },
+                            value: 0,
                           },
                         ]}
                       />
