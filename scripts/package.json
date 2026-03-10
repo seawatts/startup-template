@@ -1,15 +1,15 @@
 {
   "dependencies": {
-    "@ai-sdk/openai": "3.0.2",
-    "@clack/prompts": "0.11.0",
-    "ai": "6.0.6",
+    "@ai-sdk/openai": "3.0.41",
+    "@clack/prompts": "1.1.0",
+    "ai": "6.0.116",
     "picocolors": "1.1.1",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@seawatts/tsconfig": "workspace:*",
     "@types/bun": "catalog:",
-    "@types/node": "25.0.3",
+    "@types/node": "25.4.0",
     "typescript": "catalog:"
   },
   "license": "MIT",

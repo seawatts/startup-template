@@ -3,18 +3,18 @@
     "@seawatts/db": "workspace:*",
     "@seawatts/id": "workspace:*",
     "drizzle-orm": "catalog:",
-    "postgres": "3.4.7"
+    "postgres": "3.4.8"
   },
   "devDependencies": {
-    "@faker-js/faker": "10.2.0",
+    "@faker-js/faker": "10.3.0",
     "@seawatts/tsconfig": "workspace:*",
-    "@types/node": "25.0.3",
-    "@vitest/coverage-v8": "4.0.16",
-    "@vitest/ui": "4.0.16",
-    "dotenv": "17.2.3",
-    "testcontainers": "11.11.0",
+    "@types/node": "25.4.0",
+    "@vitest/coverage-v8": "4.0.18",
+    "@vitest/ui": "4.0.18",
+    "dotenv": "17.3.1",
+    "testcontainers": "11.12.0",
     "typescript": "catalog:",
-    "vitest": "4.0.16"
+    "vitest": "4.0.18"
   },
   "engines": {
     "node": ">=20.12.0"

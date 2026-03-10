@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@boundaryml/baml": "0.216.0"
+    "@boundaryml/baml": "0.219.0"
   },
   "devDependencies": {
     "@seawatts/tsconfig": "workspace:*",

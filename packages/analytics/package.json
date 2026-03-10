@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@clerk/chrome-extension": "2.8.14",
+    "@clerk/chrome-extension": "3.1.0",
     "@seawatts/auth": "workspace:*",
     "@seawatts/logger": "workspace:*",
     "@seawatts/ui": "workspace:*",
@@ -9,15 +9,15 @@
     "@vercel/speed-insights": "1.3.1",
     "class-variance-authority": "0.7.1",
     "next": "catalog:",
-    "posthog-js": "1.313.0",
-    "posthog-node": "5.18.1",
+    "posthog-js": "1.360.0",
+    "posthog-node": "5.28.0",
     "react": "catalog:",
     "react-dom": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@seawatts/tsconfig": "workspace:*",
-    "@types/aws-lambda": "8.10.159",
+    "@types/aws-lambda": "8.10.161",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "typescript": "catalog:"

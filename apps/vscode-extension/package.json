@@ -251,18 +251,18 @@
     "@seawatts/tsconfig": "workspace:*",
     "@types/bun": "catalog:",
     "@types/mocha": "10.0.10",
-    "@types/node": "25.0.3",
+    "@types/node": "25.4.0",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@types/vscode": "1.107.0",
-    "@vitejs/plugin-react": "5.1.2",
+    "@types/vscode": "1.110.0",
+    "@vitejs/plugin-react": "5.1.4",
     "@vscode/test-cli": "0.0.12",
     "@vscode/test-electron": "2.5.2",
     "concurrently": "9.2.1",
-    "glob": "13.0.0",
+    "glob": "13.0.6",
     "mocha": "11.7.5",
     "typescript": "catalog:",
-    "vite": "7.3.0"
+    "vite": "7.3.1"
   },
   "displayName": "Seawatts - Webhook Development",
   "engines": {
