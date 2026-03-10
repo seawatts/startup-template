@@ -1,12 +1,9 @@
 import { useCallback, useEffect, useRef } from 'react';
-import {
-  type GestureResponderEvent,
-  Pressable,
-  StyleSheet,
-  Text,
-} from 'react-native';
+import { StyleSheet, Text } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   interpolateColor,
+  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withSequence,
@@ -33,8 +30,6 @@ interface PianoKeyProps {
   showKeyName?: boolean;
 }
 
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-
 export function PianoKey({
   midiNumber,
   note,
@@ -48,6 +43,7 @@ export function PianoKey({
   const pressedValue = useSharedValue(0);
   const landingValue = useSharedValue(0);
   const pressStartTime = useRef<number>(0);
+  const isCurrentlyPressed = useRef<boolean>(false);
 
   // Handle press animation
   useEffect(() => {
@@ -70,20 +66,31 @@ export function PianoKey({
     }
   }, [isLanding, landingValue]);
 
-  const handlePressIn = useCallback(
-    (_event: GestureResponderEvent) => {
-      pressStartTime.current = Date.now();
-      onPressIn(midiNumber);
-    },
-    [midiNumber, onPressIn],
-  );
+  const handlePressIn = useCallback(() => {
+    if (isCurrentlyPressed.current) return;
+    isCurrentlyPressed.current = true;
+    pressStartTime.current = Date.now();
+    onPressIn(midiNumber);
+  }, [midiNumber, onPressIn]);
 
-  const handlePressOut = useCallback(
-    (_event: GestureResponderEvent) => {
-      onPressOut(midiNumber);
-    },
-    [midiNumber, onPressOut],
-  );
+  const handlePressOut = useCallback(() => {
+    if (!isCurrentlyPressed.current) return;
+    isCurrentlyPressed.current = false;
+    onPressOut(midiNumber);
+  }, [midiNumber, onPressOut]);
+
+  // Use Pan gesture for reliable touch tracking
+  // onBegin fires when touch starts, onFinalize fires when touch ends (always fires, even if canceled)
+  const panGesture = Gesture.Pan()
+    .minDistance(0)
+    .onBegin(() => {
+      'worklet';
+      runOnJS(handlePressIn)();
+    })
+    .onFinalize(() => {
+      'worklet';
+      runOnJS(handlePressOut)();
+    });
 
   // White key animated style
   const whiteKeyAnimatedStyle = useAnimatedStyle(() => {
@@ -136,30 +143,28 @@ export function PianoKey({
 
   if (isBlackKey) {
     return (
-      <AnimatedPressable
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        style={[styles.blackKey, blackKeyAnimatedStyle]}
-      >
-        {/* Glow effect overlay */}
-        <Animated.View style={[styles.blackKeyGlow, glowAnimatedStyle]} />
+      <GestureDetector gesture={panGesture}>
+        <Animated.View style={[styles.blackKey, blackKeyAnimatedStyle]}>
+          {/* Glow effect overlay */}
+          <Animated.View style={[styles.blackKeyGlow, glowAnimatedStyle]} />
 
-        {showKeyName && <Text style={styles.blackKeyLabel}>{displayNote}</Text>}
-      </AnimatedPressable>
+          {showKeyName && (
+            <Text style={styles.blackKeyLabel}>{displayNote}</Text>
+          )}
+        </Animated.View>
+      </GestureDetector>
     );
   }
 
   return (
-    <AnimatedPressable
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
-      style={[styles.whiteKey, whiteKeyAnimatedStyle]}
-    >
-      {/* Glow effect overlay */}
-      <Animated.View style={[styles.whiteKeyGlow, glowAnimatedStyle]} />
+    <GestureDetector gesture={panGesture}>
+      <Animated.View style={[styles.whiteKey, whiteKeyAnimatedStyle]}>
+        {/* Glow effect overlay */}
+        <Animated.View style={[styles.whiteKeyGlow, glowAnimatedStyle]} />
 
-      {showKeyName && <Text style={styles.whiteKeyLabel}>{displayNote}</Text>}
-    </AnimatedPressable>
+        {showKeyName && <Text style={styles.whiteKeyLabel}>{displayNote}</Text>}
+      </Animated.View>
+    </GestureDetector>
   );
 }
 
