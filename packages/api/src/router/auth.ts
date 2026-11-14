@@ -1,11 +1,9 @@
 import { db } from '@seawatts/db/client';
-import {
-  Accounts,
-  AuthCodes,
-  Orgs,
-  Sessions,
-  Users,
-} from '@seawatts/db/schema';
+import { Accounts } from '@seawatts/db/schema/accounts';
+import { AuthCodes } from '@seawatts/db/schema/api-keys';
+import { Orgs } from '@seawatts/db/schema/organizations';
+import { Sessions } from '@seawatts/db/schema/sessions';
+import { Users } from '@seawatts/db/schema/users';
 import { createId } from '@seawatts/id';
 import { TRPCError } from '@trpc/server';
 import { and, desc, eq, gte, isNull } from 'drizzle-orm';

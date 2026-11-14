@@ -7,7 +7,8 @@ import type {
   SupabaseClient,
 } from '@supabase/supabase-js';
 import { REALTIME_POSTGRES_CHANGES_LISTEN_EVENT } from '@supabase/supabase-js';
-import type { TableName, Tables } from './types';
+import type { TableName } from './types';
+import type { Tables } from './types.generated';
 
 const log = debug('seawatts:lib:channel');
 

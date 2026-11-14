@@ -2,7 +2,7 @@
 
 import { auth } from '@seawatts/auth/server';
 import { db } from '@seawatts/db/client';
-import { AuthCodes } from '@seawatts/db/schema';
+import { AuthCodes } from '@seawatts/db/schema/api-keys';
 import { headers } from 'next/headers';
 import { createSafeActionClient } from 'next-safe-action';
 

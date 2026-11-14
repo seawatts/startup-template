@@ -1,6 +1,6 @@
 import { auth } from '@seawatts/auth/server';
 import { db } from '@seawatts/db/client';
-import { Orgs } from '@seawatts/db/schema';
+import { Orgs } from '@seawatts/db/schema/organizations';
 import { eq } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import { stripe } from '../index';

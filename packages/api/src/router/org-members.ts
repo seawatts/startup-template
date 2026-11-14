@@ -1,4 +1,4 @@
-import { OrgMembers } from '@seawatts/db/schema';
+import { OrgMembers } from '@seawatts/db/schema/organizations';
 import { eq } from 'drizzle-orm';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 

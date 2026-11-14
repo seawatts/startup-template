@@ -2,14 +2,9 @@ import { subDays } from 'date-fns';
 import { seed } from 'drizzle-seed';
 
 import { db } from './client';
-import {
-  ApiKeys,
-  ApiKeyUsage,
-  AuthCodes,
-  OrgMembers,
-  Orgs,
-  Users,
-} from './schema';
+import { ApiKeys, ApiKeyUsage, AuthCodes } from './schema/api-keys';
+import { OrgMembers, Orgs } from './schema/organizations';
+import { Users } from './schema/users';
 
 // Reset all tables
 

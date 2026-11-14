@@ -1,30 +1,79 @@
-import { sql } from '@vercel/postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
-import { drizzle as drizzleVercel } from 'drizzle-orm/vercel-postgres';
 import postgres from 'postgres';
-
+import { databaseTls, idleTimeout, poolMax } from './connection-config';
 import { env } from './env';
-import * as schema from './schema';
+import { Accounts, Verifications } from './schema/accounts';
+import { ApiKeys, ApiKeyUsage, AuthCodes } from './schema/api-keys';
+import { Invitations, OrgMembers, Orgs } from './schema/organizations';
+import {
+  AccountsRelations,
+  ApiKeysRelations,
+  ApiKeyUsageRelations,
+  AuthCodesRelations,
+  InvitationsRelations,
+  OrgMembersRelations,
+  OrgsRelations,
+  SessionsRelations,
+  ShortUrlsRelations,
+  UsersRelations,
+} from './schema/relations';
+import { Sessions } from './schema/sessions';
+import { ShortUrls } from './schema/short-urls';
+import { Users } from './schema/users';
 
-const isProd = env.VERCEL_ENV === 'production';
+// The longest one statement may run inside `inTransaction`. Without a limit
+// a stuck query keeps its connection forever, and a few of them leave every
+// request on that server waiting. Give each database role a default too
+// (`alter role … set statement_timeout`, `idle_in_transaction_session_timeout`)
+// for queries outside these transactions.
+export const requestStatementLimit = '30s';
 
-// Create postgres-js client for non-production
-const queryClient = isProd
-  ? null
-  : postgres(env.POSTGRES_URL, {
-      connect_timeout: 10,
-      idle_timeout: 20,
-      max: 10,
-    });
-
-if (!isProd && !queryClient) {
-  throw new Error(
-    'Query client is not initialized for non-production environment',
-  );
+export function connectDatabase(url: string) {
+  return postgres(url, {
+    // A healthy pooler opens a connection in a few hundred milliseconds.
+    // Waiting longer only stacks requests behind a pooler that is out of
+    // client slots; fail fast and let the caller try again.
+    connect_timeout: 5,
+    idle_timeout: idleTimeout(),
+    max: poolMax(),
+    // Required behind a transaction pooler (Supabase's port 6543): a
+    // prepared statement belongs to one server connection and the pooler
+    // hands out a different one per transaction. The patched driver
+    // (patches/postgres@3.4.9.patch) makes unprepared queries cost one round
+    // trip and pipeline inside a transaction.
+    prepare: false,
+    ssl: databaseTls(url),
+  });
 }
 
-export const db = isProd
-  ? drizzleVercel(sql, { schema })
-  : drizzle(queryClient as postgres.Sql, { schema });
+export const connection = connectDatabase(env.POSTGRES_URL);
 
-export { sql };
+// The registry exists only for Drizzle's relational queries (`db.query.*`).
+// It makes every request load every table, so new code uses the query
+// builder with tables imported from their own files; once the last
+// relational query is gone, drop this object and the relations file.
+const registry = {
+  Accounts,
+  AccountsRelations,
+  ApiKeys,
+  ApiKeysRelations,
+  ApiKeyUsage,
+  ApiKeyUsageRelations,
+  AuthCodes,
+  AuthCodesRelations,
+  Invitations,
+  InvitationsRelations,
+  OrgMembers,
+  OrgMembersRelations,
+  Orgs,
+  OrgsRelations,
+  Sessions,
+  SessionsRelations,
+  ShortUrls,
+  ShortUrlsRelations,
+  Users,
+  UsersRelations,
+  Verifications,
+};
+
+export const db = drizzle(connection, { schema: registry });

@@ -1,4 +1,5 @@
-import { ApiKeys, OrgMembers, Orgs } from '@seawatts/db/schema';
+import { ApiKeys } from '@seawatts/db/schema/api-keys';
+import { OrgMembers, Orgs } from '@seawatts/db/schema/organizations';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { createOrg } from '../services';

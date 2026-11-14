@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
 import { db } from '../client';
-import { ApiKeys, ApiKeyUsage } from '../schema';
+import { ApiKeys, ApiKeyUsage } from '../schema/api-keys';
 
 export type ApiKeyUsageType = 'mcp-server';
 

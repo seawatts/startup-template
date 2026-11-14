@@ -23,7 +23,10 @@ Stack: Next.js 16 (App Router), React 19, TypeScript strict, Tailwind 4, shadcn/
 
 - No barrel files: import every binding from the file that declares it, never through an `index.ts` or other re-exporting module. Biome's `noBarrelFile`/`noReExportAll` enforce it; the barrels that predate the rule are listed in `biome.json` and that list only shrinks (`docs/agents/imports.md`).
 - Kebab-case filenames, no `any`, Node built-ins through `node:`; Biome enforces these.
-- All database access goes through `@seawatts/db`.
+- All database access goes through `@seawatts/db`. Import each table from its own file (`@seawatts/db/schema/users`), use the query builder for new code (not `db.query.*`), and run reads that belong together inside `inTransaction` with `Promise.all` (`docs/agents/database.md`).
+- Behind a transaction pooler the driver uses `prepare: false` and pipelines only inside a transaction; keep `patches/postgres@3.4.9.patch` when upgrading the driver, and rerun its tests (`docs/agents/database.md`).
+- Work after the response (email, third-party calls, analytics) goes through `after`/`waitUntil`, never a bare `void promise` (`docs/agents/database.md`).
+- Speed: measure before and after, no N+1, a read never writes, share "who is asking" lookups across one request's reads with `requestRead` (`docs/agents/speed.md`).
 
 ## UI
 
