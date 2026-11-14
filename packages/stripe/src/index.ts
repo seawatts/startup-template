@@ -183,10 +183,12 @@ export async function createBillingPortalSession({
 }
 
 // Verify webhook signature
+// Async on purpose: the sync `constructEvent` uses Node's crypto and throws
+// on the Bun runtime, which only offers Stripe the async Web Crypto.
 export function constructWebhookEvent(
   body: string | Buffer,
   signature: string,
-): Stripe.Event {
+): Promise<Stripe.Event> {
   const webhookSecret =
     env.STRIPE_WEBHOOK_SECRET ??
     (() => {
@@ -195,7 +197,7 @@ export function constructWebhookEvent(
       );
     })();
 
-  return stripe.webhooks.constructEvent(body, signature, webhookSecret);
+  return stripe.webhooks.constructEventAsync(body, signature, webhookSecret);
 }
 
 // Get or create a Stripe customer

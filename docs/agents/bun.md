@@ -29,7 +29,24 @@ Move one area at a time and measure before and after.
 
 ## Postgres
 
-The database client is still postgres.js with the patch in `patches/` ([database.md](database.md#the-driver-patch)). Moving it to `Bun.sql` is waiting on a measured run behind a transaction pooler, because the same rules apply to any driver there: prepared statements off, and no pipelining outside a transaction. What a first run on another app found: behind Supavisor `Bun.sql` needs `prepare: false` (the default returned wrong rows and hung), with that setting it does not pipeline even inside a transaction, so `Promise.all` in a transaction runs serially, and its errors carry the SQLSTATE in `errno`, not `code`. Do not swap the driver without rerunning `packages/db/tests/unit/transaction.test.ts` and the round-trip measurement against a pooler.
+The database client is postgres.js with the patch in `patches/` ([database.md](database.md#the-driver-patch)), and behind Supavisor (Supabase's pooler) it stays that way. `Bun.sql` was measured on a real app:
+
+| Connection | `Bun.sql` | Use |
+| --- | --- | --- |
+| Supavisor, defaults (named statements) | wrong rows and hangs | never |
+| Supavisor, `prepare: false` | correct, but never pipelines, even in a transaction: one page's first batch went from 270 ms to 558 ms with the pooler 5 ms away | patched postgres.js |
+| Direct connection | fine with its defaults | `Bun.sql` |
+| PgBouncer 1.21 or later, transaction mode, `max_prepared_statements` set | fine with its defaults, and the fastest measured | `Bun.sql` |
+
+- `Bun.sql` errors carry the SQLSTATE in `errno`, not `code`.
+- A move to `Bun.sql` wraps `unsafe`, `begin` and `savepoint` for the read guard and the statement counter as the postgres.js client does, and reruns `packages/db/tests/unit/transaction.test.ts` and the round-trip measurement against the real pooler.
+
+## Runtime gotchas
+
+- Stripe's sync `webhooks.constructEvent` throws on Bun (it has only the async Web Crypto there). Use `constructEventAsync`; `constructWebhookEvent` in `packages/stripe` does, and `packages/stripe/tests/webhook.test.ts` checks it.
+- A Node preload (`NODE_OPTIONS=--import ./x`) is `--preload ./x` on Bun, or `preload` in `bunfig.toml`.
+- Build and start Next.js with `bun --bun`, or it runs under Node.
+- The CLI (`apps/cli`) is published for people's own Node, so its `node` shebang stays.
 
 ## Not moved yet
 
