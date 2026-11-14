@@ -1,6 +1,7 @@
 'use client';
 
 import { MetricLink } from '@seawatts/analytics';
+import { useORPC } from '@seawatts/api/react/react';
 import {
   Sidebar,
   SidebarContent,
@@ -22,7 +23,9 @@ import {
   IconKey,
   IconReport,
   IconSettings,
+  IconShieldLock,
 } from '@tabler/icons-react';
+import { useQuery } from '@tanstack/react-query';
 import { usePathname } from 'next/navigation';
 import type * as React from 'react';
 import { Icons } from '~/app/(marketing)/_components/icons';
@@ -34,6 +37,12 @@ import { UsageCard } from './usage-card';
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
   const isOnboarding = pathname?.startsWith('/app/onboarding');
+  // Operators get a link to Internal. The pages and their reads check the
+  // operator again on the server.
+  const api = useORPC();
+  const operator = useQuery(
+    api.operator.access.queryOptions({ staleTime: Number.POSITIVE_INFINITY }),
+  ).data?.operator;
 
   const data = {
     documents: [
@@ -132,6 +141,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: 'Settings',
         url: '/app/settings/organization',
       },
+      ...(operator
+        ? [{ icon: IconShieldLock, title: 'Internal', url: '/app/internal' }]
+        : []),
     ],
     navSecondary: [
       {

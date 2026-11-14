@@ -107,6 +107,10 @@ export const sessionOnly: Record<string, string> = {
   'billing.getUsageInfo': 'Payment details stay in the signed-in app.',
   'billing.reactivateSubscription':
     'A billing decision a signed-in person makes.',
+  'operator.access': 'The app asks whether to show the Internal link.',
+  'operator.organization': 'Staff only, across customers; never by API key.',
+  'operator.organizations': 'Staff only, across customers; never by API key.',
+  'operator.overview': 'Staff only, across customers; never by API key.',
   'org.checkNameAvailability': 'A form helper for the app.',
   'org.upsert': 'Creating an organization starts from a signed-in person.',
   'user.delete': 'Deleting an account is done by its owner, signed in.',

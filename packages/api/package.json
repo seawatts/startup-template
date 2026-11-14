@@ -3,6 +3,7 @@
     "@orpc/client": "catalog:",
     "@orpc/server": "catalog:",
     "@orpc/tanstack-query": "catalog:",
+    "@seawatts/analytics": "workspace:*",
     "@seawatts/auth": "workspace:*",
     "@seawatts/db": "workspace:*",
     "@seawatts/id": "workspace:*",

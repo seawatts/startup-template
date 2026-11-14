@@ -48,6 +48,7 @@
         "BETTER_AUTH_*",
         "GOOGLE_*",
         "OPENAI_API_KEY",
+        "OPERATOR_*",
         "STRIPE_*",
         "RESEND_*"
       ],
@@ -79,6 +80,7 @@
         "POSTGRES_*",
         "POSTHOG_*",
         "OPENAI_API_KEY",
+        "OPERATOR_*",
         "STRIPE_*",
         "RESEND_*"
       ],
