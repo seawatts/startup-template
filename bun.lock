@@ -353,7 +353,6 @@
         "chokidar": "5.0.0",
         "drizzle-kit": "0.31.9",
         "supabase": "2.77.1",
-        "tsx": "4.21.0",
         "typescript": "catalog:",
         "zx": "8.8.5",
       },
