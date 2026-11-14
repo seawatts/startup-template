@@ -41,7 +41,9 @@ About 100 ms of server time per page, for every page and every role. An over-bud
 ## Fewer round trips per query
 
 - Reads that belong together run with `Promise.all` inside one transaction, where they pipeline.
-- Tenancy: every query filters by its tenant id explicitly, with row-level security as a backstop behind it. Pay the backstop's setup (begin, settings, commit) once or twice per request, not once per read. When wrapper statements are a large share of a request's count, its reads are opening too many transactions.
+- Tenancy: every query filters by its tenant id explicitly, with row-level security as a backstop behind it. Keep each read's transaction cheap: `inTransaction` sends `set_config` right behind `begin` with the first query behind that, so the settings cost no round trip of their own.
+- A request's cost is its statement count and its serial awaits (a query that waits on the previous one), not its transaction wrappers. Cut statements per page, and collapse sibling lists one screen shows together into one read.
+- Never pool one transaction across a request's concurrent reads. It was tried on a real app: no time gained (138 ms to 151 ms on one page while transactions fell from 34 to 26) and the driver became unstable (`CONNECTION_CLOSED`, `CONNECT_TIMEOUT`).
 - Send a transaction's settings with its first reads (`inTransaction` does).
 - Keep connections warm between requests (the client's idle timeout), and put the app's functions in the database's region.
 
