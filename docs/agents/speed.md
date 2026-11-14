@@ -2,9 +2,14 @@
 
 What made a real app built on this template fast, in the order to apply it. Measure first, change one thing, measure again, and put both numbers in the pull request.
 
+## The budget
+
+About 100 ms of server time per page, for every page and every role. An over-budget page is a bug. `SPEED=enabled bun test:e2e speed` adds up each screen's server time, statements and transactions, and `SPEED_SERVER_BUDGET=100` fails a screen over it ([tests.md](tests.md#the-speed-measurement)).
+
 ## Measure
 
 - Time to content for the screen, with `SPEED=enabled bun test:e2e speed` ([tests.md](tests.md#the-speed-measurement)), as a median over several loads with network latency and CPU throttling for a phone.
+- Server time, statements and transactions per request: the `Server-Timing` header on every API answer in development ([database.md](database.md#measuring)).
 - Database round trips with a delay in front of the local database, and query count per load from the statement log ([database.md](database.md#measuring)).
 - Server code loaded per route: after a build, read `.next/server/**/*.nft.json`.
 - The host's request logs for cold starts and per-request time, a few days before and after a deploy.
@@ -22,20 +27,23 @@ What made a real app built on this template fast, in the order to apply it. Meas
 ## Fewer requests, sent sooner
 
 - Batch a screen's reads into one HTTP request. Ten parallel reads otherwise start ten cold instances.
+- One round of requests per page: the shell and the page send their reads together in the first batch, never the shell first and the page after it has answered.
 - Gate follow-up reads on data the shell already has, not on a third round trip.
 
 ## Fewer queries per request
 
 - Share "who is asking" across a request's reads (`requestRead`).
 - No N+1: one query for a list's related rows (lookups by id array, grouped queries, a recursive CTE instead of a query per level).
+- Show a number, read a count: a badge or tile that shows "5" runs one `count(*)`, never loads the list to count it.
 - Read only what the view needs. A card that shows a photo and a name reads those two columns.
 - For slow SQL fix the plan: look for a correlated `EXISTS` over a materialized CTE or a lookup by a column no index leads with.
 
 ## Fewer round trips per query
 
 - Reads that belong together run with `Promise.all` inside one transaction, where they pipeline.
+- Tenancy: every query filters by its tenant id explicitly, with row-level security as a backstop behind it. Pay the backstop's setup (begin, settings, commit) once or twice per request, not once per read. When wrapper statements are a large share of a request's count, its reads are opening too many transactions.
 - Send a transaction's settings with its first reads (`inTransaction` does).
-- Keep connections warm between requests (the client's idle timeout).
+- Keep connections warm between requests (the client's idle timeout), and put the app's functions in the database's region.
 
 ## No contention on reads
 

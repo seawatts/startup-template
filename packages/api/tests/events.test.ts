@@ -135,6 +135,25 @@ describe.skipIf(!url)('with a database', () => {
     });
   });
 
+  test('a run wakes within a week, and stops when the expiry moved', async () => {
+    const [, , , , { longestSleepMs, nextExpiryWake }] = await loaded;
+    const now = Date.parse('2026-01-01T00:00:00.000Z');
+    const tomorrow = '2026-01-02T00:00:00.000Z';
+    const nextMonth = '2026-02-01T00:00:00.000Z';
+    expect(nextExpiryWake(tomorrow, tomorrow, now)).toEqual({
+      replaced: false,
+      wakeAt: tomorrow,
+    });
+    expect(nextExpiryWake(nextMonth, nextMonth, now)).toEqual({
+      replaced: false,
+      wakeAt: new Date(now + longestSleepMs).toISOString(),
+    });
+    // The key now expires at another time: a newer run owns it.
+    expect(nextExpiryWake(nextMonth, tomorrow, now)).toEqual({
+      replaced: true,
+    });
+  });
+
   test('saving an expiry publishes it, and only then', async () => {
     await seeded;
     const [, , , , , { createCaller }, { apiKeyContext }] = await loaded;

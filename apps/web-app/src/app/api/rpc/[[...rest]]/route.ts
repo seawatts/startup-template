@@ -6,6 +6,11 @@ import {
 import { createORPCContext } from '@seawatts/api/context';
 import { rpcRouter } from '@seawatts/api/rpc-router';
 import { sharingRequestReads } from '@seawatts/db/request-reads';
+import {
+  countingStatements,
+  countsStatements,
+  serverTiming,
+} from '@seawatts/db/statement-count';
 import { isWarmPing, warmApi } from '~/server/warm-api';
 
 // The web app sends a screen's reads as one batch (packages/api
@@ -35,12 +40,27 @@ async function handler(request: Request) {
   // asking" lookups (`requestRead` in packages/db request-reads.ts). Writes
   // share nothing.
   const shared = request.method === 'GET' ? new Map() : undefined;
-  const { response } = await sharingRequestReads(shared, async () =>
-    rpc.handle(request, {
-      context: await createORPCContext(request.headers),
-      prefix: '/api/rpc',
-    }),
+  const answer = () =>
+    sharingRequestReads(shared, async () =>
+      rpc.handle(request, {
+        context: await createORPCContext(request.headers),
+        prefix: '/api/rpc',
+      }),
+    );
+  // In development every answer says how long the server took and how many
+  // statements and transactions it sent (the browser's network panel shows
+  // it under Timing, and the speed measurement adds it up per screen).
+  if (!countsStatements()) return finish((await answer()).response);
+  const started = performance.now();
+  const { counts, result } = await countingStatements(answer);
+  result.response?.headers.set(
+    'Server-Timing',
+    serverTiming(performance.now() - started, counts),
   );
+  return finish(result.response);
+}
+
+function finish(response: Response | undefined) {
   // Answers depend on who asks: never cached by a browser or a CDN.
   if (response) response.headers.set('Cache-Control', 'no-store');
   return response ?? new Response('Not found', { status: 404 });
