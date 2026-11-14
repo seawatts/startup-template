@@ -1,5 +1,8 @@
 {
   "dependencies": {
+    "@orpc/client": "catalog:",
+    "@orpc/server": "catalog:",
+    "@orpc/tanstack-query": "catalog:",
     "@seawatts/auth": "workspace:*",
     "@seawatts/db": "workspace:*",
     "@seawatts/id": "workspace:*",
@@ -7,9 +10,6 @@
     "@seawatts/stripe": "workspace:*",
     "@t3-oss/env-nextjs": "catalog:",
     "@tanstack/react-query": "catalog:",
-    "@trpc/client": "catalog:",
-    "@trpc/server": "catalog:",
-    "@trpc/tanstack-react-query": "catalog:",
     "drizzle-orm": "catalog:",
     "next": "catalog:",
     "react": "catalog:",
@@ -25,13 +25,9 @@
     "typescript": "catalog:"
   },
   "exports": {
-    ".": "./src/index.ts",
-    "./client": "./src/client.ts",
-    "./native": "./src/native.ts",
-    "./react": "./src/react/client-exports.ts",
-    "./server": "./src/react/server-exports.ts",
-    "./services": "./src/services/index.ts",
-    "./types": "./src/types.ts"
+    "./*": "./src/*.ts",
+    "./react/hydration-boundary": "./src/react/hydration-boundary.tsx",
+    "./react/react": "./src/react/react.tsx"
   },
   "license": "MIT",
   "name": "@seawatts/api",

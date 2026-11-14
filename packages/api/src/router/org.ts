@@ -1,11 +1,12 @@
+import { ORPCError } from '@orpc/server';
 import { ApiKeys } from '@seawatts/db/schema/api-keys';
 import { OrgMembers, Orgs } from '@seawatts/db/schema/organizations';
 import { and, eq } from 'drizzle-orm';
 import { z } from 'zod';
-import { createOrg } from '../services';
-import { createTRPCRouter, protectedProcedure } from '../trpc';
+import { protectedProcedure } from '../orpc';
+import { createOrg } from '../services/create-org';
 
-export const orgRouter = createTRPCRouter({
+export const orgRouter = {
   checkNameAvailability: protectedProcedure
     .input(
       z.object({
@@ -13,8 +14,10 @@ export const orgRouter = createTRPCRouter({
         name: z.string(),
       }),
     )
-    .query(async ({ ctx, input }) => {
-      if (!ctx.auth.userId) throw new Error('User ID is required');
+    .route({ method: 'GET' })
+    .handler(async ({ context: ctx, input }) => {
+      if (!ctx.auth.userId)
+        throw new ORPCError('BAD_REQUEST', { message: 'User ID is required' });
 
       // First check if the user already has access to an organization with this name
       const existingOrgWithAccess = await ctx.db
@@ -56,15 +59,20 @@ export const orgRouter = createTRPCRouter({
           : `Organization name '${input.name}' already exists`,
       };
     }),
-  current: protectedProcedure.query(async ({ ctx }) => {
-    if (!ctx.auth.orgId) throw new Error('Organization ID is required');
-    return ctx.db
-      .select()
-      .from(Orgs)
-      .where(eq(Orgs.id, ctx.auth.orgId))
-      .limit(1)
-      .then((rows) => rows[0]);
-  }),
+  current: protectedProcedure
+    .route({ method: 'GET' })
+    .handler(async ({ context: ctx }) => {
+      if (!ctx.auth.orgId)
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Organization ID is required',
+        });
+      return ctx.db
+        .select()
+        .from(Orgs)
+        .where(eq(Orgs.id, ctx.auth.orgId))
+        .limit(1)
+        .then((rows) => rows[0]);
+    }),
 
   updateName: protectedProcedure
     .input(
@@ -79,8 +87,11 @@ export const orgRouter = createTRPCRouter({
           ),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
-      if (!ctx.auth.orgId) throw new Error('Organization ID is required');
+    .handler(async ({ context: ctx, input }) => {
+      if (!ctx.auth.orgId)
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Organization ID is required',
+        });
 
       // Check if organization name already exists
       const existingOrg = await ctx.db
@@ -91,7 +102,9 @@ export const orgRouter = createTRPCRouter({
         .then((rows) => rows[0]);
 
       if (existingOrg && existingOrg.id !== ctx.auth.orgId) {
-        throw new Error(`Organization name '${input.name}' already exists`);
+        throw new ORPCError('BAD_REQUEST', {
+          message: `Organization name '${input.name}' already exists`,
+        });
       }
 
       const [updatedOrg] = await ctx.db
@@ -115,9 +128,9 @@ export const orgRouter = createTRPCRouter({
           .min(3, 'Organization name must be at least 3 characters'),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .handler(async ({ context: ctx, input }) => {
       if (!ctx.auth.userId) {
-        throw new Error('User ID is required');
+        throw new ORPCError('BAD_REQUEST', { message: 'User ID is required' });
       }
 
       try {
@@ -150,7 +163,9 @@ export const orgRouter = createTRPCRouter({
         }
       } catch (error) {
         console.error('Failed to check organization name:', error);
-        throw new Error('Failed to check organization name');
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Failed to check organization name',
+        });
       }
 
       try {
@@ -162,11 +177,12 @@ export const orgRouter = createTRPCRouter({
         return result;
       } catch (error) {
         console.error('Failed to create organization:', error);
-        throw new Error(
-          error instanceof Error
-            ? error.message
-            : 'Failed to create organization',
-        );
+        throw new ORPCError('BAD_REQUEST', {
+          message:
+            error instanceof Error
+              ? error.message
+              : 'Failed to create organization',
+        });
       }
     }),
-});
+};

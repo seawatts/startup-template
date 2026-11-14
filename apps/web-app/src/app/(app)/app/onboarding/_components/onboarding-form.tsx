@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useTRPC } from '@seawatts/api/react';
+import { useORPC } from '@seawatts/api/react/react';
 import { useActiveOrganization, useSession } from '@seawatts/auth/client';
 import {
   Card,
@@ -189,7 +189,7 @@ export function OnboardingForm({
   redirectTo,
   source,
 }: OnboardingFormProps) {
-  const api = useTRPC();
+  const api = useORPC();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { data: activeOrg } = useActiveOrganization();
@@ -209,7 +209,7 @@ export function OnboardingForm({
   const orgName = watch('orgName');
   const webhookName = watch('webhookName');
 
-  // Use tRPC utils for API calls
+  // Use oRPC utils for API calls
   const queryClient = useQueryClient();
 
   // Validation hooks
@@ -220,8 +220,7 @@ export function OnboardingForm({
       (name) =>
         queryClient.fetchQuery(
           api.org.checkNameAvailability.queryOptions({
-            excludeOrgId: activeOrg?.id,
-            name,
+            input: { excludeOrgId: activeOrg?.id, name },
           }),
         ),
       [api, activeOrg?.id, queryClient],

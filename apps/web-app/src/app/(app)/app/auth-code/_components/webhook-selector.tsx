@@ -1,6 +1,6 @@
 'use client';
 
-import { HydrationBoundary } from '@seawatts/api/server';
+import { HydrationBoundary } from '@seawatts/api/react/hydration-boundary';
 import {
   Select,
   SelectContent,

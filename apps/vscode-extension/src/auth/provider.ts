@@ -101,7 +101,7 @@ export class SeawattsAuthProvider implements AuthenticationProvider {
 
       // Use your existing code exchange
       const { authToken, sessionId, user } =
-        await this.authStore.api.auth.exchangeAuthCode.mutate({
+        await this.authStore.api.auth.exchangeAuthCode({
           code: session.accessToken, // VS Code will pass the code as the accessToken
         });
 

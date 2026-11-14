@@ -1,7 +1,7 @@
 'use client';
 
 import { MetricButton } from '@seawatts/analytics/components';
-import { useTRPC } from '@seawatts/api/react';
+import { useORPC } from '@seawatts/api/react/react';
 import { CopyButton } from '@seawatts/ui/custom/copy-button';
 import { TimezoneDisplay } from '@seawatts/ui/custom/timezone-display';
 import * as Editable from '@seawatts/ui/diceui/editable-input';
@@ -51,15 +51,15 @@ function SkeletonRow() {
 }
 
 export function ApiKeysTable() {
-  const api = useTRPC();
+  const api = useORPC();
   const apiKeys = useQuery(api.apiKeys.allWithLastUsage.queryOptions());
   const queryClient = useQueryClient();
   const updateApiKey = useMutation(
     api.apiKeys.update.mutationOptions({
       onSuccess: () => {
-        queryClient.invalidateQueries(
-          api.apiKeys.allWithLastUsage.pathFilter(),
-        );
+        queryClient.invalidateQueries({
+          queryKey: api.apiKeys.allWithLastUsage.key(),
+        });
       },
     }),
   );

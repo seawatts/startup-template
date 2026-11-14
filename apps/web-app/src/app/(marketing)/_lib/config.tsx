@@ -54,7 +54,7 @@ export const siteConfig = {
     {
       id: 3,
       image: '/Device-8.png',
-      text: 'Modern stack: Next.js 15, React 19, tRPC, Drizzle, Supabase.',
+      text: 'Modern stack: Next.js 15, React 19, oRPC, Drizzle, Supabase.',
     },
     {
       id: 4,
@@ -83,7 +83,7 @@ export const siteConfig = {
       {
         content: <ThirdBentoAnimation />,
         description:
-          'End-to-end TypeScript with tRPC ensures type safety from database to UI. Shared context helps AI understand your entire codebase.',
+          'End-to-end TypeScript with oRPC ensures type safety from database to UI. Shared context helps AI understand your entire codebase.',
         id: 3,
         title: 'Type-Safe by Default',
       },
@@ -195,7 +195,7 @@ export const siteConfig = {
     faQitems: [
       {
         answer:
-          'This is a production-ready monorepo template optimized for AI code generation workflows. It includes 6 applications (web app, mobile, CLI, Chrome extension, VS Code extension, iOS) and 12 shared packages (database, API, UI, AI, analytics, payments, etc.) built with modern technologies like Next.js 15, React 19, tRPC, Drizzle, and Supabase.',
+          'This is a production-ready monorepo template optimized for AI code generation workflows. It includes 6 applications (web app, mobile, CLI, Chrome extension, VS Code extension, iOS) and 12 shared packages (database, API, UI, AI, analytics, payments, etc.) built with modern technologies like Next.js 15, React 19, oRPC, Drizzle, and Supabase.',
         id: 1,
         question: 'What is this startup template?',
       },

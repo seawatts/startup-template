@@ -13,7 +13,7 @@
 ### 🚀 Production Ready
 - **6 Applications**: Web app, mobile (Expo), CLI, Chrome extension, VS Code extension, iOS
 - **12 Shared Packages**: Database, API, UI, AI, analytics, payments, and more
-- **Modern Stack**: Next.js 15, React 19, tRPC v11, Drizzle ORM, Supabase
+- **Modern Stack**: Next.js 15, React 19, oRPC, Drizzle ORM, Supabase
 - **Developer Experience**: Bun, Turborepo, Biome, comprehensive tooling
 
 ## Quick Start
@@ -53,7 +53,7 @@ bun dev:vscode        # VS Code extension
 - **iOS** (`apps/ios`): Native iOS app
 
 ### Packages
-- **API** (`packages/api`): tRPC v11 router with end-to-end type safety
+- **API** (`packages/api`): oRPC router with end-to-end type safety
 - **Database** (`packages/db`): Drizzle ORM with Supabase
 - **UI** (`packages/ui`): shadcn/ui components shared across apps
 - **AI** (`packages/ai`): BAML templates for structured LLM interactions
@@ -74,7 +74,7 @@ The monorepo structure allows AI to understand:
 ### 2. **Consistent Patterns**
 - Shared TypeScript configurations
 - Unified code formatting with Biome
-- Consistent API patterns with tRPC
+- Consistent API patterns with oRPC
 - Reusable UI components across platforms
 
 ### 3. **Rapid Development**
@@ -185,7 +185,7 @@ bun publish
 
 ## Key Features
 
-- ✅ **End-to-End Type Safety** with tRPC
+- ✅ **End-to-End Type Safety** with oRPC
 - ✅ **AI Integration** with BAML templates
 - ✅ **Cross-Platform** development
 - ✅ **Modern Stack** (Next.js 15, React 19)

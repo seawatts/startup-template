@@ -1,7 +1,7 @@
 'use client';
 
 import { MetricButton } from '@seawatts/analytics/components';
-import { useTRPC } from '@seawatts/api/react';
+import { useORPC } from '@seawatts/api/react/react';
 import { Icons } from '@seawatts/ui/custom/icons';
 import {
   Dialog,
@@ -19,15 +19,15 @@ import posthog from 'posthog-js';
 import { useState } from 'react';
 
 export function CreateApiKeyDialog() {
-  const api = useTRPC();
+  const api = useORPC();
   const queryClient = useQueryClient();
 
   const createApiKey = useMutation(
     api.apiKeys.create.mutationOptions({
       onSuccess: () => {
-        queryClient.invalidateQueries(
-          api.apiKeys.allWithLastUsage.pathFilter(),
-        );
+        queryClient.invalidateQueries({
+          queryKey: api.apiKeys.allWithLastUsage.key(),
+        });
       },
     }),
   );

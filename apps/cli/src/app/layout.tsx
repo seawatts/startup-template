@@ -1,4 +1,4 @@
-import { TRPCReactProvider } from '@seawatts/api/react';
+import { ORPCReactProvider } from '@seawatts/api/react/react';
 
 import { debug } from '@seawatts/logger';
 import { Box, Text } from 'ink';
@@ -104,9 +104,9 @@ export const Layout: FC = () => {
           <RouterProvider>
             <PostHogPageView />
             <PostHogIdentifyUser />
-            <TRPCReactProvider sourceHeader="cli">
+            <ORPCReactProvider sourceHeader="cli">
               <AppContent />
-            </TRPCReactProvider>
+            </ORPCReactProvider>
           </RouterProvider>
         </AuthProvider>
       </ErrorBoundary>

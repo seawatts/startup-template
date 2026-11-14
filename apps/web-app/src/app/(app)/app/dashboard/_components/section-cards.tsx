@@ -1,6 +1,6 @@
 'use client';
 
-import { useTRPC } from '@seawatts/api/react';
+import { useORPC } from '@seawatts/api/react/react';
 import {
   Card,
   CardDescription,
@@ -15,7 +15,7 @@ import { env } from '~/env';
 import { maskApiKey } from '~/lib/mask-api-key';
 
 export function SectionCards() {
-  const api = useTRPC();
+  const api = useORPC();
   const apiKeys = useQuery(api.apiKeys.allWithLastUsage.queryOptions());
   // TODO: Re-enable when webhooks are re-implemented
   // const webhooks = api.webhooks.all.useQuery();

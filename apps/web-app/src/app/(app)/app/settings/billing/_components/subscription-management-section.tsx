@@ -1,7 +1,7 @@
 'use client';
 
 import { MetricButton } from '@seawatts/analytics/components';
-import { useTRPC } from '@seawatts/api/react';
+import { useORPC } from '@seawatts/api/react/react';
 import { useHasActiveSubscription } from '@seawatts/stripe/guards/client';
 import {
   Card,
@@ -17,12 +17,12 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 export function SubscriptionManagementSection() {
-  const api = useTRPC();
+  const api = useORPC();
   const hasActiveSubscription = useHasActiveSubscription();
 
   // Get subscription details
   const { data: subscriptionDetails, isLoading: isLoadingDetails } = useQuery(
-    api.billing.getSubscriptionDetails.queryOptions(undefined, {
+    api.billing.getSubscriptionDetails.queryOptions({
       enabled: hasActiveSubscription,
     }),
   );
@@ -66,12 +66,12 @@ export function SubscriptionManagementSection() {
         'Are you sure you want to cancel your subscription? It will remain active until the end of the current billing period.',
       )
     ) {
-      cancelSubscription();
+      cancelSubscription(undefined);
     }
   };
 
   const handleReactivateSubscription = () => {
-    reactivateSubscription();
+    reactivateSubscription(undefined);
   };
 
   if (!hasActiveSubscription) {

@@ -1,15 +1,16 @@
-import { getQueryClient, HydrationBoundary, trpc } from '@seawatts/api/server';
+import { HydrationBoundary } from '@seawatts/api/react/hydration-boundary';
+import { getQueryClient, orpc } from '@seawatts/api/react/server';
 import { ApiKeysTable } from './_components/api-keys-table';
 import { CreateApiKeyDialog } from './_components/create-api-key-dialog';
 
-// Dynamic because tRPC queries require authenticated session context
+// Dynamic because oRPC queries require authenticated session context
 export const dynamic = 'force-dynamic';
 
 export default async function ApiKeysPage() {
   const queryClient = getQueryClient();
 
   // Prefetch API keys data on the server
-  void queryClient.prefetchQuery(trpc.apiKeys.allWithLastUsage.queryOptions());
+  void queryClient.prefetchQuery(orpc.apiKeys.allWithLastUsage.queryOptions());
 
   return (
     <HydrationBoundary>

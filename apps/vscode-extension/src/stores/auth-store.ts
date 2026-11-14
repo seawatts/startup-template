@@ -108,7 +108,7 @@ export class AuthStore implements vscode.Disposable {
     this.setValidatingSession(true);
 
     try {
-      const { user } = await this._api.auth.verifySessionToken.query({
+      const { user } = await this._api.auth.verifySessionToken({
         sessionId: this._sessionId,
       });
 

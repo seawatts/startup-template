@@ -1,28 +1,23 @@
-import { auth } from '@seawatts/auth/server';
+import type { Session } from '@seawatts/auth/server';
+import { readSession } from '@seawatts/auth/session-reader';
 import { db } from '@seawatts/db/client';
 import { headers } from 'next/headers';
 
-export const createTRPCContext = async () => {
-  let session: Awaited<ReturnType<typeof auth.api.getSession>> | null = null;
-
+// Pass the request's headers from a route handler; a server component call
+// leaves them out and Next's own headers are read.
+export const createORPCContext = async (requestHeaders?: Headers) => {
+  let session: Session | null = null;
   try {
-    const headersList = await headers();
-    session = await auth.api.getSession({
-      headers: headersList,
-    });
-  } catch (error) {
-    console.error('Error getting session', error);
+    // The session-only reader: a cold server answers a read without
+    // loading the sign-in providers (packages/auth session-reader.ts).
+    session = await readSession(requestHeaders ?? (await headers()));
+  } catch {
+    console.error('Authentication lookup failed');
   }
-
   const userId = session?.user?.id ?? null;
   const orgId = session?.session?.activeOrganizationId ?? null;
-
   return {
-    // Auth object for compatibility with existing routers
-    auth: {
-      orgId,
-      userId,
-    },
+    auth: { orgId, userId },
     db,
     organizationId: orgId,
     session,
@@ -30,4 +25,4 @@ export const createTRPCContext = async () => {
   };
 };
 
-export type Context = Awaited<ReturnType<typeof createTRPCContext>>;
+export type Context = Awaited<ReturnType<typeof createORPCContext>>;

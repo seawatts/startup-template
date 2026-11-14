@@ -9,7 +9,7 @@ This is the main web application for the SeaWatts startup template, built with N
 - **TypeScript** for type safety
 - **Tailwind CSS** for styling
 - **shadcn/ui** components
-- **tRPC** for type-safe APIs
+- **oRPC** for type-safe APIs
 - **Clerk** for authentication
 - **Supabase** for database
 - **PostHog** for analytics
@@ -36,6 +36,6 @@ vercel --prod
 ## Learn More
 
 - [Next.js Documentation](https://nextjs.org/docs)
-- [tRPC Documentation](https://trpc.io/docs)
+- [oRPC Documentation](https://orpc.unnoq.com)
 - [shadcn/ui Components](https://ui.shadcn.com)
 - [Clerk Authentication](https://clerk.com/docs)

@@ -1,3 +1,4 @@
+import { ORPCError } from '@orpc/server';
 import {
   ApiKeys,
   ApiKeyUsage,
@@ -5,56 +6,70 @@ import {
 } from '@seawatts/db/schema/api-keys';
 import { and, desc, eq } from 'drizzle-orm';
 import { z } from 'zod';
-import { createTRPCRouter, protectedProcedure } from '../trpc';
+import { protectedProcedure } from '../orpc';
 
-export const apiKeysRouter = createTRPCRouter({
-  all: protectedProcedure.query(async ({ ctx }) => {
-    if (!ctx.auth.orgId) throw new Error('Organization ID is required');
+export const apiKeysRouter = {
+  all: protectedProcedure
+    .route({ method: 'GET' })
+    .handler(async ({ context: ctx }) => {
+      if (!ctx.auth.orgId)
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Organization ID is required',
+        });
 
-    const apiKeys = await ctx.db
-      .select()
-      .from(ApiKeys)
-      .where(eq(ApiKeys.organizationId, ctx.auth.orgId))
-      .orderBy(desc(ApiKeys.updatedAt));
+      const apiKeys = await ctx.db
+        .select()
+        .from(ApiKeys)
+        .where(eq(ApiKeys.organizationId, ctx.auth.orgId))
+        .orderBy(desc(ApiKeys.updatedAt));
 
-    return apiKeys;
-  }),
+      return apiKeys;
+    }),
 
-  allWithLastUsage: protectedProcedure.query(async ({ ctx }) => {
-    if (!ctx.auth.orgId) throw new Error('Organization ID is required');
+  allWithLastUsage: protectedProcedure
+    .route({ method: 'GET' })
+    .handler(async ({ context: ctx }) => {
+      if (!ctx.auth.orgId)
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Organization ID is required',
+        });
 
-    // Get all API keys
-    const apiKeys = await ctx.db
-      .select()
-      .from(ApiKeys)
-      .where(eq(ApiKeys.organizationId, ctx.auth.orgId))
-      .orderBy(desc(ApiKeys.updatedAt));
+      // Get all API keys
+      const apiKeys = await ctx.db
+        .select()
+        .from(ApiKeys)
+        .where(eq(ApiKeys.organizationId, ctx.auth.orgId))
+        .orderBy(desc(ApiKeys.updatedAt));
 
-    // For each API key, get the most recent usage
-    const apiKeysWithLastUsage = await Promise.all(
-      apiKeys.map(async (apiKey) => {
-        const lastUsage = await ctx.db
-          .select()
-          .from(ApiKeyUsage)
-          .where(eq(ApiKeyUsage.apiKeyId, apiKey.id))
-          .orderBy(desc(ApiKeyUsage.createdAt))
-          .limit(1)
-          .then((rows) => rows[0]);
+      // For each API key, get the most recent usage
+      const apiKeysWithLastUsage = await Promise.all(
+        apiKeys.map(async (apiKey) => {
+          const lastUsage = await ctx.db
+            .select()
+            .from(ApiKeyUsage)
+            .where(eq(ApiKeyUsage.apiKeyId, apiKey.id))
+            .orderBy(desc(ApiKeyUsage.createdAt))
+            .limit(1)
+            .then((rows) => rows[0]);
 
-        return {
-          ...apiKey,
-          lastUsage,
-        };
-      }),
-    );
+          return {
+            ...apiKey,
+            lastUsage,
+          };
+        }),
+      );
 
-    return apiKeysWithLastUsage;
-  }),
+      return apiKeysWithLastUsage;
+    }),
 
   byId: protectedProcedure
     .input(z.object({ id: z.string() }))
-    .query(async ({ ctx, input }) => {
-      if (!ctx.auth.orgId) throw new Error('Organization ID is required');
+    .route({ method: 'GET' })
+    .handler(async ({ context: ctx, input }) => {
+      if (!ctx.auth.orgId)
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Organization ID is required',
+        });
 
       const apiKey = await ctx.db
         .select()
@@ -75,9 +90,13 @@ export const apiKeysRouter = createTRPCRouter({
 
   create: protectedProcedure
     .input(CreateApiKeySchema)
-    .mutation(async ({ ctx, input }) => {
-      if (!ctx.auth.orgId) throw new Error('Organization ID is required');
-      if (!ctx.auth.userId) throw new Error('User ID is required');
+    .handler(async ({ context: ctx, input }) => {
+      if (!ctx.auth.orgId)
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Organization ID is required',
+        });
+      if (!ctx.auth.userId)
+        throw new ORPCError('BAD_REQUEST', { message: 'User ID is required' });
 
       try {
         const [apiKey] = await ctx.db
@@ -92,14 +111,19 @@ export const apiKeysRouter = createTRPCRouter({
         return apiKey;
       } catch (error) {
         console.error(error);
-        throw new Error('Failed to create API key');
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Failed to create API key',
+        });
       }
     }),
 
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      if (!ctx.auth.orgId) throw new Error('Organization ID is required');
+    .handler(async ({ context: ctx, input }) => {
+      if (!ctx.auth.orgId)
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Organization ID is required',
+        });
 
       const apiKey = await ctx.db
         .delete(ApiKeys)
@@ -116,8 +140,11 @@ export const apiKeysRouter = createTRPCRouter({
 
   toggleActive: protectedProcedure
     .input(z.object({ id: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      if (!ctx.auth.orgId) throw new Error('Organization ID is required');
+    .handler(async ({ context: ctx, input }) => {
+      if (!ctx.auth.orgId)
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Organization ID is required',
+        });
 
       // First get the current state
       const currentApiKey = await ctx.db
@@ -132,7 +159,8 @@ export const apiKeysRouter = createTRPCRouter({
         .limit(1)
         .then((rows) => rows[0]);
 
-      if (!currentApiKey) throw new Error('API Key not found');
+      if (!currentApiKey)
+        throw new ORPCError('BAD_REQUEST', { message: 'API Key not found' });
 
       const [apiKey] = await ctx.db
         .update(ApiKeys)
@@ -168,8 +196,11 @@ export const apiKeysRouter = createTRPCRouter({
           .optional(),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
-      if (!ctx.auth.orgId) throw new Error('Organization ID is required');
+    .handler(async ({ context: ctx, input }) => {
+      if (!ctx.auth.orgId)
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Organization ID is required',
+        });
 
       const { id, ...updateData } = input;
 
@@ -186,8 +217,11 @@ export const apiKeysRouter = createTRPCRouter({
 
   updateLastUsed: protectedProcedure
     .input(z.object({ id: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      if (!ctx.auth.orgId) throw new Error('Organization ID is required');
+    .handler(async ({ context: ctx, input }) => {
+      if (!ctx.auth.orgId)
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Organization ID is required',
+        });
 
       const [apiKey] = await ctx.db
         .update(ApiKeys)
@@ -204,4 +238,4 @@ export const apiKeysRouter = createTRPCRouter({
 
       return apiKey;
     }),
-});
+};

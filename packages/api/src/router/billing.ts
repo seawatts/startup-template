@@ -1,3 +1,4 @@
+import { ORPCError } from '@orpc/server';
 import { Orgs } from '@seawatts/db/schema/organizations';
 import {
   BILLING_INTERVALS,
@@ -10,12 +11,15 @@ import {
 import { eq } from 'drizzle-orm';
 import type Stripe from 'stripe';
 import { z } from 'zod';
-import { createTRPCRouter, protectedProcedure } from '../trpc';
+import { protectedProcedure } from '../orpc';
 
-export const billingRouter = createTRPCRouter({
+export const billingRouter = {
   // Cancel subscription at period end
-  cancelSubscription: protectedProcedure.mutation(async ({ ctx }) => {
-    if (!ctx.auth.orgId) throw new Error('Organization ID is required');
+  cancelSubscription: protectedProcedure.handler(async ({ context: ctx }) => {
+    if (!ctx.auth.orgId)
+      throw new ORPCError('BAD_REQUEST', {
+        message: 'Organization ID is required',
+      });
 
     const org = await ctx.db
       .select()
@@ -25,7 +29,9 @@ export const billingRouter = createTRPCRouter({
       .then((rows) => rows[0]);
 
     if (!org || !org.stripeSubscriptionId) {
-      throw new Error('No active subscription found');
+      throw new ORPCError('BAD_REQUEST', {
+        message: 'No active subscription found',
+      });
     }
 
     try {
@@ -50,7 +56,9 @@ export const billingRouter = createTRPCRouter({
       };
     } catch (error) {
       console.error('Error canceling subscription:', error);
-      throw new Error('Failed to cancel subscription');
+      throw new ORPCError('BAD_REQUEST', {
+        message: 'Failed to cancel subscription',
+      });
     }
   }),
 
@@ -61,8 +69,11 @@ export const billingRouter = createTRPCRouter({
         returnUrl: z.string().url(),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
-      if (!ctx.auth.orgId) throw new Error('Organization ID is required');
+    .handler(async ({ context: ctx, input }) => {
+      if (!ctx.auth.orgId)
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Organization ID is required',
+        });
 
       const org = await ctx.db
         .select()
@@ -72,7 +83,9 @@ export const billingRouter = createTRPCRouter({
         .then((rows) => rows[0]);
 
       if (!org || !org.stripeCustomerId) {
-        throw new Error('No active subscription found');
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'No active subscription found',
+        });
       }
 
       const session = await createBillingPortalSession({
@@ -81,7 +94,9 @@ export const billingRouter = createTRPCRouter({
       });
 
       if (!session.url) {
-        throw new Error('Failed to create billing portal session');
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Failed to create billing portal session',
+        });
       }
 
       return {
@@ -100,8 +115,11 @@ export const billingRouter = createTRPCRouter({
         successUrl: z.string().url(),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
-      if (!ctx.auth.orgId) throw new Error('Organization ID is required');
+    .handler(async ({ context: ctx, input }) => {
+      if (!ctx.auth.orgId)
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Organization ID is required',
+        });
 
       const org = await ctx.db
         .select()
@@ -111,7 +129,9 @@ export const billingRouter = createTRPCRouter({
         .then((rows) => rows[0]);
 
       if (!org) {
-        throw new Error('Organization not found');
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Organization not found',
+        });
       }
 
       // Create or get Stripe customer
@@ -121,7 +141,9 @@ export const billingRouter = createTRPCRouter({
         // Get user details from database for creating customer
         const user = ctx.user;
         if (!user || !user.email) {
-          throw new Error('User email is required to create Stripe customer');
+          throw new ORPCError('BAD_REQUEST', {
+            message: 'User email is required to create Stripe customer',
+          });
         }
 
         const customer = await getOrCreateCustomer({
@@ -134,7 +156,9 @@ export const billingRouter = createTRPCRouter({
         });
 
         if (!customer) {
-          throw new Error('Failed to create Stripe customer');
+          throw new ORPCError('BAD_REQUEST', {
+            message: 'Failed to create Stripe customer',
+          });
         }
 
         customerId = customer.id;
@@ -162,7 +186,9 @@ export const billingRouter = createTRPCRouter({
       });
 
       if (!session.url) {
-        throw new Error('Failed to create checkout session');
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Failed to create checkout session',
+        });
       }
 
       return {
@@ -172,27 +198,34 @@ export const billingRouter = createTRPCRouter({
     }),
 
   // Get organization billing details
-  getBillingDetails: protectedProcedure.query(async ({ ctx }) => {
-    if (!ctx.auth.orgId) throw new Error('Organization ID is required');
+  getBillingDetails: protectedProcedure
+    .route({ method: 'GET' })
+    .handler(async ({ context: ctx }) => {
+      if (!ctx.auth.orgId)
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Organization ID is required',
+        });
 
-    const org = await ctx.db
-      .select()
-      .from(Orgs)
-      .where(eq(Orgs.id, ctx.auth.orgId))
-      .limit(1)
-      .then((rows) => rows[0]);
+      const org = await ctx.db
+        .select()
+        .from(Orgs)
+        .where(eq(Orgs.id, ctx.auth.orgId))
+        .limit(1)
+        .then((rows) => rows[0]);
 
-    if (!org) {
-      throw new Error('Organization not found');
-    }
+      if (!org) {
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Organization not found',
+        });
+      }
 
-    return {
-      customerId: org.stripeCustomerId,
-      name: org.name,
-      subscriptionId: org.stripeSubscriptionId,
-      subscriptionStatus: org.stripeSubscriptionStatus,
-    };
-  }),
+      return {
+        customerId: org.stripeCustomerId,
+        name: org.name,
+        subscriptionId: org.stripeSubscriptionId,
+        subscriptionStatus: org.stripeSubscriptionStatus,
+      };
+    }),
 
   // Get invoices for the current organization
   getInvoices: protectedProcedure
@@ -202,8 +235,12 @@ export const billingRouter = createTRPCRouter({
         startingAfter: z.string().optional(),
       }),
     )
-    .query(async ({ ctx, input }) => {
-      if (!ctx.auth.orgId) throw new Error('Organization ID is required');
+    .route({ method: 'GET' })
+    .handler(async ({ context: ctx, input }) => {
+      if (!ctx.auth.orgId)
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Organization ID is required',
+        });
 
       const org = await ctx.db
         .select()
@@ -213,7 +250,9 @@ export const billingRouter = createTRPCRouter({
         .then((rows) => rows[0]);
 
       if (!org || !org.stripeCustomerId) {
-        throw new Error('No active subscription found');
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'No active subscription found',
+        });
       }
 
       const invoices = await stripe.invoices.list({
@@ -234,192 +273,217 @@ export const billingRouter = createTRPCRouter({
     }),
 
   // Get subscription details from Stripe
-  getSubscriptionDetails: protectedProcedure.query(async ({ ctx }) => {
-    if (!ctx.auth.orgId) throw new Error('Organization ID is required');
+  getSubscriptionDetails: protectedProcedure
+    .route({ method: 'GET' })
+    .handler(async ({ context: ctx }) => {
+      if (!ctx.auth.orgId)
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Organization ID is required',
+        });
 
-    const org = await ctx.db
-      .select()
-      .from(Orgs)
-      .where(eq(Orgs.id, ctx.auth.orgId))
-      .limit(1)
-      .then((rows) => rows[0]);
+      const org = await ctx.db
+        .select()
+        .from(Orgs)
+        .where(eq(Orgs.id, ctx.auth.orgId))
+        .limit(1)
+        .then((rows) => rows[0]);
 
-    if (!org || !org.stripeSubscriptionId) {
-      return null;
-    }
+      if (!org || !org.stripeSubscriptionId) {
+        return null;
+      }
 
-    try {
-      const subscription = (await stripe.subscriptions.retrieve(
-        org.stripeSubscriptionId,
-        {
-          expand: ['latest_invoice', 'customer'],
-        },
-      )) as Stripe.Subscription;
-
-      return {
-        cancelAtPeriodEnd: subscription.cancel_at_period_end,
-        canceledAt: subscription.canceled_at,
-        id: subscription.id,
-        items: subscription.items.data.map((item) => ({
-          id: item.id,
-          price: {
-            currency: item.price.currency,
-            id: item.price.id,
-            recurring: item.price.recurring,
-            unitAmount: item.price.unit_amount,
+      try {
+        const subscription = (await stripe.subscriptions.retrieve(
+          org.stripeSubscriptionId,
+          {
+            expand: ['latest_invoice', 'customer'],
           },
-          quantity: item.quantity,
-        })),
-        latestInvoice: subscription.latest_invoice
-          ? {
-              amount: (subscription.latest_invoice as Stripe.Invoice).total,
-              hostedInvoiceUrl: (subscription.latest_invoice as Stripe.Invoice)
-                .hosted_invoice_url,
-              id: (subscription.latest_invoice as Stripe.Invoice).id,
-              status: (subscription.latest_invoice as Stripe.Invoice).status,
-            }
-          : null,
-        status: subscription.status,
-        trialEnd: subscription.trial_end,
-        trialStart: subscription.trial_start,
-      };
-    } catch (error) {
-      console.error('Error retrieving subscription:', error);
-      return null;
-    }
-  }),
+        )) as Stripe.Subscription;
+
+        return {
+          cancelAtPeriodEnd: subscription.cancel_at_period_end,
+          canceledAt: subscription.canceled_at,
+          id: subscription.id,
+          items: subscription.items.data.map((item) => ({
+            id: item.id,
+            price: {
+              currency: item.price.currency,
+              id: item.price.id,
+              recurring: item.price.recurring,
+              unitAmount: item.price.unit_amount,
+            },
+            quantity: item.quantity,
+          })),
+          latestInvoice: subscription.latest_invoice
+            ? {
+                amount: (subscription.latest_invoice as Stripe.Invoice).total,
+                hostedInvoiceUrl: (
+                  subscription.latest_invoice as Stripe.Invoice
+                ).hosted_invoice_url,
+                id: (subscription.latest_invoice as Stripe.Invoice).id,
+                status: (subscription.latest_invoice as Stripe.Invoice).status,
+              }
+            : null,
+          status: subscription.status,
+          trialEnd: subscription.trial_end,
+          trialStart: subscription.trial_start,
+        };
+      } catch (error) {
+        console.error('Error retrieving subscription:', error);
+        return null;
+      }
+    }),
   // Get subscription status for the current organization
-  getSubscriptionStatus: protectedProcedure.query(async ({ ctx }) => {
-    if (!ctx.auth.orgId) throw new Error('Organization ID is required');
+  getSubscriptionStatus: protectedProcedure
+    .route({ method: 'GET' })
+    .handler(async ({ context: ctx }) => {
+      if (!ctx.auth.orgId)
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Organization ID is required',
+        });
 
-    const org = await ctx.db
-      .select()
-      .from(Orgs)
-      .where(eq(Orgs.id, ctx.auth.orgId))
-      .limit(1)
-      .then((rows) => rows[0]);
+      const org = await ctx.db
+        .select()
+        .from(Orgs)
+        .where(eq(Orgs.id, ctx.auth.orgId))
+        .limit(1)
+        .then((rows) => rows[0]);
 
-    if (!org) {
+      if (!org) {
+        return {
+          customerId: null,
+          dailyUsage: 0,
+          hasAny: false,
+          isActive: false,
+          isCanceled: false,
+          isPaid: false,
+          isPastDue: false,
+          isTrialing: false,
+          monthlyUsage: 0,
+          status: null,
+          subscriptionId: null,
+        };
+      }
+
+      const status = org.stripeSubscriptionStatus;
+      const isPaid = ['active', 'past_due', 'trialing'].includes(status || '');
+
       return {
-        customerId: null,
+        customerId: org.stripeCustomerId,
         dailyUsage: 0,
-        hasAny: false,
-        isActive: false,
-        isCanceled: false,
-        isPaid: false,
-        isPastDue: false,
-        isTrialing: false,
+        hasAny: !!status,
+        isActive: status === 'active',
+        isCanceled: status === 'canceled',
+        isPaid,
+        isPastDue: status === 'past_due',
+        isTrialing: status === 'trialing',
         monthlyUsage: 0,
-        status: null,
-        subscriptionId: null,
+        status,
+        subscriptionId: org.stripeSubscriptionId,
       };
-    }
-
-    const status = org.stripeSubscriptionStatus;
-    const isPaid = ['active', 'past_due', 'trialing'].includes(status || '');
-
-    return {
-      customerId: org.stripeCustomerId,
-      dailyUsage: 0,
-      hasAny: !!status,
-      isActive: status === 'active',
-      isCanceled: status === 'canceled',
-      isPaid,
-      isPastDue: status === 'past_due',
-      isTrialing: status === 'trialing',
-      monthlyUsage: 0,
-      status,
-      subscriptionId: org.stripeSubscriptionId,
-    };
-  }),
+    }),
 
   // Get usage-based billing information
-  getUsageInfo: protectedProcedure.query(async ({ ctx }) => {
-    if (!ctx.auth.orgId) throw new Error('Organization ID is required');
+  getUsageInfo: protectedProcedure
+    .route({ method: 'GET' })
+    .handler(async ({ context: ctx }) => {
+      if (!ctx.auth.orgId)
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Organization ID is required',
+        });
 
-    const org = await ctx.db
-      .select()
-      .from(Orgs)
-      .where(eq(Orgs.id, ctx.auth.orgId))
-      .limit(1)
-      .then((rows) => rows[0]);
+      const org = await ctx.db
+        .select()
+        .from(Orgs)
+        .where(eq(Orgs.id, ctx.auth.orgId))
+        .limit(1)
+        .then((rows) => rows[0]);
 
-    if (!org || !org.stripeSubscriptionId) {
-      return null;
-    }
+      if (!org || !org.stripeSubscriptionId) {
+        return null;
+      }
 
-    try {
-      const subscription = (await stripe.subscriptions.retrieve(
-        org.stripeSubscriptionId,
-      )) as Stripe.Subscription;
+      try {
+        const subscription = (await stripe.subscriptions.retrieve(
+          org.stripeSubscriptionId,
+        )) as Stripe.Subscription;
 
-      // Get usage records for metered items
-      const usageRecords = await Promise.all(
-        subscription.items.data
-          .filter((item) => item.price.recurring?.usage_type === 'metered')
-          .map(async (item) => {
-            // Note: This would require the correct Stripe API method
-            // For now, return basic item info
-            return {
-              itemId: item.id,
-              period: {
-                end: Date.now() / 1000 + 30 * 24 * 60 * 60, // Current timestamp as fallback
-                start: Date.now() / 1000, // 30 days from now
-              },
-              priceId: item.price.id, // Would need to implement usage tracking
-              totalUsage: 0,
-            };
-          }),
-      );
+        // Get usage records for metered items
+        const usageRecords = await Promise.all(
+          subscription.items.data
+            .filter((item) => item.price.recurring?.usage_type === 'metered')
+            .map(async (item) => {
+              // Note: This would require the correct Stripe API method
+              // For now, return basic item info
+              return {
+                itemId: item.id,
+                period: {
+                  end: Date.now() / 1000 + 30 * 24 * 60 * 60, // Current timestamp as fallback
+                  start: Date.now() / 1000, // 30 days from now
+                },
+                priceId: item.price.id, // Would need to implement usage tracking
+                totalUsage: 0,
+              };
+            }),
+        );
 
-      return {
-        subscriptionId: subscription.id,
-        usageRecords,
-      };
-    } catch (error) {
-      console.error('Error retrieving usage info:', error);
-      return null;
-    }
-  }),
+        return {
+          subscriptionId: subscription.id,
+          usageRecords,
+        };
+      } catch (error) {
+        console.error('Error retrieving usage info:', error);
+        return null;
+      }
+    }),
 
   // Reactivate subscription (remove cancel at period end)
-  reactivateSubscription: protectedProcedure.mutation(async ({ ctx }) => {
-    if (!ctx.auth.orgId) throw new Error('Organization ID is required');
+  reactivateSubscription: protectedProcedure.handler(
+    async ({ context: ctx }) => {
+      if (!ctx.auth.orgId)
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Organization ID is required',
+        });
 
-    const org = await ctx.db
-      .select()
-      .from(Orgs)
-      .where(eq(Orgs.id, ctx.auth.orgId))
-      .limit(1)
-      .then((rows) => rows[0]);
+      const org = await ctx.db
+        .select()
+        .from(Orgs)
+        .where(eq(Orgs.id, ctx.auth.orgId))
+        .limit(1)
+        .then((rows) => rows[0]);
 
-    if (!org || !org.stripeSubscriptionId) {
-      throw new Error('No active subscription found');
-    }
+      if (!org || !org.stripeSubscriptionId) {
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'No active subscription found',
+        });
+      }
 
-    try {
-      const subscription = (await stripe.subscriptions.update(
-        org.stripeSubscriptionId,
-        {
-          cancel_at_period_end: false,
-        },
-      )) as Stripe.Subscription;
+      try {
+        const subscription = (await stripe.subscriptions.update(
+          org.stripeSubscriptionId,
+          {
+            cancel_at_period_end: false,
+          },
+        )) as Stripe.Subscription;
 
-      // Update local database
-      await ctx.db
-        .update(Orgs)
-        .set({
-          stripeSubscriptionStatus: subscription.status,
-        })
-        .where(eq(Orgs.id, ctx.auth.orgId));
+        // Update local database
+        await ctx.db
+          .update(Orgs)
+          .set({
+            stripeSubscriptionStatus: subscription.status,
+          })
+          .where(eq(Orgs.id, ctx.auth.orgId));
 
-      return {
-        cancelAtPeriodEnd: subscription.cancel_at_period_end,
-        success: true,
-      };
-    } catch (error) {
-      console.error('Error reactivating subscription:', error);
-      throw new Error('Failed to reactivate subscription');
-    }
-  }),
-});
+        return {
+          cancelAtPeriodEnd: subscription.cancel_at_period_end,
+          success: true,
+        };
+      } catch (error) {
+        console.error('Error reactivating subscription:', error);
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Failed to reactivate subscription',
+        });
+      }
+    },
+  ),
+};

@@ -36,7 +36,7 @@ function MobileAuth({ theme }: { theme: (typeof colors)['light'] }) {
       try {
         console.log('[DEV SYNC] Syncing user to local database...');
         const user = newSession.data.user;
-        await api.auth.syncFromProduction.mutate({
+        await api.auth.syncFromProduction({
           user: {
             email: user.email,
             emailVerified: user.emailVerified,

@@ -1,6 +1,6 @@
 'use server';
 
-import { upsertOrg } from '@seawatts/api/services';
+import { upsertOrg } from '@seawatts/api/services/upsert-org';
 import { auth } from '@seawatts/auth/server';
 import { db } from '@seawatts/db/client';
 import { OrgMembers, Orgs } from '@seawatts/db/schema/organizations';

@@ -1,3 +1,4 @@
+import { ORPCError } from '@orpc/server';
 import { db } from '@seawatts/db/client';
 import { Accounts } from '@seawatts/db/schema/accounts';
 import { AuthCodes } from '@seawatts/db/schema/api-keys';
@@ -5,11 +6,10 @@ import { Orgs } from '@seawatts/db/schema/organizations';
 import { Sessions } from '@seawatts/db/schema/sessions';
 import { Users } from '@seawatts/db/schema/users';
 import { createId } from '@seawatts/id';
-import { TRPCError } from '@trpc/server';
 import { and, desc, eq, gte, isNull } from 'drizzle-orm';
 import { z } from 'zod';
-import { upsertOrg } from '../services';
-import { protectedProcedure, publicProcedure } from '../trpc';
+import { protectedProcedure, publicProcedure } from '../orpc';
+import { upsertOrg } from '../services/upsert-org';
 
 export const authRouter = {
   exchangeAuthCode: publicProcedure
@@ -19,7 +19,7 @@ export const authRouter = {
         sessionTemplate: z.enum(['cli', 'supabase']).default('cli'),
       }),
     )
-    .mutation(async ({ input }) => {
+    .handler(async ({ input }) => {
       const { code } = input;
 
       const authCode = await db.transaction(async (tx) => {
@@ -51,9 +51,8 @@ export const authRouter = {
       });
 
       if (!authCode) {
-        throw new TRPCError({
+        throw new ORPCError('BAD_REQUEST', {
           cause: new Error(`Auth code validation failed for code: ${code}`),
-          code: 'BAD_REQUEST',
           message: 'Invalid or expired authentication code',
         });
       }
@@ -68,9 +67,8 @@ export const authRouter = {
           .then((rows) => rows[0]);
 
         if (!user) {
-          throw new TRPCError({
+          throw new ORPCError('NOT_FOUND', {
             cause: new Error(`User not found for userId: ${authCode.userId}`),
-            code: 'NOT_FOUND',
             message: 'User not found',
           });
         }
@@ -117,9 +115,8 @@ export const authRouter = {
             error.message.includes('not found') ||
             error.message.includes('404')
           ) {
-            throw new TRPCError({
+            throw new ORPCError('NOT_FOUND', {
               cause: error,
-              code: 'NOT_FOUND',
               message: 'User, session, or organization not found',
             });
           }
@@ -128,9 +125,8 @@ export const authRouter = {
             error.message.includes('unauthorized') ||
             error.message.includes('401')
           ) {
-            throw new TRPCError({
+            throw new ORPCError('UNAUTHORIZED', {
               cause: error,
-              code: 'UNAUTHORIZED',
               message: 'Unauthorized access',
             });
           }
@@ -139,24 +135,21 @@ export const authRouter = {
             error.message.includes('forbidden') ||
             error.message.includes('403')
           ) {
-            throw new TRPCError({
+            throw new ORPCError('FORBIDDEN', {
               cause: error,
-              code: 'FORBIDDEN',
               message: 'Access forbidden',
             });
           }
 
-          throw new TRPCError({
+          throw new ORPCError('INTERNAL_SERVER_ERROR', {
             cause: error,
-            code: 'INTERNAL_SERVER_ERROR',
             message: 'Failed to retrieve user or organization data',
           });
         }
-        throw new TRPCError({
+        throw new ORPCError('INTERNAL_SERVER_ERROR', {
           cause: new Error(
             `Unknown error during auth code exchange for code: ${code}, userId: ${authCode.userId}, orgId: ${authCode.organizationId}`,
           ),
-          code: 'INTERNAL_SERVER_ERROR',
           message:
             'An unexpected error occurred while processing authentication',
         });
@@ -190,11 +183,10 @@ export const authRouter = {
         }),
       }),
     )
-    .mutation(async ({ input }) => {
+    .handler(async ({ input }) => {
       // Only allow in development
       if (process.env.NODE_ENV !== 'development') {
-        throw new TRPCError({
-          code: 'FORBIDDEN',
+        throw new ORPCError('FORBIDDEN', {
           message: 'This endpoint is only available in development mode',
         });
       }
@@ -319,9 +311,8 @@ export const authRouter = {
         };
       } catch (error) {
         console.error('[DEV SYNC] Failed to sync user:', error);
-        throw new TRPCError({
+        throw new ORPCError('INTERNAL_SERVER_ERROR', {
           cause: error instanceof Error ? error : undefined,
-          code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to sync user to local database',
         });
       }
@@ -333,16 +324,16 @@ export const authRouter = {
         sessionTemplate: z.enum(['cli', 'supabase']).default('cli'),
       }),
     )
-    .query(async ({ input, ctx }) => {
+    .route({ method: 'GET' })
+    .handler(async ({ input, context: ctx }) => {
       try {
         // Get user from context (already authenticated via Better Auth)
         const userId = ctx.auth.userId;
         const orgId = ctx.auth.orgId;
 
         if (!userId) {
-          throw new TRPCError({
+          throw new ORPCError('UNAUTHORIZED', {
             cause: new Error('User not authenticated'),
-            code: 'UNAUTHORIZED',
             message: 'User not authenticated',
           });
         }
@@ -356,19 +347,17 @@ export const authRouter = {
           .then((rows) => rows[0]);
 
         if (!user) {
-          throw new TRPCError({
+          throw new ORPCError('NOT_FOUND', {
             cause: new Error(`User not found for userId: ${userId}`),
-            code: 'NOT_FOUND',
             message: 'User not found',
           });
         }
 
         if (!orgId) {
-          throw new TRPCError({
+          throw new ORPCError('BAD_REQUEST', {
             cause: new Error(
               `No active organization for session: ${input.sessionId}, userId: ${userId}`,
             ),
-            code: 'BAD_REQUEST',
             message: 'No active organization found for this session',
           });
         }
@@ -400,8 +389,8 @@ export const authRouter = {
         };
       } catch (error) {
         // Handle API errors with detailed metadata
-        if (error instanceof TRPCError) {
-          throw error; // Re-throw TRPC errors as-is
+        if (error instanceof ORPCError) {
+          throw error; // Re-throw API errors as-is
         }
         if (error instanceof Error) {
           // Add context about what operation failed
@@ -423,9 +412,8 @@ export const authRouter = {
             error.message.includes('not found') ||
             error.message.includes('404')
           ) {
-            throw new TRPCError({
+            throw new ORPCError('NOT_FOUND', {
               cause: error,
-              code: 'NOT_FOUND',
               message: 'User, session, or organization not found',
             });
           }
@@ -434,9 +422,8 @@ export const authRouter = {
             error.message.includes('unauthorized') ||
             error.message.includes('401')
           ) {
-            throw new TRPCError({
+            throw new ORPCError('UNAUTHORIZED', {
               cause: error,
-              code: 'UNAUTHORIZED',
               message: 'Unauthorized access',
             });
           }
@@ -445,24 +432,21 @@ export const authRouter = {
             error.message.includes('forbidden') ||
             error.message.includes('403')
           ) {
-            throw new TRPCError({
+            throw new ORPCError('FORBIDDEN', {
               cause: error,
-              code: 'FORBIDDEN',
               message: 'Access forbidden',
             });
           }
 
-          throw new TRPCError({
+          throw new ORPCError('INTERNAL_SERVER_ERROR', {
             cause: error,
-            code: 'INTERNAL_SERVER_ERROR',
             message: 'Failed to verify session or retrieve user data',
           });
         }
-        throw new TRPCError({
+        throw new ORPCError('INTERNAL_SERVER_ERROR', {
           cause: new Error(
             `Unknown error during session verification for sessionId: ${input.sessionId}, userId: ${ctx.auth.userId}`,
           ),
-          code: 'INTERNAL_SERVER_ERROR',
           message: 'An unexpected error occurred while verifying session',
         });
       }
