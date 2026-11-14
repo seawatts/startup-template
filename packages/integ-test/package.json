@@ -9,26 +9,16 @@
     "@faker-js/faker": "10.3.0",
     "@seawatts/tsconfig": "workspace:*",
     "@types/node": "25.4.0",
-    "@vitest/coverage-v8": "4.0.18",
-    "@vitest/ui": "4.0.18",
-    "dotenv": "17.3.1",
     "testcontainers": "11.12.0",
-    "typescript": "catalog:",
-    "vitest": "4.0.18"
-  },
-  "engines": {
-    "node": ">=20.12.0"
+    "typescript": "catalog:"
   },
   "name": "@seawatts/integ-test",
   "private": true,
   "scripts": {
     "clean": "git clean -xdf .turbo node_modules dist coverage",
-    "test": "vitest",
-    "test:ci": "CI=true vitest run --coverage",
-    "test:debug": "vitest --inspect-brk --inspect --logHeapUsage --threads=false",
-    "test:run": "vitest run",
-    "test:ui": "vitest --ui",
-    "test:watch": "vitest --watch",
+    "test": "bun test",
+    "test:ci": "CI=true bun test --coverage --coverage-reporter=lcov --coverage-reporter=text --coverage-dir=coverage",
+    "test:watch": "bun test --watch",
     "typecheck": "tsc --noEmit"
   },
   "type": "module",

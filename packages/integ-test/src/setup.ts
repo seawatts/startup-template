@@ -1,10 +1,10 @@
-import { config } from 'dotenv';
-import { afterAll, beforeAll, beforeEach } from 'vitest';
+import { afterAll, beforeAll, beforeEach } from 'bun:test';
 import { cleanupTestData } from '../test-utils/cleanup';
 import { getTestDatabase } from '../test-utils/database';
 
-// Load environment variables
-config({ path: '../../.env.local' });
+// Preloaded by bunfig.toml before every test file. The database comes from
+// the environment (DATABASE_URL with USE_LOCAL_DB or CI set) or from a
+// container; nothing is read from an .env file.
 
 // Global test state
 export let testDb: Awaited<ReturnType<typeof getTestDatabase>>;

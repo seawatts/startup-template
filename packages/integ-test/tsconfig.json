@@ -2,9 +2,9 @@
   "compilerOptions": {
     "outDir": "dist",
     "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json",
-    "types": ["vitest/globals", "node"]
+    "types": ["bun", "node"]
   },
   "exclude": ["node_modules"],
   "extends": "@seawatts/tsconfig/node.json",
-  "include": ["*.ts", "src", "vitest.config.ts", "test-utils/**/*"]
+  "include": ["src", "test-utils/**/*"]
 }

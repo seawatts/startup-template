@@ -29,9 +29,9 @@ Move one area at a time and measure before and after.
 
 ## Postgres
 
-The database client is still postgres.js with the patch in `patches/` ([database.md](database.md#the-driver-patch)). Moving it to `Bun.sql` is waiting on a measured run behind a transaction pooler, because the same rules apply to any driver there: prepared statements off, and no pipelining outside a transaction. Do not swap the driver without rerunning `packages/db/tests/unit/transaction.test.ts` and the round-trip measurement against a pooler.
+The database client is still postgres.js with the patch in `patches/` ([database.md](database.md#the-driver-patch)). Moving it to `Bun.sql` is waiting on a measured run behind a transaction pooler, because the same rules apply to any driver there: prepared statements off, and no pipelining outside a transaction. What a first run on another app found: behind Supavisor `Bun.sql` needs `prepare: false` (the default returned wrong rows and hung), with that setting it does not pipeline even inside a transaction, so `Promise.all` in a transaction runs serially, and its errors carry the SQLSTATE in `errno`, not `code`. Do not swap the driver without rerunning `packages/db/tests/unit/transaction.test.ts` and the round-trip measurement against a pooler.
 
 ## Not moved yet
 
-- `packages/integ-test` and `apps/chrome-extension` still use vitest.
+- `apps/chrome-extension` still uses vitest; it is not built or typechecked.
 - Existing scripts and packages still import `node:fs`, `node:path` and `node:child_process`; move them when you touch them.

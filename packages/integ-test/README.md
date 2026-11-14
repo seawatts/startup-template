@@ -49,8 +49,8 @@ bun test:ci
 # Run specific test file
 bun test src/webhooks.test.ts
 
-# Run tests with UI
-bun test:ui
+# Rerun on change
+bun test:watch
 ```
 
 ### Environment Variables
@@ -180,7 +180,7 @@ turbo run test --filter=@seawatts/integ-test
 ### Test Template
 
 ```typescript
-import { describe, it, expect, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it } from 'bun:test';
 import { testDb, testApiServer } from './setup';
 import { TestFactories } from '../test-utils/factories';
 
@@ -213,8 +213,8 @@ describe('Feature Name', () => {
 ### Running Individual Tests
 
 ```bash
-# Run with Node.js inspector
-bun test:debug
+# Run with the inspector
+bun test --inspect-brk
 
 # Run specific test with logging
 DEBUG=* bun test src/webhooks.test.ts
