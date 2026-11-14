@@ -16,5 +16,7 @@ pre-push:
   commands:
     typecheck:
       run: bun typecheck
+    bun-version:
+      run: bun test scripts/test/bun-version.test.ts
     infisical:
       run: infisical scan git-changes --staged --verbose
