@@ -22,6 +22,7 @@ Stack: Next.js 16 (App Router), React 19, TypeScript strict, Tailwind 4, shadcn/
 ## Code
 
 - No barrel files: import every binding from the file that declares it, never through an `index.ts` or other re-exporting module. Biome's `noBarrelFile`/`noReExportAll` enforce it; the barrels that predate the rule are listed in `biome.json` and that list only shrinks (`docs/agents/imports.md`).
+- Bun everywhere it applies: Bun is the runtime in dev, tests, scripts and production (Vercel functions on the Bun runtime), and code uses Bun primitives where Bun has one (`bun test`, `Bun.file`/`Bun.write`, `Bun.spawn`, `Bun.password`, `Bun.hash`, `Bun.serve`, `bun:sqlite`, `Bun.sql`); `node:*` or a Node-only package only where Bun has none or a framework requires it, with a comment saying why (`docs/agents/bun.md`).
 - Kebab-case filenames, no `any`, Node built-ins through `node:`; Biome enforces these.
 - All database access goes through `@seawatts/db`. Import each table from its own file (`@seawatts/db/schema/users`), use the query builder (never `db.query.*`; the client has no schema registry), and run reads that belong together inside `inTransaction` with `Promise.all` (`docs/agents/database.md`).
 - Behind a transaction pooler the driver uses `prepare: false` and pipelines only inside a transaction; keep `patches/postgres@3.4.9.patch` when upgrading the driver, and rerun its tests (`docs/agents/database.md`).

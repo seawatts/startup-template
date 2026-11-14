@@ -45,9 +45,6 @@
     "typescript": "5.9.3",
     "vitest": "4.0.18"
   },
-  "engines": {
-    "node": ">=20.12.0"
-  },
   "name": "@seawatts/root",
   "overrides": {
     "@types/vscode": "1.96.0",

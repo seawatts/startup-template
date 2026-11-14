@@ -5,6 +5,7 @@
 | File | Read it when |
 | --- | --- |
 | [checks.md](checks.md) | Running tests or type checks while you work, pushing, merging |
+| [bun.md](bun.md) | Adding a script, a dependency or a Node import; anything about the runtime |
 | [imports.md](imports.md) | Adding modules, package entries or imports |
 | [database.md](database.md) | Touching the schema, the database client, transactions or after-response work |
 | [analytics-internal.md](analytics-internal.md) | Adding a feature, a save, or anything staff will want to see per customer |

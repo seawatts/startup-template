@@ -60,11 +60,11 @@
   "name": "@seawatts/web-app",
   "private": true,
   "scripts": {
-    "build": "NODE_ENV=production NEXT_PUBLIC_APP_TYPE=nextjs next build",
+    "build": "NODE_ENV=production NEXT_PUBLIC_APP_TYPE=nextjs bun --bun next build",
     "clean": "git clean -xdf .turbo node_modules dist .next",
-    "dev": "next dev --turbo",
+    "dev": "bun --bun next dev --turbo",
     "postbuild": "next-sitemap --config next-sitemap.config.cjs",
-    "start": "next start",
+    "start": "bun --bun next start",
     "test": "bun test",
     "test:e2e": "playwright test --config e2e/playwright.config.ts",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
