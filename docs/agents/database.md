@@ -52,7 +52,9 @@ Email, third-party calls and analytics run after the response through the platfo
 
 - Statements per request: in development every `/api/rpc` answer has a `Server-Timing` header (the browser's network panel shows it under Timing): `server` is the time the server took, `db-content` the queries the code wrote, `db-wrapper` the statements that only frame a transaction (begin, commit, settings, savepoints) and `db-transactions` the transactions. `packages/db/src/statement-count.ts` counts them where statements leave the client. A built app counts only when started with `STATEMENT_COUNTS=enabled`; production never does.
   - Many content statements for one screen: an N+1, or a list read to show a count.
-  - A wrapper count near or above the content count: each read opens its own transaction. Run them together in one `inTransaction`.
+  - What to cut is content statements and serial awaits (a query that waits on the previous one), not transactions. The wrapper count is there to show the split; a per-read transaction is cheap because its settings go out pipelined behind `begin`.
+  - Sibling lists one screen shows together belong in one read.
+  - Do not share one transaction between a request's concurrent reads to lower the transaction count: it gained no time on a real app and made the driver unstable (`CONNECTION_CLOSED`, `CONNECT_TIMEOUT`). Reads one procedure issues together still go in one `inTransaction` with `Promise.all`.
   - Count another entry point (a page that reads the database itself, a webhook) by wrapping it in `countingStatements(() => …)`.
 - Round trips: `packages/db/tests/utils/delay-proxy.ts` puts a delay in front of a local database. Use 30 ms each way.
 - Query count per screen: `alter system set log_statement = 'all'`, reload, run a marker `select 'start'` before the load and one after, and count the log lines between them. Reset logging afterwards.

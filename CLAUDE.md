@@ -32,7 +32,7 @@ Stack: Next.js 16 (App Router), React 19, TypeScript strict, Tailwind 4, shadcn/
 - Work after the response (email, third-party calls, analytics) goes through `after`/`waitUntil`, never a bare `void promise` (`docs/agents/database.md`).
 - Tests go where the behavior lives: logic and procedures in `bun test` suites, screens in `apps/web-app/e2e` at desktop and 390px; never skip or loosen a failing test (`docs/agents/tests.md`).
 - Speed: about 100 ms of server time per page; measure before and after (`SPEED=enabled bun test:e2e speed`, and the `Server-Timing` statement counts in dev), one round of requests per page, no N+1, a count for a badge and never the list, a read never writes, share "who is asking" lookups across one request's reads with `requestRead` (`docs/agents/speed.md`).
-- Queries filter by tenant id explicitly, with row-level security only as a backstop; queues of pending work get a partial index on the pending rows (`docs/agents/database.md`).
+- Queries filter by tenant id explicitly, with row-level security only as a backstop; cut statements and serial awaits per page, not transactions, and never share one transaction across a request's concurrent reads; queues of pending work get a partial index on the pending rows (`docs/agents/database.md`).
 - Observability: errors, events and logs carry opaque ids, enums, counts and durations, never names, emails or content; every entry point reports its errors with `service`, `area` and a short `code` (`docs/agents/observability.md`).
 
 ## UI

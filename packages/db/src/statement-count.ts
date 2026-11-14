@@ -4,9 +4,10 @@ import { AsyncLocalStorage } from 'node:async_hooks';
 // leave: content statements (the queries the code wrote), wrapper statements
 // (begin, commit, settings, savepoints) and transactions. A page has about
 // 100 ms of server time to spend (docs/agents/speed.md), and this is the
-// number that says where it went: many content statements is an N+1 or a
-// list read to show a count; a large wrapper share means reads open a
-// transaction each instead of running together in one.
+// number that says where it went. What to cut is content statements (an N+1,
+// a list read to show a count, sibling lists read one by one) and serial
+// awaits, not transactions: a per-read transaction is cheap when its settings
+// are pipelined behind `begin`, and the wrapper count only shows the split.
 //
 // Development only: on in dev and tests, off in a production build unless
 // STATEMENT_COUNTS=enabled (for measuring a built app locally).
