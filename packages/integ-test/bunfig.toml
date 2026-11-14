@@ -1,0 +1,5 @@
+[test]
+# One database for the run: set up once, cleaned before each test.
+preload = ["./src/setup.ts"]
+# Integration tests wait on a database, sometimes on a container starting.
+timeout = 300000
