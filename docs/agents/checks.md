@@ -6,6 +6,7 @@ Run the smallest check that covers the change while you work, and the full set o
 | --- | --- |
 | One package's types | `bun run --filter @seawatts/<package> typecheck` |
 | One test file | `bun test <path>` from that package |
+| The database client, transactions or the driver patch | `TEST_POSTGRES_URL=<disposable database> bun test packages/db/tests/unit` |
 | Formatting and lint | `bunx biome check --write <paths>` |
 | Everything, before a push | `bun format:ci && bun typecheck:ci && bun test` |
 

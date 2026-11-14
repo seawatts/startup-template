@@ -3,7 +3,7 @@
 import { upsertOrg } from '@seawatts/api/services';
 import { auth } from '@seawatts/auth/server';
 import { db } from '@seawatts/db/client';
-import { OrgMembers } from '@seawatts/db/schema';
+import { OrgMembers } from '@seawatts/db/schema/organizations';
 import { eq } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import { createSafeActionClient } from 'next-safe-action';

@@ -2,7 +2,7 @@ import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { cache } from 'react';
 import { env } from '../env';
-import type { Database } from './types';
+import type { Database } from './types.generated';
 
 export interface SessionInfo {
   token?: string | null;

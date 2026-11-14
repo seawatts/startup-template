@@ -1,5 +1,7 @@
 import { db } from '@seawatts/db/client';
-import { ApiKeys, OrgMembers, Orgs, Users } from '@seawatts/db/schema';
+import { ApiKeys } from '@seawatts/db/schema/api-keys';
+import { OrgMembers, Orgs } from '@seawatts/db/schema/organizations';
+import { Users } from '@seawatts/db/schema/users';
 import { generateRandomName, generateUniqueOrgName } from '@seawatts/id';
 import {
   BILLING_INTERVALS,

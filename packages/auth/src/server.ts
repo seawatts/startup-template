@@ -1,14 +1,13 @@
 import { expo } from '@better-auth/expo';
 import { db } from '@seawatts/db/client';
+import { Accounts, Verifications } from '@seawatts/db/schema/accounts';
 import {
-  Accounts,
   Invitations,
   OrgMembers,
   Orgs,
-  Sessions,
-  Users,
-  Verifications,
-} from '@seawatts/db/schema';
+} from '@seawatts/db/schema/organizations';
+import { Sessions } from '@seawatts/db/schema/sessions';
+import { Users } from '@seawatts/db/schema/users';
 import { createId } from '@seawatts/id';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';

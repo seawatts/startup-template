@@ -1,14 +1,19 @@
 import { faker } from '@faker-js/faker';
-import * as schema from '@seawatts/db/schema';
+import { ApiKeys, type ApiKeyType } from '@seawatts/db/schema/api-keys';
+import {
+  OrgMembers,
+  type OrgMembersType,
+  Orgs,
+  type OrgType,
+} from '@seawatts/db/schema/organizations';
+import { Users, type UserType } from '@seawatts/db/schema/users';
 import { createId } from '@seawatts/id';
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 
 export class TestFactories {
-  constructor(private db: PostgresJsDatabase<typeof schema>) {}
+  constructor(private db: PostgresJsDatabase) {}
 
-  async createUser(
-    overrides?: Partial<schema.UserType>,
-  ): Promise<schema.UserType> {
+  async createUser(overrides?: Partial<UserType>): Promise<UserType> {
     const user = {
       createdAt: new Date(),
       email: faker.internet.email(),
@@ -19,19 +24,14 @@ export class TestFactories {
       ...overrides,
     };
 
-    const [created] = await this.db
-      .insert(schema.Users)
-      .values(user)
-      .returning();
+    const [created] = await this.db.insert(Users).values(user).returning();
     if (!created) {
       throw new Error('Failed to create user');
     }
     return created;
   }
 
-  async createOrg(
-    overrides?: Partial<schema.OrgType>,
-  ): Promise<schema.OrgType> {
+  async createOrg(overrides?: Partial<OrgType>): Promise<OrgType> {
     const org = {
       createdAt: new Date(),
       id: createId({ prefix: 'org' }),
@@ -43,7 +43,7 @@ export class TestFactories {
       ...overrides,
     };
 
-    const [created] = await this.db.insert(schema.Orgs).values(org).returning();
+    const [created] = await this.db.insert(Orgs).values(org).returning();
     if (!created) {
       throw new Error('Failed to create org');
     }
@@ -54,7 +54,7 @@ export class TestFactories {
     userId: string,
     organizationId: string,
     role: 'member' | 'admin' | 'owner' = 'member',
-  ): Promise<schema.OrgMembersType> {
+  ): Promise<OrgMembersType> {
     const member = {
       createdAt: new Date(),
       id: createId({ prefix: 'member' }),
@@ -64,7 +64,7 @@ export class TestFactories {
     };
 
     const [created] = await this.db
-      .insert(schema.OrgMembers)
+      .insert(OrgMembers)
       .values(member)
       .returning();
     if (!created) {
@@ -76,8 +76,8 @@ export class TestFactories {
   async createApiKey(
     userId: string,
     organizationId: string,
-    overrides?: Partial<schema.ApiKeyType>,
-  ): Promise<schema.ApiKeyType> {
+    overrides?: Partial<ApiKeyType>,
+  ): Promise<ApiKeyType> {
     const apiKey = {
       createdAt: new Date(),
       id: createId({ prefix: 'ak' }),
@@ -89,10 +89,7 @@ export class TestFactories {
       ...overrides,
     };
 
-    const [created] = await this.db
-      .insert(schema.ApiKeys)
-      .values(apiKey)
-      .returning();
+    const [created] = await this.db.insert(ApiKeys).values(apiKey).returning();
     if (!created) {
       throw new Error('Failed to create API key');
     }
@@ -100,8 +97,8 @@ export class TestFactories {
   }
 
   async createCompleteSetup(overrides?: {
-    user?: Partial<schema.UserType>;
-    org?: Partial<schema.OrgType>;
+    user?: Partial<UserType>;
+    org?: Partial<OrgType>;
   }) {
     // Create user
     const user = await this.createUser(overrides?.user);

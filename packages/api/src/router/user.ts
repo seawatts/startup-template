@@ -1,6 +1,6 @@
-import { eq } from '@seawatts/db';
-import { CreateUserSchema, Users } from '@seawatts/db/schema';
+import { CreateUserSchema, Users } from '@seawatts/db/schema/users';
 import type { TRPCRouterRecord } from '@trpc/server';
+import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 
 import { protectedProcedure } from '../trpc';

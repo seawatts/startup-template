@@ -1,5 +1,4 @@
 import path from 'node:path';
-import * as schema from '@seawatts/db/schema';
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { migrate } from 'drizzle-orm/postgres-js/migrator';
@@ -8,7 +7,7 @@ import type { StartedTestContainer } from 'testcontainers';
 import { GenericContainer, Wait } from 'testcontainers';
 
 export interface TestDatabase {
-  db: PostgresJsDatabase<typeof schema>;
+  db: PostgresJsDatabase;
   connectionString: string;
   supabaseUrl: string;
   supabaseAnonKey: string;
@@ -53,7 +52,7 @@ async function getLocalDatabase(): Promise<TestDatabase> {
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU';
 
   const sql = postgres(connectionString, { max: 1 });
-  const db = drizzle(sql, { schema });
+  const db = drizzle(sql);
 
   // Run migrations
   const migrationsPath = path.join(__dirname, '../../db/drizzle');
@@ -119,7 +118,7 @@ async function getContainerDatabase(): Promise<TestDatabase> {
     throw new Error('Database connection failed');
   }
 
-  const db = drizzle(sql, { schema });
+  const db = drizzle(sql);
 
   // Run migrations
   const migrationsPath = path.join(__dirname, '../../db/drizzle');

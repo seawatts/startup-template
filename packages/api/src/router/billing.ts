@@ -1,4 +1,4 @@
-import { Orgs } from '@seawatts/db/schema';
+import { Orgs } from '@seawatts/db/schema/organizations';
 import {
   BILLING_INTERVALS,
   createBillingPortalSession,

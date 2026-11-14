@@ -20,7 +20,8 @@ import {
 } from 'react';
 import { createClient } from './client';
 import { type NetworkStatus, useNetworkStore } from './network-store';
-import type { TableName, Tables } from './types';
+import type { TableName } from './types';
+import type { Tables } from './types.generated';
 
 type SubscriptionStatus = 'connecting' | 'connected' | 'disconnected' | 'error';
 
