@@ -46,10 +46,12 @@
   "devDependencies": {
     "@seawatts/next-config": "workspace:*",
     "@seawatts/tsconfig": "workspace:*",
+    "@tailwindcss/postcss": "4.2.1",
     "@types/node": "25.4.0",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "next-sitemap": "4.2.3",
+    "tailwindcss": "catalog:",
     "typescript": "catalog:"
   },
   "name": "@seawatts/web-app",
