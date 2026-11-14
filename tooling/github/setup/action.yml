@@ -18,7 +18,7 @@ runs:
     - name: Setup Node.js for npm OIDC
       uses: actions/setup-node@v4
       with:
-        node-version: '20'
+        node-version: '24'
         registry-url: 'https://registry.npmjs.org'
 
     - name: Update npm for OIDC support
