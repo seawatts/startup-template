@@ -9,6 +9,7 @@ const config: KnipConfig = {
   ],
   ignoreDependencies: [
     // Used via postcss config, not direct imports
+    'postcss',
     'tailwindcss',
     '@tailwindcss/postcss',
     'picocolors',
