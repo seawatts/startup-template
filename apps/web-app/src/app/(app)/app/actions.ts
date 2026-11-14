@@ -3,7 +3,7 @@
 import { upsertOrg } from '@seawatts/api/services';
 import { auth } from '@seawatts/auth/server';
 import { db } from '@seawatts/db/client';
-import { OrgMembers } from '@seawatts/db/schema/organizations';
+import { OrgMembers, Orgs } from '@seawatts/db/schema/organizations';
 import { eq } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import { createSafeActionClient } from 'next-safe-action';
@@ -47,12 +47,13 @@ export const upsertOrgAction = action
     // If no orgId is provided (creating new org), check if user already has an organization via membership
     if (!orgId) {
       // Find existing org through membership
-      const existingMembership = await db.query.OrgMembers.findFirst({
-        where: eq(OrgMembers.userId, userId),
-        with: { organization: true },
-      });
-
-      const existingOrg = existingMembership?.organization;
+      const existingOrg = await db
+        .select({ id: Orgs.id, name: Orgs.name })
+        .from(OrgMembers)
+        .innerJoin(Orgs, eq(Orgs.id, OrgMembers.organizationId))
+        .where(eq(OrgMembers.userId, userId))
+        .limit(1)
+        .then((rows) => rows[0]);
       console.log('Existing org found:', existingOrg);
 
       if (existingOrg) {

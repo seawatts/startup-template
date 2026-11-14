@@ -43,9 +43,12 @@ async function ensureDefaultApiKey({
   userId: string;
   tx: Transaction;
 }) {
-  const existingApiKey = await tx.query.ApiKeys.findFirst({
-    where: eq(ApiKeys.organizationId, organizationId),
-  });
+  const existingApiKey = await tx
+    .select()
+    .from(ApiKeys)
+    .where(eq(ApiKeys.organizationId, organizationId))
+    .limit(1)
+    .then((rows) => rows[0]);
 
   if (existingApiKey) {
     return existingApiKey;
@@ -207,9 +210,12 @@ export async function createOrg({
 }: CreateOrgParams): Promise<CreateOrgResult> {
   return await db.transaction(async (tx) => {
     // Get user from database
-    const existingUser = await tx.query.Users.findFirst({
-      where: eq(Users.id, userId),
-    });
+    const existingUser = await tx
+      .select()
+      .from(Users)
+      .where(eq(Users.id, userId))
+      .limit(1)
+      .then((rows) => rows[0]);
 
     if (!existingUser) {
       throw new Error(`User not found for userId: ${userId}`);
@@ -218,9 +224,12 @@ export async function createOrg({
     const userEmail = existingUser.email;
 
     // Check if organization name already exists in database
-    const existingOrgByName = await tx.query.Orgs.findFirst({
-      where: eq(Orgs.name, name),
-    });
+    const existingOrgByName = await tx
+      .select()
+      .from(Orgs)
+      .where(eq(Orgs.name, name))
+      .limit(1)
+      .then((rows) => rows[0]);
 
     if (existingOrgByName) {
       throw new Error(
@@ -232,9 +241,12 @@ export async function createOrg({
     const orgId = generateRandomName();
 
     // Final check: Double-check that the organization wasn't created by another process
-    const finalCheckOrg = await tx.query.Orgs.findFirst({
-      where: eq(Orgs.id, orgId),
-    });
+    const finalCheckOrg = await tx
+      .select()
+      .from(Orgs)
+      .where(eq(Orgs.id, orgId))
+      .limit(1)
+      .then((rows) => rows[0]);
 
     if (finalCheckOrg) {
       console.log(

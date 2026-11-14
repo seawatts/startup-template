@@ -83,9 +83,12 @@ export async function checkOrgEntitlements(
   }
 
   // Get the organization
-  const org = await db.query.Orgs.findFirst({
-    where: eq(Orgs.id, orgId),
-  });
+  const org = await db
+    .select()
+    .from(Orgs)
+    .where(eq(Orgs.id, orgId))
+    .limit(1)
+    .then((rows) => rows[0]);
 
   if (!org?.stripeCustomerId) {
     return Array.isArray(entitlement) ? {} : false;
@@ -122,9 +125,12 @@ export async function getOrgEntitlements(): Promise<EntitlementsRecord> {
   }
 
   // Get the organization
-  const org = await db.query.Orgs.findFirst({
-    where: eq(Orgs.id, orgId),
-  });
+  const org = await db
+    .select()
+    .from(Orgs)
+    .where(eq(Orgs.id, orgId))
+    .limit(1)
+    .then((rows) => rows[0]);
 
   if (!org?.stripeCustomerId) {
     return {} as EntitlementsRecord;

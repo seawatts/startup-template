@@ -68,9 +68,12 @@ async function ensureDefaultApiKey({
   userId: string;
   tx: Transaction;
 }) {
-  const existingApiKey = await tx.query.ApiKeys.findFirst({
-    where: eq(ApiKeys.organizationId, organizationId),
-  });
+  const existingApiKey = await tx
+    .select()
+    .from(ApiKeys)
+    .where(eq(ApiKeys.organizationId, organizationId))
+    .limit(1)
+    .then((rows) => rows[0]);
 
   if (existingApiKey) {
     return existingApiKey;
@@ -275,28 +278,40 @@ async function findExistingOrg({
   // Run all possible org existence checks in parallel
   const [existingMembership, existingOrgByOrgId] = await Promise.all([
     // Check 1: User already has an org membership
-    tx.query.OrgMembers.findFirst({
-      where: eq(OrgMembers.userId, userId),
-    }),
+    tx
+      .select()
+      .from(OrgMembers)
+      .where(eq(OrgMembers.userId, userId))
+      .limit(1)
+      .then((rows) => rows[0]),
     // Check 2: If orgId is provided, check if organization already exists
     orgId
-      ? tx.query.Orgs.findFirst({
-          where: eq(Orgs.id, orgId),
-        })
+      ? tx
+          .select()
+          .from(Orgs)
+          .where(eq(Orgs.id, orgId))
+          .limit(1)
+          .then((rows) => rows[0])
       : null,
   ]);
 
   // Check 1: User already has an org membership
   if (existingMembership && !orgId) {
-    const existingOrg = await tx.query.Orgs.findFirst({
-      where: eq(Orgs.id, existingMembership.organizationId),
-    });
+    const existingOrg = await tx
+      .select()
+      .from(Orgs)
+      .where(eq(Orgs.id, existingMembership.organizationId))
+      .limit(1)
+      .then((rows) => rows[0]);
 
     if (existingOrg) {
       // Run API key check
-      const apiKey = await tx.query.ApiKeys.findFirst({
-        where: eq(ApiKeys.organizationId, existingOrg.id),
-      });
+      const apiKey = await tx
+        .select()
+        .from(ApiKeys)
+        .where(eq(ApiKeys.organizationId, existingOrg.id))
+        .limit(1)
+        .then((rows) => rows[0]);
 
       if (apiKey) {
         return { org: existingOrg, reason: 'existing_membership' };
@@ -335,9 +350,12 @@ export async function upsertOrg({
     }
 
     // Get user from database
-    const existingUser = await tx.query.Users.findFirst({
-      where: eq(Users.id, userId),
-    });
+    const existingUser = await tx
+      .select()
+      .from(Users)
+      .where(eq(Users.id, userId))
+      .limit(1)
+      .then((rows) => rows[0]);
 
     if (!existingUser) {
       throw new Error(`User not found for userId: ${userId}`);
@@ -350,9 +368,12 @@ export async function upsertOrg({
     let finalOrgName = name;
 
     // Check if organization name already exists in database
-    const existingOrgByName = await tx.query.Orgs.findFirst({
-      where: eq(Orgs.name, name),
-    });
+    const existingOrgByName = await tx
+      .select()
+      .from(Orgs)
+      .where(eq(Orgs.name, name))
+      .limit(1)
+      .then((rows) => rows[0]);
 
     if (existingOrgByName) {
       // Generate a new unique name
@@ -360,9 +381,12 @@ export async function upsertOrg({
     }
 
     // Final check: Double-check that the organization wasn't created by another process
-    const finalCheckOrg = await tx.query.Orgs.findFirst({
-      where: eq(Orgs.id, finalOrgId),
-    });
+    const finalCheckOrg = await tx
+      .select()
+      .from(Orgs)
+      .where(eq(Orgs.id, finalOrgId))
+      .limit(1)
+      .then((rows) => rows[0]);
 
     if (finalCheckOrg) {
       console.log(

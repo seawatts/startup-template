@@ -17,9 +17,12 @@ export const billingRouter = createTRPCRouter({
   cancelSubscription: protectedProcedure.mutation(async ({ ctx }) => {
     if (!ctx.auth.orgId) throw new Error('Organization ID is required');
 
-    const org = await ctx.db.query.Orgs.findFirst({
-      where: eq(Orgs.id, ctx.auth.orgId),
-    });
+    const org = await ctx.db
+      .select()
+      .from(Orgs)
+      .where(eq(Orgs.id, ctx.auth.orgId))
+      .limit(1)
+      .then((rows) => rows[0]);
 
     if (!org || !org.stripeSubscriptionId) {
       throw new Error('No active subscription found');
@@ -61,9 +64,12 @@ export const billingRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       if (!ctx.auth.orgId) throw new Error('Organization ID is required');
 
-      const org = await ctx.db.query.Orgs.findFirst({
-        where: eq(Orgs.id, ctx.auth.orgId),
-      });
+      const org = await ctx.db
+        .select()
+        .from(Orgs)
+        .where(eq(Orgs.id, ctx.auth.orgId))
+        .limit(1)
+        .then((rows) => rows[0]);
 
       if (!org || !org.stripeCustomerId) {
         throw new Error('No active subscription found');
@@ -97,9 +103,12 @@ export const billingRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       if (!ctx.auth.orgId) throw new Error('Organization ID is required');
 
-      const org = await ctx.db.query.Orgs.findFirst({
-        where: eq(Orgs.id, ctx.auth.orgId),
-      });
+      const org = await ctx.db
+        .select()
+        .from(Orgs)
+        .where(eq(Orgs.id, ctx.auth.orgId))
+        .limit(1)
+        .then((rows) => rows[0]);
 
       if (!org) {
         throw new Error('Organization not found');
@@ -166,9 +175,12 @@ export const billingRouter = createTRPCRouter({
   getBillingDetails: protectedProcedure.query(async ({ ctx }) => {
     if (!ctx.auth.orgId) throw new Error('Organization ID is required');
 
-    const org = await ctx.db.query.Orgs.findFirst({
-      where: eq(Orgs.id, ctx.auth.orgId),
-    });
+    const org = await ctx.db
+      .select()
+      .from(Orgs)
+      .where(eq(Orgs.id, ctx.auth.orgId))
+      .limit(1)
+      .then((rows) => rows[0]);
 
     if (!org) {
       throw new Error('Organization not found');
@@ -193,9 +205,12 @@ export const billingRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       if (!ctx.auth.orgId) throw new Error('Organization ID is required');
 
-      const org = await ctx.db.query.Orgs.findFirst({
-        where: eq(Orgs.id, ctx.auth.orgId),
-      });
+      const org = await ctx.db
+        .select()
+        .from(Orgs)
+        .where(eq(Orgs.id, ctx.auth.orgId))
+        .limit(1)
+        .then((rows) => rows[0]);
 
       if (!org || !org.stripeCustomerId) {
         throw new Error('No active subscription found');
@@ -222,9 +237,12 @@ export const billingRouter = createTRPCRouter({
   getSubscriptionDetails: protectedProcedure.query(async ({ ctx }) => {
     if (!ctx.auth.orgId) throw new Error('Organization ID is required');
 
-    const org = await ctx.db.query.Orgs.findFirst({
-      where: eq(Orgs.id, ctx.auth.orgId),
-    });
+    const org = await ctx.db
+      .select()
+      .from(Orgs)
+      .where(eq(Orgs.id, ctx.auth.orgId))
+      .limit(1)
+      .then((rows) => rows[0]);
 
     if (!org || !org.stripeSubscriptionId) {
       return null;
@@ -274,9 +292,12 @@ export const billingRouter = createTRPCRouter({
   getSubscriptionStatus: protectedProcedure.query(async ({ ctx }) => {
     if (!ctx.auth.orgId) throw new Error('Organization ID is required');
 
-    const org = await ctx.db.query.Orgs.findFirst({
-      where: eq(Orgs.id, ctx.auth.orgId),
-    });
+    const org = await ctx.db
+      .select()
+      .from(Orgs)
+      .where(eq(Orgs.id, ctx.auth.orgId))
+      .limit(1)
+      .then((rows) => rows[0]);
 
     if (!org) {
       return {
@@ -316,9 +337,12 @@ export const billingRouter = createTRPCRouter({
   getUsageInfo: protectedProcedure.query(async ({ ctx }) => {
     if (!ctx.auth.orgId) throw new Error('Organization ID is required');
 
-    const org = await ctx.db.query.Orgs.findFirst({
-      where: eq(Orgs.id, ctx.auth.orgId),
-    });
+    const org = await ctx.db
+      .select()
+      .from(Orgs)
+      .where(eq(Orgs.id, ctx.auth.orgId))
+      .limit(1)
+      .then((rows) => rows[0]);
 
     if (!org || !org.stripeSubscriptionId) {
       return null;
@@ -362,9 +386,12 @@ export const billingRouter = createTRPCRouter({
   reactivateSubscription: protectedProcedure.mutation(async ({ ctx }) => {
     if (!ctx.auth.orgId) throw new Error('Organization ID is required');
 
-    const org = await ctx.db.query.Orgs.findFirst({
-      where: eq(Orgs.id, ctx.auth.orgId),
-    });
+    const org = await ctx.db
+      .select()
+      .from(Orgs)
+      .where(eq(Orgs.id, ctx.auth.orgId))
+      .limit(1)
+      .then((rows) => rows[0]);
 
     if (!org || !org.stripeSubscriptionId) {
       throw new Error('No active subscription found');

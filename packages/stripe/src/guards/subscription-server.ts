@@ -22,9 +22,12 @@ export async function getOrgSubscriptionStatus(): Promise<{
   }
 
   // Get the organization
-  const org = await db.query.Orgs.findFirst({
-    where: eq(Orgs.id, orgId),
-  });
+  const org = await db
+    .select()
+    .from(Orgs)
+    .where(eq(Orgs.id, orgId))
+    .limit(1)
+    .then((rows) => rows[0]);
 
   if (!org) {
     return { customerId: null, status: null };

@@ -23,13 +23,18 @@ export const authRouter = {
       const { code } = input;
 
       const authCode = await db.transaction(async (tx) => {
-        const foundCode = await tx.query.AuthCodes.findFirst({
-          where: and(
-            eq(AuthCodes.id, code),
-            isNull(AuthCodes.usedAt),
-            gte(AuthCodes.expiresAt, new Date()),
-          ),
-        });
+        const foundCode = await tx
+          .select()
+          .from(AuthCodes)
+          .where(
+            and(
+              eq(AuthCodes.id, code),
+              isNull(AuthCodes.usedAt),
+              gte(AuthCodes.expiresAt, new Date()),
+            ),
+          )
+          .limit(1)
+          .then((rows) => rows[0]);
 
         if (!foundCode) {
           return null;
@@ -55,9 +60,12 @@ export const authRouter = {
 
       try {
         // Get user from database
-        const user = await db.query.Users.findFirst({
-          where: eq(Users.id, authCode.userId),
-        });
+        const user = await db
+          .select()
+          .from(Users)
+          .where(eq(Users.id, authCode.userId))
+          .limit(1)
+          .then((rows) => rows[0]);
 
         if (!user) {
           throw new TRPCError({
@@ -220,13 +228,18 @@ export const authRouter = {
         // Better Auth uses composite unique key on (accountId, providerId, userId)
         if (account) {
           // First, try to find existing account
-          const existingAccount = await db.query.Accounts.findFirst({
-            where: and(
-              eq(Accounts.accountId, account.accountId),
-              eq(Accounts.providerId, account.providerId),
-              eq(Accounts.userId, user.id),
-            ),
-          });
+          const existingAccount = await db
+            .select()
+            .from(Accounts)
+            .where(
+              and(
+                eq(Accounts.accountId, account.accountId),
+                eq(Accounts.providerId, account.providerId),
+                eq(Accounts.userId, user.id),
+              ),
+            )
+            .limit(1)
+            .then((rows) => rows[0]);
 
           if (existingAccount) {
             // Update existing account
@@ -255,13 +268,18 @@ export const authRouter = {
         const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
 
         // Check for existing valid session for this user
-        const existingSession = await db.query.Sessions.findFirst({
-          orderBy: [desc(Sessions.createdAt)],
-          where: and(
-            eq(Sessions.userId, user.id),
-            gte(Sessions.expiresAt, new Date()),
-          ),
-        });
+        const existingSession = await db
+          .select()
+          .from(Sessions)
+          .where(
+            and(
+              eq(Sessions.userId, user.id),
+              gte(Sessions.expiresAt, new Date()),
+            ),
+          )
+          .orderBy(desc(Sessions.createdAt))
+          .limit(1)
+          .then((rows) => rows[0]);
 
         let sessionId: string;
         let sessionToken: string;
@@ -330,9 +348,12 @@ export const authRouter = {
         }
 
         // Get user from database
-        const user = await db.query.Users.findFirst({
-          where: eq(Users.id, userId),
-        });
+        const user = await db
+          .select()
+          .from(Users)
+          .where(eq(Users.id, userId))
+          .limit(1)
+          .then((rows) => rows[0]);
 
         if (!user) {
           throw new TRPCError({
@@ -353,9 +374,12 @@ export const authRouter = {
         }
 
         // Get organization from database
-        const org = await db.query.Orgs.findFirst({
-          where: eq(Orgs.id, orgId),
-        });
+        const org = await db
+          .select()
+          .from(Orgs)
+          .where(eq(Orgs.id, orgId))
+          .limit(1)
+          .then((rows) => rows[0]);
 
         // Use the upsertOrg utility function
         await upsertOrg({

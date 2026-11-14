@@ -2,24 +2,6 @@ import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import { databaseTls, idleTimeout, poolMax } from './connection-config';
 import { env } from './env';
-import { Accounts, Verifications } from './schema/accounts';
-import { ApiKeys, ApiKeyUsage, AuthCodes } from './schema/api-keys';
-import { Invitations, OrgMembers, Orgs } from './schema/organizations';
-import {
-  AccountsRelations,
-  ApiKeysRelations,
-  ApiKeyUsageRelations,
-  AuthCodesRelations,
-  InvitationsRelations,
-  OrgMembersRelations,
-  OrgsRelations,
-  SessionsRelations,
-  ShortUrlsRelations,
-  UsersRelations,
-} from './schema/relations';
-import { Sessions } from './schema/sessions';
-import { ShortUrls } from './schema/short-urls';
-import { Users } from './schema/users';
 
 // The longest one statement may run inside `inTransaction`. Without a limit
 // a stuck query keeps its connection forever, and a few of them leave every
@@ -48,32 +30,7 @@ export function connectDatabase(url: string) {
 
 export const connection = connectDatabase(env.POSTGRES_URL);
 
-// The registry exists only for Drizzle's relational queries (`db.query.*`).
-// It makes every request load every table, so new code uses the query
-// builder with tables imported from their own files; once the last
-// relational query is gone, drop this object and the relations file.
-const registry = {
-  Accounts,
-  AccountsRelations,
-  ApiKeys,
-  ApiKeysRelations,
-  ApiKeyUsage,
-  ApiKeyUsageRelations,
-  AuthCodes,
-  AuthCodesRelations,
-  Invitations,
-  InvitationsRelations,
-  OrgMembers,
-  OrgMembersRelations,
-  Orgs,
-  OrgsRelations,
-  Sessions,
-  SessionsRelations,
-  ShortUrls,
-  ShortUrlsRelations,
-  Users,
-  UsersRelations,
-  Verifications,
-};
-
-export const db = drizzle(connection, { schema: registry });
+// No schema registry: nothing uses Drizzle's relational queries
+// (`db.query.*`), and a registry makes every request load every table.
+// Queries use the builder with tables imported from their own files.
+export const db = drizzle(connection);

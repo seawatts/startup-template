@@ -44,9 +44,12 @@ export const createCheckoutSessionAction = action
     }
 
     // Get the organization
-    const org = await db.query.Orgs.findFirst({
-      where: eq(Orgs.id, parsedInput.orgId),
-    });
+    const org = await db
+      .select()
+      .from(Orgs)
+      .where(eq(Orgs.id, parsedInput.orgId))
+      .limit(1)
+      .then((rows) => rows[0]);
 
     if (!org) {
       throw new Error('Organization not found');

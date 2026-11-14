@@ -23,9 +23,12 @@ export async function trackApiKeyUsage({
 }) {
   try {
     // Find the API key record
-    const apiKeyRecord = await db.query.ApiKeys.findFirst({
-      where: eq(ApiKeys.key, apiKey),
-    });
+    const apiKeyRecord = await db
+      .select()
+      .from(ApiKeys)
+      .where(eq(ApiKeys.key, apiKey))
+      .limit(1)
+      .then((rows) => rows[0]);
 
     if (apiKeyRecord?.isActive) {
       // Create usage record

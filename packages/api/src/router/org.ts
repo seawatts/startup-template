@@ -1,6 +1,6 @@
 import { ApiKeys } from '@seawatts/db/schema/api-keys';
 import { OrgMembers, Orgs } from '@seawatts/db/schema/organizations';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { createOrg } from '../services';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
@@ -17,26 +17,33 @@ export const orgRouter = createTRPCRouter({
       if (!ctx.auth.userId) throw new Error('User ID is required');
 
       // First check if the user already has access to an organization with this name
-      const existingOrgWithAccess = await ctx.db.query.Orgs.findFirst({
-        where: eq(Orgs.name, input.name),
-        with: {
-          members: {
-            where: eq(OrgMembers.userId, ctx.auth.userId),
-          },
-        },
-      });
+      const existingOrgWithAccess = await ctx.db
+        .select({ id: Orgs.id })
+        .from(Orgs)
+        .innerJoin(OrgMembers, eq(OrgMembers.organizationId, Orgs.id))
+        .where(
+          and(
+            eq(Orgs.name, input.name),
+            eq(OrgMembers.userId, ctx.auth.userId),
+          ),
+        )
+        .limit(1)
+        .then((rows) => rows[0]);
 
       // If user has access to an org with this name, it's available to them
-      if (existingOrgWithAccess && existingOrgWithAccess.members.length > 0) {
+      if (existingOrgWithAccess) {
         return {
           available: true,
           message: `You already have access to organization '${input.name}'`,
         };
       }
 
-      const existingOrg = await ctx.db.query.Orgs.findFirst({
-        where: eq(Orgs.name, input.name),
-      });
+      const existingOrg = await ctx.db
+        .select()
+        .from(Orgs)
+        .where(eq(Orgs.name, input.name))
+        .limit(1)
+        .then((rows) => rows[0]);
 
       const isAvailable =
         !existingOrg ||
@@ -51,9 +58,12 @@ export const orgRouter = createTRPCRouter({
     }),
   current: protectedProcedure.query(async ({ ctx }) => {
     if (!ctx.auth.orgId) throw new Error('Organization ID is required');
-    return ctx.db.query.Orgs.findFirst({
-      where: eq(Orgs.id, ctx.auth.orgId),
-    });
+    return ctx.db
+      .select()
+      .from(Orgs)
+      .where(eq(Orgs.id, ctx.auth.orgId))
+      .limit(1)
+      .then((rows) => rows[0]);
   }),
 
   updateName: protectedProcedure
@@ -73,9 +83,12 @@ export const orgRouter = createTRPCRouter({
       if (!ctx.auth.orgId) throw new Error('Organization ID is required');
 
       // Check if organization name already exists
-      const existingOrg = await ctx.db.query.Orgs.findFirst({
-        where: eq(Orgs.name, input.name),
-      });
+      const existingOrg = await ctx.db
+        .select()
+        .from(Orgs)
+        .where(eq(Orgs.name, input.name))
+        .limit(1)
+        .then((rows) => rows[0]);
 
       if (existingOrg && existingOrg.id !== ctx.auth.orgId) {
         throw new Error(`Organization name '${input.name}' already exists`);
@@ -108,14 +121,20 @@ export const orgRouter = createTRPCRouter({
       }
 
       try {
-        const existingOrg = await ctx.db.query.Orgs.findFirst({
-          where: eq(Orgs.name, input.name),
-        });
+        const existingOrg = await ctx.db
+          .select()
+          .from(Orgs)
+          .where(eq(Orgs.name, input.name))
+          .limit(1)
+          .then((rows) => rows[0]);
 
         if (existingOrg) {
-          const apiKey = await ctx.db.query.ApiKeys.findFirst({
-            where: eq(ApiKeys.organizationId, existingOrg.id),
-          });
+          const apiKey = await ctx.db
+            .select()
+            .from(ApiKeys)
+            .where(eq(ApiKeys.organizationId, existingOrg.id))
+            .limit(1)
+            .then((rows) => rows[0]);
           return {
             apiKey: {
               id: apiKey?.id,

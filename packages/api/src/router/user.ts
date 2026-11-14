@@ -7,16 +7,17 @@ import { protectedProcedure } from '../trpc';
 
 export const userRouter = {
   all: protectedProcedure.query(({ ctx }) => {
-    return ctx.db.query.Users.findMany({
-      limit: 10,
-    });
+    return ctx.db.select().from(Users).limit(10);
   }),
   byId: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(({ ctx, input }) => {
-      return ctx.db.query.Users.findFirst({
-        where: eq(Users.id, input.id),
-      });
+      return ctx.db
+        .select()
+        .from(Users)
+        .where(eq(Users.id, input.id))
+        .limit(1)
+        .then((rows) => rows[0]);
     }),
   create: protectedProcedure
     .input(CreateUserSchema)
@@ -29,9 +30,12 @@ export const userRouter = {
     }),
   current: protectedProcedure.query(({ ctx }) => {
     if (!ctx.auth.userId) throw new Error('User ID is required');
-    return ctx.db.query.Users.findFirst({
-      where: eq(Users.id, ctx.auth.userId),
-    });
+    return ctx.db
+      .select()
+      .from(Users)
+      .where(eq(Users.id, ctx.auth.userId))
+      .limit(1)
+      .then((rows) => rows[0]);
   }),
   delete: protectedProcedure
     .input(z.string())

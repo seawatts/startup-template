@@ -43,12 +43,17 @@ export const apiKeyUsageRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       if (!ctx.auth.orgId) throw new Error('Organization ID is required');
 
-      const usage = await ctx.db.query.ApiKeyUsage.findFirst({
-        where: and(
-          eq(ApiKeyUsage.id, input.id),
-          eq(ApiKeyUsage.organizationId, ctx.auth.orgId),
-        ),
-      });
+      const usage = await ctx.db
+        .select()
+        .from(ApiKeyUsage)
+        .where(
+          and(
+            eq(ApiKeyUsage.id, input.id),
+            eq(ApiKeyUsage.organizationId, ctx.auth.orgId),
+          ),
+        )
+        .limit(1)
+        .then((rows) => rows[0]);
 
       if (!usage) return null;
 
