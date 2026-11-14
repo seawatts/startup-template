@@ -6,6 +6,7 @@ import {
 } from '@seawatts/db/schema/api-keys';
 import { and, desc, eq } from 'drizzle-orm';
 import { z } from 'zod';
+import { publishEvent } from '../events/publish';
 import { protectedProcedure } from '../orpc';
 
 export const apiKeysRouter = {
@@ -98,8 +99,9 @@ export const apiKeysRouter = {
       if (!ctx.auth.userId)
         throw new ORPCError('BAD_REQUEST', { message: 'User ID is required' });
 
+      let apiKey: typeof ApiKeys.$inferSelect | undefined;
       try {
-        const [apiKey] = await ctx.db
+        [apiKey] = await ctx.db
           .insert(ApiKeys)
           .values({
             ...input,
@@ -107,14 +109,21 @@ export const apiKeysRouter = {
             userId: ctx.auth.userId,
           })
           .returning();
-
-        return apiKey;
       } catch (error) {
         console.error(error);
         throw new ORPCError('BAD_REQUEST', {
           message: 'Failed to create API key',
         });
       }
+      // The insert has committed. A key with an expiry gets a workflow that
+      // sleeps until then and switches it off (docs/agents/events.md).
+      if (apiKey?.expiresAt)
+        await publishEvent('apiKey.expirySet', {
+          apiKeyId: apiKey.id,
+          expiresAt: apiKey.expiresAt.toISOString(),
+          organizationId: apiKey.organizationId,
+        });
+      return apiKey;
     }),
 
   delete: protectedProcedure
@@ -212,6 +221,12 @@ export const apiKeysRouter = {
         )
         .returning();
 
+      if (apiKey && input.expiresAt !== undefined)
+        await publishEvent('apiKey.expirySet', {
+          apiKeyId: apiKey.id,
+          expiresAt: apiKey.expiresAt?.toISOString() ?? null,
+          organizationId: apiKey.organizationId,
+        });
       return apiKey;
     }),
 

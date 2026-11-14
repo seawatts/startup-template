@@ -1,4 +1,5 @@
 import { db } from '@seawatts/db/client';
+import { notReading } from '@seawatts/db/read-only';
 import { ApiKeys } from '@seawatts/db/schema/api-keys';
 import { and, eq, gt, isNull, or } from 'drizzle-orm';
 import type { Context } from './context';
@@ -52,9 +53,12 @@ export const apiKeyContext = (principal: ApiKeyPrincipal): Context => ({
 });
 
 // After the response: when the key was last used. Never awaited by a call.
+// A record of the request itself, so it is allowed beside a read.
 export async function recordApiKeyUse(principal: ApiKeyPrincipal) {
-  await db
-    .update(ApiKeys)
-    .set({ lastUsedAt: new Date() })
-    .where(eq(ApiKeys.id, principal.apiKeyId));
+  await notReading(() =>
+    db
+      .update(ApiKeys)
+      .set({ lastUsedAt: new Date() })
+      .where(eq(ApiKeys.id, principal.apiKeyId)),
+  );
 }

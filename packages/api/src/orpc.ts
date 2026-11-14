@@ -1,4 +1,5 @@
 import { ORPCError, os, ValidationError } from '@orpc/server';
+import { handleWritesInReads, readingOnly } from '@seawatts/db/read-only';
 import { debug } from '@seawatts/logger';
 import type { Context } from './context';
 
@@ -9,12 +10,31 @@ const log = debug('seawatts:orpc');
 // problems, an error a procedure raised on purpose (ORPCError with its own
 // code) passes through, and anything else is logged in full and answered
 // as a plain 500 so no stack or SQL reaches the browser.
+//
+// A GET procedure is a read and never writes: it runs inside `readingOnly`,
+// so a statement that would write is refused before it reaches the database.
+// Production reports the write and lets it through, so a path the tests
+// missed is found without breaking the page.
+if (process.env.VERCEL_ENV === 'production')
+  handleWritesInReads((error) =>
+    console.error(
+      JSON.stringify({
+        event: 'write_in_read',
+        read: error.read,
+        statement: error.statement,
+      }),
+    ),
+  );
+
 export const publicProcedure = os
   .$context<Context>()
-  .use(async ({ next, path }) => {
+  .use(async ({ next, path, procedure }) => {
     const start = Date.now();
+    const read = procedure['~orpc'].route.method === 'GET';
     try {
-      return await next();
+      return await (read
+        ? readingOnly(`rpc.${path.join('.')}`, () => next())
+        : next());
     } catch (error) {
       if (
         error instanceof ORPCError &&
