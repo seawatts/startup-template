@@ -1,6 +1,10 @@
 import { debug } from '@seawatts/logger';
-import keytar from 'keytar';
+
 import type { StorageInterface } from './storage-interface';
+
+// The system keychain is a native module: loaded on first use, so a command
+// that stores nothing (`api`) runs where it is missing.
+const loadKeytar = () => import('keytar').then((module) => module.default);
 
 const log = debug('seawatts:cli:secure-storage');
 const SERVICE_NAME = 'seawatts-cli';
@@ -25,7 +29,7 @@ export class SecureStorage implements StorageInterface {
     try {
       const fullKey = this.getKey(key);
       log('Storing secure value for key', fullKey);
-      await keytar.setPassword(SERVICE_NAME, fullKey, value);
+      await (await loadKeytar()).setPassword(SERVICE_NAME, fullKey, value);
       // Update cache after successful keychain write
       this.data[fullKey] = value;
     } catch (error: unknown) {
@@ -47,7 +51,10 @@ export class SecureStorage implements StorageInterface {
       }
 
       // If not in cache, get from keychain
-      const value = await keytar.getPassword(SERVICE_NAME, fullKey);
+      const value = await (await loadKeytar()).getPassword(
+        SERVICE_NAME,
+        fullKey,
+      );
       log('Retrieved secure value from keychain');
 
       // Update cache and return value
@@ -68,7 +75,7 @@ export class SecureStorage implements StorageInterface {
     try {
       const fullKey = this.getKey(key);
       log('Removing secure value for key', fullKey);
-      await keytar.deletePassword(SERVICE_NAME, fullKey);
+      await (await loadKeytar()).deletePassword(SERVICE_NAME, fullKey);
       // Remove from cache after successful keychain deletion
       delete this.data[fullKey];
     } catch (error: unknown) {

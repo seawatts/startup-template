@@ -1,0 +1,22 @@
+{
+  "dependencies": {
+    "@seawatts/api": "workspace:*"
+  },
+  "devDependencies": {
+    "@seawatts/tsconfig": "workspace:*",
+    "typescript": "catalog:"
+  },
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "license": "MIT",
+  "name": "@seawatts/sdk",
+  "private": true,
+  "scripts": {
+    "clean": "git clean -xdf .turbo node_modules dist",
+    "dev": "tsc --watch",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "type": "module",
+  "version": "0.1.0"
+}

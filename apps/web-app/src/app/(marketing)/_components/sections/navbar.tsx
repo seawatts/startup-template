@@ -235,6 +235,7 @@ export function Navbar({ navs }: { navs?: NavItem[] }) {
                           }`}
                           href={item.href}
                           onClick={(e) => {
+                            if (!item.href.startsWith('#')) return;
                             e.preventDefault();
                             const element = document.getElementById(
                               item.href.substring(1),
