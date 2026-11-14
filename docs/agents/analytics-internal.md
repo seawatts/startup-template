@@ -14,8 +14,9 @@ A feature is not finished until you can see it being used. A change that adds so
 
 `/app/internal` is where the people who run the product see every customer. Its reads are `packages/api/src/router/operator.ts`.
 
-- Access: `operatorProcedure` (`packages/api/src/operator/access.ts`) admits a signed-in person whose verified email is in `OPERATOR_EMAILS`, never an API key, and answers everyone else `NOT_FOUND`. The layout and the sidebar link only decide what to show; the page shell holds no data. Before real customers, require a second factor or a single sign-on domain and record each operator read.
+- Access: `operatorProcedure` (`packages/api/src/operator/access.ts`) admits a signed-in person with a verified email and a row in the `operators` table, never an API key, and answers everyone else `NOT_FOUND`. The layout and the sidebar link only decide what to show; the page shell holds no data. Before real customers, require a second factor or a single sign-on domain and record each operator read.
 - Organizations first: the organization, then its people and what it uses. What staff need about one customer goes on the organization page (`internal/_components/organization.tsx`) as a card; a whole new view is a new page under `internal/`.
+- Operators are data, not configuration: `bun operators add <email>` (also `remove`, `list`; `packages/db/scripts/operators.ts`) for someone who has signed up, wrapped in `bun with-env` for a hosted database. Never a list of emails in an environment variable.
 - Our own accounts are not customers. Every figure and list leaves them out unless Include internal is on: use `internalOrganization()` and `internalPerson()` from `packages/api/src/operator/internal-rules.ts` and keep the switch working.
 - Each list is one bounded query with counts as subqueries, never a query per row. Never return a secret (a key's value, a token).
 - Operator procedures are listed in `sessionOnly` in `operations.ts`: they are not part of the public API.
