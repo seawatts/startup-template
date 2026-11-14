@@ -74,6 +74,10 @@
       "nursery": {
         "recommended": true
       },
+      "performance": {
+        "noBarrelFile": "error",
+        "noReExportAll": "error"
+      },
       "recommended": true,
       "style": {
         "noCommonJs": "error",
@@ -106,6 +110,74 @@
       }
     }
   },
+  "overrides": [
+    {
+      "includes": [
+        "apps/chrome-extension/postcss.config.js",
+        "apps/web-app/postcss.config.mjs"
+      ],
+      "linter": {
+        "rules": {
+          "performance": {
+            "noBarrelFile": "off",
+            "noReExportAll": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "apps/chrome-extension/src/utils/existing-inputs/application/tests/mock-data/index.ts",
+        "apps/chrome-extension/src/utils/existing-inputs/readonly/tests/mock-data/index.ts",
+        "apps/cli/src/components/form/index.ts",
+        "apps/cli/src/guards/index.ts",
+        "apps/expo/src/components/piano/index.ts",
+        "apps/expo/src/utils/usb-midi-service.ts",
+        "apps/web-app/src/app/(marketing)/_components/sections/pricing-section/index.ts",
+        "packages/analytics/src/components/index.ts",
+        "packages/analytics/src/index.ts",
+        "packages/analytics/src/posthog/chrome-extension.tsx",
+        "packages/api/src/index.ts",
+        "packages/api/src/react/client-exports.ts",
+        "packages/api/src/react/server-exports.ts",
+        "packages/api/src/services/index.ts",
+        "packages/auth/src/index.ts",
+        "packages/db/src/index.ts",
+        "packages/db/src/schema/index.ts",
+        "packages/db/src/supabase/client-exports.ts",
+        "packages/db/src/supabase/server-exports.ts",
+        "packages/db/src/supabase/types.ts",
+        "packages/email/src/templates/index.ts",
+        "packages/logger/src/index.ts",
+        "packages/stripe/src/guards/client.ts",
+        "packages/stripe/src/guards/server.ts",
+        "packages/ui/src/custom/index.ts",
+        "packages/ui/src/custom/portal.tsx",
+        "packages/ui/src/custom/theme.tsx",
+        "packages/utils/src/index.ts",
+        "packages/zustand/src/index.ts",
+        "tooling/testing/src/index.ts"
+      ],
+      "linter": {
+        "rules": {
+          "performance": {
+            "noBarrelFile": "off",
+            "noReExportAll": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/ui/src/styles/theme.css"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noDuplicateCustomProperties": "off"
+          }
+        }
+      }
+    }
+  ],
   "vcs": {
     "clientKind": "git",
     "defaultBranch": "main",

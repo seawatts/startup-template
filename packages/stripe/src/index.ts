@@ -13,19 +13,23 @@ import {
 } from './billing-ids.generated';
 import { env } from './env';
 
-// Initialize Stripe with the secret key
-// Note: This will fail at runtime if STRIPE_SECRET_KEY is not configured
-export const stripe = new Stripe(
-  env.STRIPE_SECRET_KEY ??
-    (() => {
+// The client is created on first use, not on import: a build or a preview
+// without Stripe configured still loads every route, and only a call that
+// actually reaches Stripe fails.
+let client: Stripe | undefined;
+function stripeClient() {
+  if (!client) {
+    if (!env.STRIPE_SECRET_KEY)
       throw new Error(
         'STRIPE_SECRET_KEY is required. Please configure your Stripe credentials.',
       );
-    })(),
-  {
-    typescript: true,
-  },
-);
+    client = new Stripe(env.STRIPE_SECRET_KEY, { typescript: true });
+  }
+  return client;
+}
+export const stripe = new Proxy({} as Stripe, {
+  get: (_, property) => Reflect.get(stripeClient(), property),
+});
 
 // Create a checkout session for a new subscription
 export async function createCheckoutSession({

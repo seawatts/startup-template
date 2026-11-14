@@ -1,118 +1,39 @@
-# CLAUDE.md
+# Startup template development
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+A Bun + Turborepo monorepo: apps in `apps/` (`web-app` is one Next.js app with marketing at `/` and the product at `/app`; plus `expo`, `cli`, `chrome-extension`, `vscode-extension`, `ios`), shared code in `packages/`, build tooling in `tooling/`. This file is the whole rule set; `docs/agents/` holds the detail for each rule. Read a detail file only when the change touches its area.
 
-## Project Overview
+Stack: Next.js 16 (App Router), React 19, TypeScript strict, Tailwind 4, shadcn/ui (`packages/ui`), Drizzle on Supabase Postgres (`packages/db`), Better Auth (`packages/auth`), tRPC (`packages/api`), Stripe, PostHog (`packages/analytics`), Biome, Lefthook, Infisical.
 
-This is the SeaWatts Startup Template - a production-ready full-stack TypeScript monorepo using Turborepo, designed for building scalable applications with multiple frontend and backend services sharing common packages. Optimized for AI code generation workflows.
+## Commands
 
-## Essential Commands
+- `bun install`, `bun dev` (everything) or `bun dev:next` (web app only).
+- `bun typecheck` (run `bun run build --filter @seawatts/stripe` once first: it generates the billing ids), `bun test`, `bun format:fix` (Biome + knip).
+- Database: `bun db:gen-migration`, `bun db:migrate`, `bun db:push`, `bun db:seed`, `bun db:studio`. Migrations in `packages/db/drizzle` are append-only; never edit an applied one.
+- `bun ui-add` adds a shadcn component to `packages/ui`.
 
-### Development
-```bash
-# Install dependencies
-bun install
+## Working in a thread
 
-# Start development for all packages
-bun dev
+- Start from `origin/main`, work on a branch, commit with conventional subjects (`feat(web): …`; commitlint enforces it).
+- Run only the checks the change needs while you work, and the full set once before a push (`docs/agents/checks.md`). Never push with `--no-verify`; fix the cause.
+- Before pushing a visible change, run the real app and look at every changed screen at desktop and 390px width in light and dark (layout, overflow, copy, empty and error states). Capture once per screen after the fixes, not after every edit.
+- Secrets live only in Infisical, never in environment variables, `.env` files committed to the repository, setup scripts, hooks or an exported shell; wrap the one command that needs them (`bun with-env`) and never print a value (`docs/agents/secrets.md`).
+- Replies lead with the result; say which checks actually ran.
 
-# Start only the web app
-bun dev:next
+## Code
 
-# Run tests
-bun test
+- No barrel files: import every binding from the file that declares it, never through an `index.ts` or other re-exporting module. Biome's `noBarrelFile`/`noReExportAll` enforce it; the barrels that predate the rule are listed in `biome.json` and that list only shrinks (`docs/agents/imports.md`).
+- Kebab-case filenames, no `any`, Node built-ins through `node:`; Biome enforces these.
+- All database access goes through `@seawatts/db`.
 
-# Type check everything
-bun typecheck
+## UI
 
-# Format code
-bun format:fix
+- Every visible feature works in light and dark, at desktop and 390px, designed for the phone and not a narrowed desktop, with semantic color tokens and reduced motion; use a shadcn component before custom markup (`docs/agents/ui.md`).
+- Loading states go in the lowest component that waits on data: the page frame, heading, tabs and static copy render at once, and only the part waiting on a read shows a skeleton of its own shape. Never a page-blocking loader (`docs/agents/ui.md`).
+- Saves feel instant: no navigation or reload after a save, invalidate only the queries the save changed, one-click controls update optimistically (`docs/agents/ui.md`).
+- Buttons for actions, links for words: one primary button per card, a secondary beside it, ghost for "View all" and row actions, quiet links for opt-outs (`docs/agents/buttons.md`).
+- Concise copy: marketing tiles are a label plus about 20 words; docs paragraphs about 60 words (`docs/agents/copy.md`).
+- No repository references in public copy: docs, marketing, UI strings, emails and npm READMEs never cite `#123` or a private repository URL (`docs/agents/public-references.md`).
 
-# Clean all workspaces
-bun clean:ws
-```
+## Pull requests
 
-### Database Operations
-```bash
-# Open database studio
-bun db:studio
-
-# Push schema changes
-bun db:push
-
-# Generate migrations
-bun db:gen-migration
-
-# Run migrations
-bun db:migrate
-
-# Seed database
-bun db:seed
-```
-
-### Building & Publishing
-```bash
-# Build all packages
-bun build
-
-# Publish CLI and client packages
-bun publish
-
-# Add UI components
-bun ui-add
-```
-
-## Architecture Overview
-
-### Monorepo Structure
-- `/apps/*` - Applications (web-app, expo, cli, extensions)
-- `/packages/*` - Shared packages (api, db, ui, ai)
-- `/tooling/*` - Build and development tooling
-
-### Key Technologies
-- **Package Manager**: Bun with pnpm workspaces
-- **Build System**: Turborepo
-- **Web Framework**: Next.js 14 (App Router)
-- **Database**: Drizzle ORM + Supabase
-- **API Layer**: tRPC v11
-- **UI Components**: shadcn/ui
-- **Authentication**: Clerk
-- **State Management**: Zustand
-- **Mobile**: React Native with Expo SDK 51
-- **Code Quality**: Biome (formatting/linting), TypeScript
-
-### Important Patterns
-
-1. **Type Safety**: End-to-end type safety with tRPC. API types are automatically inferred from server to client.
-
-2. **Database Access**: All database operations go through the `@seawatts/db` package using Drizzle ORM.
-
-3. **Environment Variables**: Use `bun with-env` to load environment variables from Infisical.
-
-4. **UI Components**: Shared components in `@seawatts/ui` package. Use `bun ui-add` to add new shadcn components.
-
-5. **API Routes**: Define tRPC routers in `packages/api/src/router`. Routes are automatically type-safe across all apps.
-
-6. **Real-time Features**: Supabase real-time subscriptions are available for live data updates.
-
-7. **AI Integration**: BAML templates in `packages/ai` for structured LLM interactions. This enables AI to understand your codebase context and generate consistent, type-safe code across all platforms.
-
-### Testing Approach
-- Unit tests use Bun's built-in test runner
-- Chrome extension uses Vitest
-- VS Code extension uses Mocha
-- Run all tests with `bun test`
-
-### Code Style
-- Biome enforces formatting and linting rules
-- Kebab-case for filenames
-- TypeScript strict mode enabled
-- Import organization enforced
-- Run `bun format:fix` before committing
-
-### Development Tips
-- Always run `bun typecheck` before committing
-- Use Turbo for parallel task execution
-- Database changes require running migrations
-- Environment variables are managed with Infisical
-- Git hooks via Lefthook ensure code quality
+- One `Closes #N` per finished issue on its own line in the PR body (`Refs #N` for work that leaves it open); say which checks ran and attach screenshots of changed screens (`docs/agents/pull-requests.md`).
