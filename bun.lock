@@ -434,6 +434,17 @@
         "typescript": "catalog:",
       },
     },
+    "packages/sdk": {
+      "name": "@seawatts/sdk",
+      "version": "0.1.0",
+      "dependencies": {
+        "@seawatts/api": "workspace:*",
+      },
+      "devDependencies": {
+        "@seawatts/tsconfig": "workspace:*",
+        "typescript": "catalog:",
+      },
+    },
     "packages/stripe": {
       "name": "@seawatts/stripe",
       "version": "0.1.0",
@@ -2176,6 +2187,8 @@
     "@seawatts/npm": ["@seawatts/npm@workspace:tooling/npm"],
 
     "@seawatts/scripts": ["@seawatts/scripts@workspace:scripts"],
+
+    "@seawatts/sdk": ["@seawatts/sdk@workspace:packages/sdk"],
 
     "@seawatts/stripe": ["@seawatts/stripe@workspace:packages/stripe"],
 

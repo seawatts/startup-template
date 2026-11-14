@@ -332,7 +332,7 @@ export const siteConfig = {
         {
           id: 18,
           title: 'Documentation',
-          url: 'https://github.com/seawatts-sh/startup-template#readme',
+          url: '/docs',
         },
         { id: 19, title: 'OSS Friends', url: '/oss-friends' },
       ],
@@ -403,6 +403,7 @@ export const siteConfig = {
       { href: '#hero', id: 1, name: 'Home' },
       { href: '#bento', id: 2, name: 'Features' },
       { href: '#faq', id: 3, name: 'FAQ' },
+      { href: '/docs', id: 7, name: 'Docs' },
       {
         href: 'https://github.com/seawatts-sh/startup-template',
         id: 4,

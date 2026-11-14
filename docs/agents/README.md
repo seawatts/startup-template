@@ -8,6 +8,7 @@
 | [imports.md](imports.md) | Adding modules, package entries or imports |
 | [database.md](database.md) | Touching the schema, the database client, transactions or after-response work |
 | [api.md](api.md) | Adding or calling an API procedure, touching the `/api/rpc` route or how the session is read |
+| [interfaces.md](interfaces.md) | Adding or changing a procedure: the catalog that feeds REST, OpenAPI, the SDK, the CLI, MCP and the docs reference |
 | [speed.md](speed.md) | Making a screen or a save faster, or adding reads to a hot path |
 | [ui.md](ui.md) | Any visible change: themes, phone layout, loading states, saves |
 | [buttons.md](buttons.md) | Adding an action, link or button anywhere, including email |

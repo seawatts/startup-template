@@ -17,6 +17,9 @@ export const createORPCContext = async (requestHeaders?: Headers) => {
   const userId = session?.user?.id ?? null;
   const orgId = session?.session?.activeOrganizationId ?? null;
   return {
+    // Set when the caller is an API key (api-key-context.ts), never for a
+    // signed-in session.
+    apiKey: null as { id: string } | null,
     auth: { orgId, userId },
     db,
     organizationId: orgId,

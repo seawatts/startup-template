@@ -73,6 +73,9 @@ export function NavMenu({ navs }: { navs?: NavItem[] }) {
     e: React.MouseEvent<HTMLAnchorElement>,
     item: NavItem,
   ) => {
+    // Only an in-page section (`#faq`) is scrolled to; a page or an outside
+    // link navigates as any link does.
+    if (!item.href.startsWith('#')) return;
     e.preventDefault();
 
     const targetId = item.href.substring(1);
