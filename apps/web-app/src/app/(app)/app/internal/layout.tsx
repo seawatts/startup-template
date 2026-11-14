@@ -12,6 +12,6 @@ export default async function InternalLayout({
   children: React.ReactNode;
 }) {
   const session = await readSession(await headers()).catch(() => null);
-  if (!isOperator(session?.user)) notFound();
+  if (!(await isOperator(session?.user))) notFound();
   return children;
 }

@@ -28,8 +28,8 @@ export const operatorRouter = {
   // Whether to show the Internal link. Says nothing else.
   access: protectedProcedure
     .route({ method: 'GET' })
-    .handler(({ context }) => ({
-      operator: !context.apiKey && isOperator(context.user),
+    .handler(async ({ context }) => ({
+      operator: !context.apiKey && (await isOperator(context.user)),
     })),
 
   organization: operatorProcedure

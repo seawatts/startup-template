@@ -33,6 +33,7 @@ They run against an app that is already running, on the same database:
 `speed.e2e.ts` loads each listed screen as a signed-in person with a network round trip in front of every request, and reports the median time from navigation to content shown, plus every API request on the way with when it was sent and how long it took.
 
 - `SPEED_RTT` (default 60 ms), `SPEED_LOADS` (default 5), `SPEED_CPU` (4 is about a mid-range phone), `SPEED_BUDGET` (fail above this many ms; unset reports only).
+- Start the built app with `STATEMENT_COUNTS=enabled` and each request also lists its server time, statements and transactions, with a total per screen; `SPEED_SERVER_BUDGET=100` fails a screen whose server time is over the budget.
 - It is a measurement, not a check: it runs only with `SPEED=enabled`. Run it before and after a change to a screen or its reads, on a built app (`next start`, never dev), and put both tables in the pull request.
 - Add a screen to `screens` with the feature that adds it: its path and the selector that means "content shown" (a row, not a skeleton).
 - Read the request list as well as the number: the same request twice, a read sent late, or a chain of reads each waiting on the last is the thing to fix ([speed.md](speed.md)).

@@ -39,3 +39,26 @@ export async function expireApiKeyIfDue(
   if (!key?.isActive || !key.expiresAt) return { status: 'nothing_due' };
   return { status: 'waiting', until: key.expiresAt.toISOString() };
 }
+
+// A workflow run stays on the release that started it, so no run sleeps
+// longer than this: it wakes, and if the key is still waiting it starts the
+// next run on the latest release and ends.
+export const longestSleepMs = 7 * 24 * 60 * 60 * 1000;
+
+/**
+ * When a run that was scheduled for `scheduledFor` wakes next, given the key
+ * now expires at `until`. A different expiry means a newer save started its
+ * own run: this one is replaced and stops, so one chain per key stays alive.
+ */
+export function nextExpiryWake(
+  until: string,
+  scheduledFor: string,
+  now = Date.now(),
+): { replaced: true } | { replaced: false; wakeAt: string } {
+  const due = new Date(until).getTime();
+  if (due !== new Date(scheduledFor).getTime()) return { replaced: true };
+  return {
+    replaced: false,
+    wakeAt: new Date(Math.min(due, now + longestSleepMs)).toISOString(),
+  };
+}

@@ -16,6 +16,7 @@ Loading a page or calling a GET procedure changes nothing: no backfilling, no "c
 
 - Event names and payloads are in `packages/api/src/events/catalog.ts`: past tense (`apiKey.expirySet`), ids plus the few facts a handler needs, plain JSON.
 - A procedure calls `publishEvent(name, payload)` after its write has committed: after `inTransaction` returns, never inside the callback. An event for a rolled-back write starts work on rows that do not exist.
+- Every domain event also fires its content-free analytics event from the same place ([observability.md](observability.md)).
 - The procedure does not know who reacts. Do not call the reaction inline, and do not leave it for a read or a cron to notice.
 - In tests nothing delivers events; assert on `takeUndeliveredEvents()`.
 
@@ -33,11 +34,16 @@ A handler:
 
 A time-based effect is one workflow per subject, started when the data it depends on is written. It sleeps until the moment, reads its data again when it wakes, acts or sleeps again, and ends.
 
-The example: `apiKeys.create` and `apiKeys.update` publish `apiKey.expirySet`; its handler starts `apiKeyExpiryWorkflow` (`workflows/api-key-expiry.ts`), which sleeps until the expiry and switches the key off through `expireApiKeyIfDue`. Moving the expiry starts a second run; both read the current row and the switch-off matches only a key that is still on and due, so the extra run finds nothing to do.
+- A run stays on the release (deployment) that started it. No run sleeps longer than a week: it wakes, and if its moment has not come it starts the next run on the latest deployment (`start(…, { deploymentId: 'latest' })`) and ends, so an old release only hands over. The workflow's name, file and arguments are that hand-over's contract: change them like an API.
+- Every chain has a token that names the live one. Replacing a schedule starts a new chain with a new token; a run holding an older token stops at its next wake. Use the scheduled time itself when it identifies the schedule, or a token column on a schedules row when it does not.
+
+The example: `apiKeys.create` and `apiKeys.update` publish `apiKey.expirySet`; its handler starts `apiKeyExpiryWorkflow` (`workflows/api-key-expiry.ts`) with the key and the expiry it was scheduled for. The run sleeps until the expiry, a week at most, and switches the key off through `expireApiKeyIfDue`. Moving the expiry starts a new chain; the old one wakes, sees the key expires at another time (`nextExpiryWake`) and stops. The switch-off itself matches only a key that is still on and due.
 
 ## Crons, triggers
 
-- A cron is for truly periodic work (a digest, a warm ping). A sweep over everything is at most a safety net that reports what it finds; if it ever finds something, an event or a workflow is missing.
+- A cron is for truly periodic work (a digest at a local time, polling a vendor, expiring what nobody answered, a warm ping).
+- A pass that re-derives what a save already knew ("find the rows that changed") is a sweep. Publish an event from the save instead.
+- A reconciliation may back the events up, at most once a day: it repairs what it finds and reports every repair as an error, because a repair means an event path is broken.
 - Keep business logic out of database triggers and `pg_cron`: it cannot be tested, retried or seen with the rest.
 
 ## Running it

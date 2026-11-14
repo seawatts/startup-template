@@ -1,24 +1,4 @@
 import { afterAll, describe, expect, test } from 'bun:test';
-import { isOperator, operatorEmails } from '../src/operator/access';
-
-test('an operator is a verified, listed email', () => {
-  process.env.OPERATOR_EMAILS = ' Staff@Example.com, other@example.com ';
-  expect(operatorEmails()).toEqual(['staff@example.com', 'other@example.com']);
-  expect(isOperator({ email: 'staff@example.com', emailVerified: true })).toBe(
-    true,
-  );
-  expect(isOperator({ email: 'staff@example.com', emailVerified: false })).toBe(
-    false,
-  );
-  expect(isOperator({ email: 'who@example.com', emailVerified: true })).toBe(
-    false,
-  );
-  expect(isOperator(null)).toBe(false);
-  process.env.OPERATOR_EMAILS = '';
-  expect(isOperator({ email: 'staff@example.com', emailVerified: true })).toBe(
-    false,
-  );
-});
 
 // Needs a real PostgreSQL with the migrations applied: TEST_POSTGRES_URL.
 const url = process.env.TEST_POSTGRES_URL;
@@ -33,6 +13,7 @@ describe.skipIf(!url)('with a database', () => {
     import('@seawatts/db/schema/organizations'),
     import('@seawatts/db/schema/users'),
     import('../src/caller'),
+    import('@seawatts/db/schema/operators'),
   ]);
   const suffix = Date.now().toString(36);
   const staff = {
@@ -47,11 +28,22 @@ describe.skipIf(!url)('with a database', () => {
     id: `user_customer_${suffix}`,
     name: 'Customer',
   };
+  const unverified = {
+    email: `unverified-${suffix}@example.com`,
+    emailVerified: false,
+    id: `user_unverified_${suffix}`,
+    name: 'Unverified',
+  };
   const ours = `org_ours_${suffix}`;
   const theirs = `org_theirs_${suffix}`;
   const seeded = loaded.then(
-    async ([{ db }, { ApiKeys }, { OrgMembers, Orgs }, { Users }]) => {
-      await db.insert(Users).values([staff, customer]);
+    async ([{ db }, { ApiKeys }, { OrgMembers, Orgs }, { Users }, , ops]) => {
+      await db.insert(Users).values([staff, customer, unverified]);
+      // Access is a row in `operators`, and a verified email.
+      await db.insert(ops.Operators).values([
+        { addedBy: 'test', userId: staff.id },
+        { addedBy: 'test', userId: unverified.id },
+      ]);
       await db.insert(Orgs).values([
         { id: ours, name: `Ours ${suffix}` },
         { id: theirs, name: `Theirs ${suffix}` },
@@ -71,7 +63,9 @@ describe.skipIf(!url)('with a database', () => {
     const [{ db }, , { Orgs }, { Users }] = await loaded;
     const { inArray } = await import('drizzle-orm');
     await db.delete(Orgs).where(inArray(Orgs.id, [ours, theirs]));
-    await db.delete(Users).where(inArray(Users.id, [staff.id, customer.id]));
+    await db
+      .delete(Users)
+      .where(inArray(Users.id, [staff.id, customer.id, unverified.id]));
   });
 
   const as = async (user: typeof staff | null, apiKey = false) => {
@@ -88,7 +82,6 @@ describe.skipIf(!url)('with a database', () => {
 
   test('only an operator session reads across organizations', async () => {
     await seeded;
-    process.env.OPERATOR_EMAILS = staff.email;
     const refused = async (call: Promise<unknown>) =>
       call.then(
         () => 'allowed',
@@ -99,6 +92,9 @@ describe.skipIf(!url)('with a database', () => {
     );
     expect(
       await refused((await as(staff, true)).operator.organizations({})),
+    ).toBe('NOT_FOUND');
+    expect(
+      await refused((await as(unverified)).operator.organizations({})),
     ).toBe('NOT_FOUND');
     expect(await refused((await as(null)).operator.overview({}))).toBe(
       'UNAUTHORIZED',
@@ -113,7 +109,6 @@ describe.skipIf(!url)('with a database', () => {
 
   test('lists leave our own organizations out unless asked, and never return a key', async () => {
     await seeded;
-    process.env.OPERATOR_EMAILS = staff.email;
     const api = await as(staff);
     const customers = await api.operator.organizations({ search: suffix });
     expect(customers.map((row) => row.id)).toEqual([theirs]);

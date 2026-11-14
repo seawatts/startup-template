@@ -17,6 +17,12 @@ import { test } from './fixtures';
 // SPEED_CPU    CPU slowdown; 4 is about a mid-range phone (default 1)
 // SPEED_BUDGET fail when a screen's median is over this many ms (default:
 //              report only)
+// SPEED_SERVER_BUDGET fail when the server time of a screen's API requests
+//              adds up to more than this many ms (the rule is about 100)
+//
+// Each API request also reports its server time and how many statements and
+// transactions it sent, when the app counts them: a dev server does, a
+// built app does when started with STATEMENT_COUNTS=enabled.
 //
 // Run it before and after a change and put both tables in the pull request.
 
@@ -35,6 +41,7 @@ const rtt = Number(process.env.SPEED_RTT ?? 60);
 const loads = Number(process.env.SPEED_LOADS ?? 5);
 const cpu = Number(process.env.SPEED_CPU ?? 1);
 const budget = Number(process.env.SPEED_BUDGET ?? 0);
+const serverBudget = Number(process.env.SPEED_SERVER_BUDGET ?? 0);
 
 declare global {
   interface Window {
@@ -69,7 +76,16 @@ const median = (values: number[]) => {
 };
 
 async function timeLoad(page: Page, path: string) {
-  const requests: { name: string; sentAt: number; took: number }[] = [];
+  const requests: {
+    name: string;
+    sentAt: number;
+    took: number;
+    /** From the answer's Server-Timing header, when the app counts. */
+    server?: number;
+    statements?: number;
+    wrapper?: number;
+    transactions?: number;
+  }[] = [];
   await page.goto(path, { waitUntil: 'commit' });
   await page.waitForFunction(() => window.__contentShown, undefined, {
     timeout: 60_000,
@@ -78,10 +94,18 @@ async function timeLoad(page: Page, path: string) {
   // Requests still in flight when the content appeared finish and get listed.
   await page.waitForTimeout(500);
   for (const entry of await page.evaluate(() =>
-    performance.getEntriesByType('resource').map((resource) => ({
+    (
+      performance.getEntriesByType('resource') as PerformanceResourceTiming[]
+    ).map((resource) => ({
       duration: Math.round(resource.duration),
       name: resource.name,
       startTime: Math.round(resource.startTime),
+      timing: Object.fromEntries(
+        resource.serverTiming.map((entry) => [
+          entry.name,
+          entry.name === 'server' ? entry.duration : Number(entry.description),
+        ]),
+      ),
     })),
   )) {
     const url = new URL(entry.name);
@@ -89,7 +113,11 @@ async function timeLoad(page: Page, path: string) {
     requests.push({
       name: url.pathname.replace('/api/rpc/', ''),
       sentAt: entry.startTime,
+      server: entry.timing.server,
+      statements: entry.timing['db-content'],
       took: entry.duration,
+      transactions: entry.timing['db-transactions'],
+      wrapper: entry.timing['db-wrapper'],
     });
   }
   return { requests, shown };
@@ -129,6 +157,14 @@ test.describe('speed', () => {
         shown.push(last.shown);
       }
       const result = median(shown);
+      const counted = (last?.requests ?? []).filter(
+        (request) => request.server !== undefined,
+      );
+      const sum = (pick: (request: (typeof counted)[number]) => number) =>
+        Math.round(
+          counted.reduce((total, request) => total + pick(request), 0),
+        );
+      const serverTime = sum((request) => request.server ?? 0);
       console.log(
         [
           `\n${screen.name} (${screen.path}), ${rtt} ms round trip, CPU x${cpu}`,
@@ -136,11 +172,20 @@ test.describe('speed', () => {
           `  API requests in the last load: ${last?.requests.length ?? 0}`,
           ...(last?.requests ?? []).map(
             (request) =>
-              `    ${String(request.sentAt).padStart(5)} ms  +${String(request.took).padStart(4)} ms  ${request.name}`,
+              `    ${String(request.sentAt).padStart(5)} ms  +${String(request.took).padStart(4)} ms  ${request.name}${
+                request.server === undefined
+                  ? ''
+                  : `  (server ${Math.round(request.server)} ms, ${request.statements} statements + ${request.wrapper} wrapper, ${request.transactions} transactions)`
+              }`,
           ),
+          counted.length
+            ? `  server: ${serverTime} ms, ${sum((r) => r.statements ?? 0)} statements + ${sum((r) => r.wrapper ?? 0)} wrapper in ${sum((r) => r.transactions ?? 0)} transactions`
+            : '  server: not counted (start the app with STATEMENT_COUNTS=enabled)',
         ].join('\n'),
       );
       await context.close();
       if (budget) expect(result).toBeLessThanOrEqual(budget);
+      if (serverBudget && counted.length)
+        expect(serverTime).toBeLessThanOrEqual(serverBudget);
     });
 });

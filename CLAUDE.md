@@ -28,10 +28,12 @@ Stack: Next.js 16 (App Router), React 19, TypeScript strict, Tailwind 4, shadcn/
 - API procedures are oRPC in `packages/api`: mark every read `.route({ method: 'GET' })`, fail with `ORPCError` when the caller can act on the reason, and add a new area to both `root.ts` and the lazily loaded `rpc-router.ts` (`docs/agents/api.md`).
 - Every interface: a new or changed procedure goes in the operation catalog (`packages/api/src/operations.ts`), which generates REST, OpenAPI, the SDK, the CLI, MCP tools and the docs reference, or in `sessionOnly` with the reason; then call it once for real (`docs/agents/interfaces.md`).
 - Read the session on the request path with `readSession` (`@seawatts/auth/session-reader`), never the full auth instance; session and cookie settings live in `session-options.ts` so both agree (`docs/agents/api.md`).
-- A read never writes: GET procedures run under `readingOnly` and the database client refuses their writes. A save publishes a domain event after commit (`publishEvent`); the event map routes it to idempotent Vercel Workflow steps; anything due later is a per-subject workflow that sleeps until then and re-reads on waking. Crons only for truly periodic work, no logic in database triggers (`docs/agents/events.md`).
+- A read never writes: GET procedures run under `readingOnly` and the database client refuses their writes. A save publishes a domain event after commit (`publishEvent`); the event map routes it to idempotent Vercel Workflow steps; anything due later is a per-subject workflow that sleeps until then (a week at most, then hands over to a run on the latest release) and re-reads on waking. Crons only for truly periodic work, no logic in database triggers (`docs/agents/events.md`).
 - Work after the response (email, third-party calls, analytics) goes through `after`/`waitUntil`, never a bare `void promise` (`docs/agents/database.md`).
 - Tests go where the behavior lives: logic and procedures in `bun test` suites, screens in `apps/web-app/e2e` at desktop and 390px; never skip or loosen a failing test (`docs/agents/tests.md`).
-- Speed: measure before and after (`SPEED=enabled bun test:e2e speed`), no N+1, a read never writes, share "who is asking" lookups across one request's reads with `requestRead` (`docs/agents/speed.md`).
+- Speed: about 100 ms of server time per page; measure before and after (`SPEED=enabled bun test:e2e speed`, and the `Server-Timing` statement counts in dev), one round of requests per page, no N+1, a count for a badge and never the list, a read never writes, share "who is asking" lookups across one request's reads with `requestRead` (`docs/agents/speed.md`).
+- Queries filter by tenant id explicitly, with row-level security only as a backstop; queues of pending work get a partial index on the pending rows (`docs/agents/database.md`).
+- Observability: errors, events and logs carry opaque ids, enums, counts and durations, never names, emails or content; every entry point reports its errors with `service`, `area` and a short `code` (`docs/agents/observability.md`).
 
 ## UI
 
@@ -45,7 +47,7 @@ Stack: Next.js 16 (App Router), React 19, TypeScript strict, Tailwind 4, shadcn/
 ## Every feature ships with
 
 - Analytics: every save has a row in `packages/api/src/product-events.ts` (its PostHog event, or why it has none); events are named in the catalog with content-free properties only; UI-only moments use `captureBrowserEvent` (`docs/agents/analytics-internal.md`).
-- Internal (`/app/internal`): what staff need to see about a customer goes on the organization page in the same pull request; operator reads use `operatorProcedure`, put organizations first and leave our own accounts out unless Include internal is on (`docs/agents/analytics-internal.md`).
+- Internal (`/app/internal`): what staff need to see about a customer goes on the organization page in the same pull request; operators are rows in the `operators` table (`bun operators add <email>`), never an environment variable; operator reads use `operatorProcedure`, put organizations first and leave our own accounts out unless Include internal is on (`docs/agents/analytics-internal.md`).
 
 ## Pull requests
 

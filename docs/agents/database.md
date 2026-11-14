@@ -8,6 +8,12 @@ Drizzle on Postgres through postgres.js, in `packages/db`. Hosted, the app conne
 - Write queries with the query builder (`db.select().from(Users)…`), joining what you need in one query. Do not use `db.query.*` (relational queries): it needs a registry of every table on the client, which makes every request load every table. The client has no registry.
 - Migrations in `packages/db/drizzle` are append-only. Never edit an applied one. When two branches add migrations, renumber the newer one after main's right before merging.
 
+## Queries
+
+- Every query filters by its tenant id explicitly (`where organizationId = …`), even where row-level security would also filter. The explicit filter is what the planner uses and what a reader can check; row-level security is the backstop for the query that forgot.
+- A badge or tile that shows a number reads a `count(*)`, not the list.
+- A queue of pending work (deliveries to send, jobs to retry) gets a partial index on just the pending rows: `create index … on deliveries (dueAt) where status in ('pending', 'retrying')`. The table grows with history; the index stays the size of the backlog.
+
 ## The client
 
 `packages/db/src/client.ts` holds the one connection pool.
@@ -44,5 +50,9 @@ Email, third-party calls and analytics run after the response through the platfo
 
 ## Measuring
 
+- Statements per request: in development every `/api/rpc` answer has a `Server-Timing` header (the browser's network panel shows it under Timing): `server` is the time the server took, `db-content` the queries the code wrote, `db-wrapper` the statements that only frame a transaction (begin, commit, settings, savepoints) and `db-transactions` the transactions. `packages/db/src/statement-count.ts` counts them where statements leave the client. A built app counts only when started with `STATEMENT_COUNTS=enabled`; production never does.
+  - Many content statements for one screen: an N+1, or a list read to show a count.
+  - A wrapper count near or above the content count: each read opens its own transaction. Run them together in one `inTransaction`.
+  - Count another entry point (a page that reads the database itself, a webhook) by wrapping it in `countingStatements(() => …)`.
 - Round trips: `packages/db/tests/utils/delay-proxy.ts` puts a delay in front of a local database. Use 30 ms each way.
 - Query count per screen: `alter system set log_statement = 'all'`, reload, run a marker `select 'start'` before the load and one after, and count the log lines between them. Reset logging afterwards.

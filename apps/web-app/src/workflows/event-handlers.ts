@@ -31,7 +31,12 @@ export const eventHandlers: Handlers = {
         import('workflow/api'),
         import('./api-key-expiry'),
       ]);
-      const run = await start(apiKeyExpiryWorkflow, [event.payload.apiKeyId]);
+      // The expiry is the run's token: a later save starts its own run and
+      // this one stops when it sees the key expires at another time.
+      const run = await start(apiKeyExpiryWorkflow, [
+        event.payload.apiKeyId,
+        event.payload.expiresAt,
+      ]);
       return { runId: run.runId, scheduled: true };
     },
   },
