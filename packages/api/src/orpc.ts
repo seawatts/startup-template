@@ -2,6 +2,7 @@ import { ORPCError, os, ValidationError } from '@orpc/server';
 import { handleWritesInReads, readingOnly } from '@seawatts/db/read-only';
 import { debug } from '@seawatts/logger';
 import type { Context } from './context';
+import { productEventFor } from './product-events';
 
 const log = debug('seawatts:orpc');
 
@@ -28,13 +29,15 @@ if (process.env.VERCEL_ENV === 'production')
 
 export const publicProcedure = os
   .$context<Context>()
-  .use(async ({ next, path, procedure }) => {
+  .use(async ({ context, next, path, procedure }, input) => {
     const start = Date.now();
     const read = procedure['~orpc'].route.method === 'GET';
     try {
-      return await (read
-        ? readingOnly(`rpc.${path.join('.')}`, () => next())
-        : next());
+      if (read) return await readingOnly(`rpc.${path.join('.')}`, () => next());
+      const result = await next();
+      // The save succeeded: record its product event, after the response.
+      await recordProductEvent(path.join('.'), context, input, result.output);
+      return result;
     } catch (error) {
       if (
         error instanceof ORPCError &&
@@ -61,6 +64,39 @@ export const publicProcedure = os
       log(`${path.join('.')} took ${Date.now() - start}ms`);
     }
   });
+
+// Loads the analytics code only when a save has an event to record, and
+// never fails the save.
+async function recordProductEvent(
+  name: string,
+  context: Context,
+  input: unknown,
+  output: unknown,
+) {
+  const mapping = productEventFor[name];
+  if (!mapping?.event) return;
+  try {
+    const { captureProductEvent } = await import('@seawatts/analytics/capture');
+    // Not awaited: the send outlives the response.
+    void captureProductEvent({
+      event: mapping.event,
+      organizationId: context.auth?.orgId,
+      properties:
+        'properties' in mapping && mapping.properties
+          ? mapping.properties(
+              input && typeof input === 'object'
+                ? (input as Record<string, unknown>)
+                : {},
+              output,
+            )
+          : undefined,
+      surface: context.apiKey ? 'api' : 'web',
+      userId: context.auth?.userId,
+    });
+  } catch (error) {
+    console.error(`product event for ${name} failed`, error);
+  }
+}
 
 // Signed-in callers only; `context.auth.userId` is a string below this.
 export const protectedProcedure = publicProcedure.use(({ context, next }) => {

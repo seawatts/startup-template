@@ -7,6 +7,7 @@
 | [checks.md](checks.md) | Running tests or type checks while you work, pushing, merging |
 | [imports.md](imports.md) | Adding modules, package entries or imports |
 | [database.md](database.md) | Touching the schema, the database client, transactions or after-response work |
+| [analytics-internal.md](analytics-internal.md) | Adding a feature, a save, or anything staff will want to see per customer |
 | [api.md](api.md) | Adding or calling an API procedure, touching the `/api/rpc` route or how the session is read |
 | [interfaces.md](interfaces.md) | Adding or changing a procedure: the catalog that feeds REST, OpenAPI, the SDK, the CLI, MCP and the docs reference |
 | [events.md](events.md) | A save that causes other work, anything scheduled for later, a cron, or a read tempted to write |

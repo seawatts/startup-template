@@ -1,5 +1,6 @@
 'use client';
 
+import { captureBrowserEvent } from '@seawatts/analytics/browser-event';
 import { MetricButton } from '@seawatts/analytics/components';
 import { useORPC } from '@seawatts/api/react/react';
 import { CopyButton } from '@seawatts/ui/custom/copy-button';
@@ -67,10 +68,8 @@ export function ApiKeysTable() {
 
   const toggleKeyVisibility = (id: string) => {
     const newVisibility = !showKeys[id];
-    // Track the API key visibility toggle
-    posthog.capture('api_keys_visibility_toggled', {
-      api_key_id: id,
-      new_visibility: newVisibility,
+    captureBrowserEvent('api_key_visibility_toggled', {
+      visible: newVisibility,
     });
     setShowKeys((prev) => ({
       ...prev,

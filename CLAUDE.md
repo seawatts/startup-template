@@ -41,6 +41,11 @@ Stack: Next.js 16 (App Router), React 19, TypeScript strict, Tailwind 4, shadcn/
 - Concise copy: marketing tiles are a label plus about 20 words; docs paragraphs about 60 words (`docs/agents/copy.md`).
 - No repository references in public copy: docs, marketing, UI strings, emails and npm READMEs never cite `#123` or a private repository URL (`docs/agents/public-references.md`).
 
+## Every feature ships with
+
+- Analytics: every save has a row in `packages/api/src/product-events.ts` (its PostHog event, or why it has none); events are named in the catalog with content-free properties only; UI-only moments use `captureBrowserEvent` (`docs/agents/analytics-internal.md`).
+- Internal (`/app/internal`): what staff need to see about a customer goes on the organization page in the same pull request; operator reads use `operatorProcedure`, put organizations first and leave our own accounts out unless Include internal is on (`docs/agents/analytics-internal.md`).
+
 ## Pull requests
 
 - One `Closes #N` per finished issue on its own line in the PR body (`Refs #N` for work that leaves it open); say which checks ran and attach screenshots of changed screens (`docs/agents/pull-requests.md`).

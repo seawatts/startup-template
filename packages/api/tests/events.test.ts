@@ -72,6 +72,7 @@ test('a GET procedure runs as a read, a save does not', async () => {
 // Needs a real PostgreSQL with the migrations applied: TEST_POSTGRES_URL.
 const url = process.env.TEST_POSTGRES_URL;
 
+// The connection is shared by every test file in the run and left open.
 describe.skipIf(!url)('with a database', () => {
   process.env.POSTGRES_URL = url;
   process.env.CI ??= 'true';
@@ -93,15 +94,13 @@ describe.skipIf(!url)('with a database', () => {
       id: userId,
       name: 'Events Test',
     });
-    await db
-      .insert(Orgs)
-      .values({ createdByUserId: userId, id: orgId, name: orgId });
+    await db.insert(Orgs).values({ id: orgId, name: orgId });
   });
   afterAll(async () => {
-    const [{ db, connection }, , , { Users }] = await loaded;
+    const [{ db }, , { Orgs }, { Users }] = await loaded;
     const { eq } = await import('drizzle-orm');
+    await db.delete(Orgs).where(eq(Orgs.id, orgId));
     await db.delete(Users).where(eq(Users.id, userId));
-    await connection.end();
   });
 
   test('a key is switched off once, and only when it is due', async () => {
