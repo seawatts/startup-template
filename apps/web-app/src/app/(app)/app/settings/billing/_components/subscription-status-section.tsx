@@ -1,7 +1,7 @@
 'use client';
 
 import { MetricButton } from '@seawatts/analytics/components';
-import { useTRPC } from '@seawatts/api/react';
+import { useORPC } from '@seawatts/api/react/react';
 import {
   SubscriptionActive,
   SubscriptionPastDue,
@@ -33,14 +33,16 @@ import {
 
 // Usage data hook that fetches real data from the API
 function useWebhookUsage() {
-  const api = useTRPC();
+  const api = useORPC();
   const hasActiveSubscription = useHasActiveSubscription();
 
   // Fetch usage statistics for the last 30 days (for monthly) or 1 day (for daily)
   const { data: usageStats } = useQuery(
     api.apiKeyUsage.stats.queryOptions({
-      days: hasActiveSubscription ? 30 : 1, // Monthly for team, daily for free
-      type: 'mcp-server',
+      input: {
+        days: hasActiveSubscription ? 30 : 1, // Monthly for team, daily for free
+        type: 'mcp-server',
+      },
     }),
   );
 
@@ -81,7 +83,7 @@ function useWebhookUsage() {
 }
 
 export function SubscriptionStatusSection() {
-  const api = useTRPC();
+  const api = useORPC();
   // Safe actions
   const {
     executeAsync: executeCreateBillingPortal,

@@ -2,7 +2,7 @@
 
 A Bun + Turborepo monorepo: apps in `apps/` (`web-app` is one Next.js app with marketing at `/` and the product at `/app`; plus `expo`, `cli`, `chrome-extension`, `vscode-extension`, `ios`), shared code in `packages/`, build tooling in `tooling/`. This file is the whole rule set; `docs/agents/` holds the detail for each rule. Read a detail file only when the change touches its area.
 
-Stack: Next.js 16 (App Router), React 19, TypeScript strict, Tailwind 4, shadcn/ui (`packages/ui`), Drizzle on Supabase Postgres (`packages/db`), Better Auth (`packages/auth`), tRPC (`packages/api`), Stripe, PostHog (`packages/analytics`), Biome, Lefthook, Infisical.
+Stack: Next.js 16 (App Router), React 19, TypeScript strict, Tailwind 4, shadcn/ui (`packages/ui`), Drizzle on Supabase Postgres (`packages/db`), Better Auth (`packages/auth`), oRPC (`packages/api`), Stripe, PostHog (`packages/analytics`), Biome, Lefthook, Infisical.
 
 ## Commands
 
@@ -23,8 +23,10 @@ Stack: Next.js 16 (App Router), React 19, TypeScript strict, Tailwind 4, shadcn/
 
 - No barrel files: import every binding from the file that declares it, never through an `index.ts` or other re-exporting module. Biome's `noBarrelFile`/`noReExportAll` enforce it; the barrels that predate the rule are listed in `biome.json` and that list only shrinks (`docs/agents/imports.md`).
 - Kebab-case filenames, no `any`, Node built-ins through `node:`; Biome enforces these.
-- All database access goes through `@seawatts/db`. Import each table from its own file (`@seawatts/db/schema/users`), use the query builder for new code (not `db.query.*`), and run reads that belong together inside `inTransaction` with `Promise.all` (`docs/agents/database.md`).
+- All database access goes through `@seawatts/db`. Import each table from its own file (`@seawatts/db/schema/users`), use the query builder (never `db.query.*`; the client has no schema registry), and run reads that belong together inside `inTransaction` with `Promise.all` (`docs/agents/database.md`).
 - Behind a transaction pooler the driver uses `prepare: false` and pipelines only inside a transaction; keep `patches/postgres@3.4.9.patch` when upgrading the driver, and rerun its tests (`docs/agents/database.md`).
+- API procedures are oRPC in `packages/api`: mark every read `.route({ method: 'GET' })`, fail with `ORPCError` when the caller can act on the reason, and add a new area to both `root.ts` and the lazily loaded `rpc-router.ts` (`docs/agents/api.md`).
+- Read the session on the request path with `readSession` (`@seawatts/auth/session-reader`), never the full auth instance; session and cookie settings live in `session-options.ts` so both agree (`docs/agents/api.md`).
 - Work after the response (email, third-party calls, analytics) goes through `after`/`waitUntil`, never a bare `void promise` (`docs/agents/database.md`).
 - Speed: measure before and after, no N+1, a read never writes, share "who is asking" lookups across one request's reads with `requestRead` (`docs/agents/speed.md`).
 

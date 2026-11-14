@@ -1,13 +1,11 @@
 {
   "dependencies": {
     "@better-auth/expo": "catalog:",
+    "@orpc/tanstack-query": "catalog:",
     "@seawatts/api": "workspace:*",
     "@seawatts/expo-usb-midi": "workspace:*",
     "@seawatts/zustand": "workspace:*",
     "@tanstack/react-query": "catalog:",
-    "@trpc/client": "catalog:",
-    "@trpc/server": "catalog:",
-    "@trpc/tanstack-react-query": "catalog:",
     "better-auth": "catalog:",
     "expo": "55.0.5",
     "expo-audio": "~55.0.8",

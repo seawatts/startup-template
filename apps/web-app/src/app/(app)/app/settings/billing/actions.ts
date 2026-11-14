@@ -39,9 +39,12 @@ export const createCheckoutSessionAction = action.action(async () => {
   const orgId = session.session.activeOrganizationId;
 
   // Get the organization
-  const org = await db.query.Orgs.findFirst({
-    where: eq(Orgs.id, orgId),
-  });
+  const org = await db
+    .select()
+    .from(Orgs)
+    .where(eq(Orgs.id, orgId))
+    .limit(1)
+    .then((rows) => rows[0]);
 
   if (!org) {
     throw new Error('Organization not found');
@@ -107,9 +110,12 @@ export const createBillingPortalSessionAction = action.action(async () => {
   const orgId = session.session.activeOrganizationId;
 
   // Get the organization
-  const org = await db.query.Orgs.findFirst({
-    where: eq(Orgs.id, orgId),
-  });
+  const org = await db
+    .select()
+    .from(Orgs)
+    .where(eq(Orgs.id, orgId))
+    .limit(1)
+    .then((rows) => rows[0]);
 
   if (!org || !org.stripeCustomerId) {
     throw new Error('No active subscription found');
@@ -140,9 +146,12 @@ export const getInvoicesAction = action.action(async () => {
   const orgId = session.session.activeOrganizationId;
 
   // Get the organization
-  const org = await db.query.Orgs.findFirst({
-    where: eq(Orgs.id, orgId),
-  });
+  const org = await db
+    .select()
+    .from(Orgs)
+    .where(eq(Orgs.id, orgId))
+    .limit(1)
+    .then((rows) => rows[0]);
 
   if (!org || !org.stripeCustomerId) {
     throw new Error('No active subscription found');

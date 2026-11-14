@@ -1,7 +1,6 @@
-import { createNativeClient, type NativeApiClient } from '@seawatts/api/native';
-import type { AppRouter } from '@seawatts/api/types';
+import { createTanstackQueryUtils } from '@orpc/tanstack-query';
+import { createNativeClient } from '@seawatts/api/native';
 import { QueryClient } from '@tanstack/react-query';
-import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query';
 
 import { authClient } from './auth';
 import { getApiBaseUrl } from './base-url';
@@ -15,22 +14,19 @@ export const queryClient = new QueryClient({
 });
 
 /**
- * Vanilla tRPC client for imperative calls (non-React context).
- * Use this for mutations outside of React components.
+ * The typed API client for imperative calls: `await api.org.current()`.
  *
  * Uses cookieGetter for dynamic auth - the cookie is fetched on each request
  * since it may change after OAuth login.
  */
-export const api: NativeApiClient<AppRouter> = createNativeClient<AppRouter>({
+export const api = createNativeClient({
   baseUrl: getApiBaseUrl(),
   cookieGetter: () => authClient.getCookie() ?? undefined,
   sourceHeader: 'expo',
 });
 
 /**
- * A set of typesafe hooks for consuming your API.
+ * Query and mutation options for React Query:
+ * `useQuery(orpc.org.current.queryOptions())`.
  */
-export const trpc = createTRPCOptionsProxy<AppRouter>({
-  client: api,
-  queryClient,
-});
+export const orpc = createTanstackQueryUtils(api);

@@ -62,7 +62,7 @@ Key Conventions
 - Use 'ai' for ai sdk.
 - For any database queries, use the supabase client from packages/db/src/schema.ts imported as @seawatts/db/schema and @seawatts/db/client.
 - Use 'zsa' for server actions.
-- Use tRPC only when server actions are not available, such as in the ./apps/chrome-extension package. The tRPC API is defined in the packages/api folder.
+- Use oRPC only when server actions are not available, such as in the ./apps/chrome-extension package. The oRPC API is defined in the packages/api folder.
 - Use <Icons.Spinner/> (import @seawatts/ui/custom/icons) for loading icons.
 - Do not include the className height or width on Icons unless it's using margin.
 - Use packages/ui/src/icons.tsx (import @seawatts/ui/custom/icons) for any icons. If icons are not available in the ui package, use the lucide icons (https://lucide.dev/) or @icons-pack/react-simple-icons and create a new icon component in packages/ui/src/icons.tsx

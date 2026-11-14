@@ -1,34 +1,11 @@
 import { expo } from '@better-auth/expo';
-import { db } from '@seawatts/db/client';
-import { Accounts, Verifications } from '@seawatts/db/schema/accounts';
-import {
-  Invitations,
-  OrgMembers,
-  Orgs,
-} from '@seawatts/db/schema/organizations';
-import { Sessions } from '@seawatts/db/schema/sessions';
-import { Users } from '@seawatts/db/schema/users';
-import { createId } from '@seawatts/id';
 import { betterAuth } from 'better-auth';
-import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { lastLoginMethod, oAuthProxy, organization } from 'better-auth/plugins';
-
 import { env } from './env';
+import { sessionOptions } from './session-options';
 
 // Fallback production URL for OAuth proxy (used when Vercel env vars not available)
 const FALLBACK_PRODUCTION_URL = 'https://startup-template-mu.vercel.app';
-
-// Determine the base URL based on environment
-// Priority: BETTER_AUTH_URL > Vercel env vars > localhost
-const baseUrl =
-  env.BETTER_AUTH_URL ??
-  (env.VERCEL_ENV === 'production'
-    ? `https://${env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : env.VERCEL_ENV === 'preview'
-      ? `https://${env.VERCEL_URL}`
-      : 'http://localhost:3000');
-
-console.log('[AUTH SERVER] Using baseURL:', baseUrl);
 
 // Production URL for OAuth proxy - always use the production deployment
 // This allows OAuth to work from mobile devices even during local development
@@ -37,36 +14,9 @@ const productionUrl = env.VERCEL_PROJECT_PRODUCTION_URL
   : FALLBACK_PRODUCTION_URL;
 
 export const auth = betterAuth({
-  advanced: {
-    database: {
-      generateId: ({ model }) => {
-        const prefixMap: Record<string, string> = {
-          account: 'acc',
-          invitation: 'inv',
-          member: 'member',
-          organization: 'org',
-          session: 'session',
-          user: 'user',
-          verification: 'ver',
-        };
-        const prefix = prefixMap[model] ?? model.slice(0, 3);
-        return createId({ prefix });
-      },
-    },
-  },
-  baseURL: baseUrl,
-  database: drizzleAdapter(db, {
-    provider: 'pg',
-    schema: {
-      account: Accounts,
-      invitation: Invitations,
-      member: OrgMembers,
-      organization: Orgs,
-      session: Sessions,
-      user: Users,
-      verification: Verifications,
-    },
-  }),
+  // Cookie, database, secret and session settings, shared with the
+  // session-only reader (session-reader.ts).
+  ...sessionOptions,
 
   emailAndPassword: {
     enabled: false, // Only using Google OAuth
@@ -107,17 +57,6 @@ export const auth = betterAuth({
       },
     }),
   ],
-
-  secret: env.BETTER_AUTH_SECRET,
-
-  session: {
-    cookieCache: {
-      enabled: true,
-      maxAge: 60 * 5, // 5 minutes
-    },
-    expiresIn: 60 * 60 * 24 * 7, // 7 days
-    updateAge: 60 * 60 * 24, // Update session every 24 hours
-  },
 
   socialProviders: {
     google: {

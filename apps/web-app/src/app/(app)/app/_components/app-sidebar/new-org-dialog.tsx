@@ -1,7 +1,7 @@
 'use client';
 
 import { MetricButton, MetricLink } from '@seawatts/analytics/components';
-import { useTRPC } from '@seawatts/api/react';
+import { useORPC } from '@seawatts/api/react/react';
 import { useListOrganizations, useSession } from '@seawatts/auth/client';
 import {
   Entitled,
@@ -32,7 +32,7 @@ interface NewOrgDialogProps {
 }
 
 export function NewOrgDialog({ open, onOpenChange }: NewOrgDialogProps) {
-  const api = useTRPC();
+  const api = useORPC();
   const [name, setName] = useState('');
   const [webhookName, setWebhookName] = useState('');
   const organizationsQuery = useListOrganizations();
@@ -125,7 +125,7 @@ export function NewOrgDialog({ open, onOpenChange }: NewOrgDialogProps) {
     }
 
     try {
-      // Use the tRPC API to create a new organization with Stripe integration
+      // Use the oRPC API to create a new organization with Stripe integration
       const orgResult = await createOrganization({
         name: name,
       });
@@ -155,7 +155,7 @@ export function NewOrgDialog({ open, onOpenChange }: NewOrgDialogProps) {
       setErrors([]);
 
       // Invalidate queries to refresh data
-      queryClient.invalidateQueries(api.pathFilter());
+      queryClient.invalidateQueries({ queryKey: api.key() });
       if ('refetch' in organizationsQuery) {
         organizationsQuery.refetch();
       }

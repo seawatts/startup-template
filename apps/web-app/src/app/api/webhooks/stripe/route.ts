@@ -104,9 +104,12 @@ export async function POST(req: NextRequest) {
             : invoice.subscription?.id;
 
         if (subscriptionId) {
-          const org = await db.query.Orgs.findFirst({
-            where: eq(Orgs.stripeSubscriptionId, subscriptionId),
-          });
+          const org = await db
+            .select()
+            .from(Orgs)
+            .where(eq(Orgs.stripeSubscriptionId, subscriptionId))
+            .limit(1)
+            .then((rows) => rows[0]);
 
           if (org && org.stripeSubscriptionStatus === 'past_due') {
             await db
@@ -132,9 +135,12 @@ export async function POST(req: NextRequest) {
             : invoice.subscription?.id;
 
         if (subscriptionId) {
-          const org = await db.query.Orgs.findFirst({
-            where: eq(Orgs.stripeSubscriptionId, subscriptionId),
-          });
+          const org = await db
+            .select()
+            .from(Orgs)
+            .where(eq(Orgs.stripeSubscriptionId, subscriptionId))
+            .limit(1)
+            .then((rows) => rows[0]);
 
           if (org) {
             await db

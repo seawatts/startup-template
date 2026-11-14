@@ -1,5 +1,5 @@
-import type { RouterOutputs } from '@seawatts/api';
 import { createClient } from '@seawatts/api/client';
+import type { RouterOutputs } from '@seawatts/api/root';
 import { createId } from '@seawatts/id';
 import { debug } from '@seawatts/logger';
 import { createSelectors } from '@seawatts/zustand';
@@ -78,7 +78,7 @@ const store = createStore<AuthStore>()((set, get) => ({
     try {
       // Handle authentication
       const { authToken, user, orgId, sessionId } =
-        await api.auth.exchangeAuthCode.mutate({
+        await api.auth.exchangeAuthCode({
           code,
         });
 
@@ -319,7 +319,7 @@ const store = createStore<AuthStore>()((set, get) => ({
         api: apiClient,
       });
 
-      const token = await apiClient.auth.verifySessionToken.query({
+      const token = await apiClient.auth.verifySessionToken({
         sessionId,
       });
 

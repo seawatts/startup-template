@@ -15,11 +15,7 @@
     "typescript": "catalog:"
   },
   "exports": {
-    ".": "./src/index.ts",
-    "./client": "./src/client.ts",
-    "./env": "./src/env.ts",
-    "./middleware": "./src/middleware.ts",
-    "./server": "./src/server.ts"
+    "./*": "./src/*.ts"
   },
   "license": "MIT",
   "name": "@seawatts/auth",

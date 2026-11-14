@@ -31,7 +31,7 @@ export function getAuthBaseUrl(): string {
 }
 
 /**
- * Gets the base URL for API calls (tRPC, etc).
+ * Gets the base URL for API calls (oRPC, etc).
  * Always uses local server in development for faster iteration.
  */
 export function getApiBaseUrl(): string {

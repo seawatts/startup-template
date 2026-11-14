@@ -1,4 +1,5 @@
-import { getQueryClient, HydrationBoundary, trpc } from '@seawatts/api/server';
+import { HydrationBoundary } from '@seawatts/api/react/hydration-boundary';
+import { getQueryClient, orpc } from '@seawatts/api/react/server';
 import { BillingSettings } from './_components/billing-settings';
 
 // Dynamic because it uses session-dependent data
@@ -9,12 +10,14 @@ export default async function BillingPage() {
 
   // Prefetch billing data
   void queryClient.prefetchQuery(
-    trpc.billing.getSubscriptionStatus.queryOptions(),
+    orpc.billing.getSubscriptionStatus.queryOptions(),
   );
   void queryClient.prefetchQuery(
-    trpc.billing.getSubscriptionDetails.queryOptions(),
+    orpc.billing.getSubscriptionDetails.queryOptions(),
   );
-  void queryClient.prefetchQuery(trpc.billing.getInvoices.queryOptions({}));
+  void queryClient.prefetchQuery(
+    orpc.billing.getInvoices.queryOptions({ input: {} }),
+  );
 
   return (
     <HydrationBoundary>

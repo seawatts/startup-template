@@ -1,7 +1,7 @@
 'use client';
 
 import { MetricButton } from '@seawatts/analytics/components';
-import { useTRPC } from '@seawatts/api/react';
+import { useORPC } from '@seawatts/api/react/react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,7 +30,7 @@ export function DeleteApiKeyDialog({
   apiKeyName,
   onDelete,
 }: DeleteApiKeyDialogProps) {
-  const api = useTRPC();
+  const api = useORPC();
   const queryClient = useQueryClient();
   const deleteApiKey = useMutation(
     api.apiKeys.delete.mutationOptions({
@@ -38,9 +38,9 @@ export function DeleteApiKeyDialog({
         setDeleting(false);
       },
       onSuccess: () => {
-        queryClient.invalidateQueries(
-          api.apiKeys.allWithLastUsage.pathFilter(),
-        );
+        queryClient.invalidateQueries({
+          queryKey: api.apiKeys.allWithLastUsage.key(),
+        });
         onDelete?.();
       },
     }),

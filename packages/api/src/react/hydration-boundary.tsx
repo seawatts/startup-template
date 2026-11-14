@@ -6,17 +6,17 @@ import type { PropsWithChildren } from 'react';
 import { getQueryClient } from './server';
 
 /**
- * HydrationBoundary for tRPC queries prefetched in server components.
+ * HydrationBoundary for oRPC queries prefetched in server components.
  * Use this to hydrate query data from server to client.
  *
  * @example
  * ```tsx
- * import { getQueryClient, trpc } from '@seawatts/api/server';
- * import { HydrationBoundary } from '@seawatts/api/react';
+ * import { HydrationBoundary } from '@seawatts/api/react/hydration-boundary';
+ * import { getQueryClient, orpc } from '@seawatts/api/react/server';
  *
  * export default async function Page() {
  *   const queryClient = getQueryClient();
- *   void queryClient.prefetchQuery(trpc.greeting.queryOptions({ name: 'World' }));
+ *   void queryClient.prefetchQuery(orpc.org.current.queryOptions());
  *
  *   return (
  *     <HydrationBoundary>

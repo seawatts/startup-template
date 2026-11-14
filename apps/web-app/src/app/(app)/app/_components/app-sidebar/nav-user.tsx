@@ -1,7 +1,7 @@
 'use client';
 
 import { MetricLink } from '@seawatts/analytics/components';
-import { useTRPC } from '@seawatts/api/react';
+import { useORPC } from '@seawatts/api/react/react';
 import {
   signOut,
   useActiveOrganization,
@@ -45,7 +45,7 @@ import { useState } from 'react';
 import { NewOrgDialog } from './new-org-dialog';
 
 export function NavUser() {
-  const api = useTRPC();
+  const api = useORPC();
   const pathname = usePathname();
   const isOnboarding = pathname?.startsWith('/app/onboarding');
   const { setTheme, theme } = useTheme();
@@ -66,7 +66,7 @@ export function NavUser() {
       headers: { 'Content-Type': 'application/json' },
       method: 'POST',
     });
-    await queryClient.invalidateQueries(api.pathFilter());
+    await queryClient.invalidateQueries({ queryKey: api.key() });
     router.refresh();
   };
 

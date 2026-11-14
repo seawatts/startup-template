@@ -1,4 +1,4 @@
-import { HydrationBoundary } from '@seawatts/api/server';
+import { HydrationBoundary } from '@seawatts/api/react/hydration-boundary';
 import { OrganizationSettings } from './_components/organization-settings';
 
 export default async function OrganizationSettingsPage() {

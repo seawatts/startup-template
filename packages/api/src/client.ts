@@ -1,16 +1,11 @@
-import { createTRPCClient } from '@trpc/client';
-import { type ClientConfig, createDefaultLinks } from './react/config';
+import { createORPCClient } from '@orpc/client';
+import type { RouterClient } from '@orpc/server';
+import { type ClientConfig, createDefaultLink } from './react/config';
 import type { AppRouter } from './root';
 
-export type ApiClient = ReturnType<typeof createClient>;
+export type ApiClient = RouterClient<AppRouter>;
 
-export const createClient = (config?: ClientConfig) => {
-  return createTRPCClient<AppRouter>({
-    links: createDefaultLinks({
-      authToken: config?.authToken,
-      baseUrl: config?.baseUrl,
-      sessionCookie: config?.sessionCookie,
-      sourceHeader: config?.sourceHeader,
-    }),
-  });
-};
+// The typed HTTP client for anything outside React: the CLI, the editor
+// extension, scripts. `await client.org.current()`.
+export const createClient = (config?: ClientConfig): ApiClient =>
+  createORPCClient(createDefaultLink(config));

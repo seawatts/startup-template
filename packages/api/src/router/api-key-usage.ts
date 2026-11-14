@@ -1,28 +1,38 @@
+import { ORPCError } from '@orpc/server';
 import {
   ApiKeyUsage,
   CreateApiKeyUsageSchema,
 } from '@seawatts/db/schema/api-keys';
-import { and, desc, eq, sql } from 'drizzle-orm';
+import { and, desc, eq, gte, sql } from 'drizzle-orm';
 import { z } from 'zod';
-import { createTRPCRouter, protectedProcedure } from '../trpc';
+import { protectedProcedure } from '../orpc';
 
-export const apiKeyUsageRouter = createTRPCRouter({
-  all: protectedProcedure.query(async ({ ctx }) => {
-    if (!ctx.auth.orgId) throw new Error('Organization ID is required');
+export const apiKeyUsageRouter = {
+  all: protectedProcedure
+    .route({ method: 'GET' })
+    .handler(async ({ context: ctx }) => {
+      if (!ctx.auth.orgId)
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Organization ID is required',
+        });
 
-    const apiKeyUsage = await ctx.db
-      .select()
-      .from(ApiKeyUsage)
-      .where(eq(ApiKeyUsage.organizationId, ctx.auth.orgId))
-      .orderBy(desc(ApiKeyUsage.createdAt));
+      const apiKeyUsage = await ctx.db
+        .select()
+        .from(ApiKeyUsage)
+        .where(eq(ApiKeyUsage.organizationId, ctx.auth.orgId))
+        .orderBy(desc(ApiKeyUsage.createdAt));
 
-    return apiKeyUsage;
-  }),
+      return apiKeyUsage;
+    }),
 
   byApiKeyId: protectedProcedure
     .input(z.object({ apiKeyId: z.string() }))
-    .query(async ({ ctx, input }) => {
-      if (!ctx.auth.orgId) throw new Error('Organization ID is required');
+    .route({ method: 'GET' })
+    .handler(async ({ context: ctx, input }) => {
+      if (!ctx.auth.orgId)
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Organization ID is required',
+        });
 
       const usage = await ctx.db
         .select()
@@ -40,15 +50,24 @@ export const apiKeyUsageRouter = createTRPCRouter({
 
   byId: protectedProcedure
     .input(z.object({ id: z.string() }))
-    .query(async ({ ctx, input }) => {
-      if (!ctx.auth.orgId) throw new Error('Organization ID is required');
+    .route({ method: 'GET' })
+    .handler(async ({ context: ctx, input }) => {
+      if (!ctx.auth.orgId)
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Organization ID is required',
+        });
 
-      const usage = await ctx.db.query.ApiKeyUsage.findFirst({
-        where: and(
-          eq(ApiKeyUsage.id, input.id),
-          eq(ApiKeyUsage.organizationId, ctx.auth.orgId),
-        ),
-      });
+      const usage = await ctx.db
+        .select()
+        .from(ApiKeyUsage)
+        .where(
+          and(
+            eq(ApiKeyUsage.id, input.id),
+            eq(ApiKeyUsage.organizationId, ctx.auth.orgId),
+          ),
+        )
+        .limit(1)
+        .then((rows) => rows[0]);
 
       if (!usage) return null;
 
@@ -61,8 +80,12 @@ export const apiKeyUsageRouter = createTRPCRouter({
         type: z.enum(['mcp-server']),
       }),
     )
-    .query(async ({ ctx, input }) => {
-      if (!ctx.auth.orgId) throw new Error('Organization ID is required');
+    .route({ method: 'GET' })
+    .handler(async ({ context: ctx, input }) => {
+      if (!ctx.auth.orgId)
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Organization ID is required',
+        });
 
       const usage = await ctx.db
         .select()
@@ -80,9 +103,13 @@ export const apiKeyUsageRouter = createTRPCRouter({
 
   create: protectedProcedure
     .input(CreateApiKeyUsageSchema)
-    .mutation(async ({ ctx, input }) => {
-      if (!ctx.auth.orgId) throw new Error('Organization ID is required');
-      if (!ctx.auth.userId) throw new Error('User ID is required');
+    .handler(async ({ context: ctx, input }) => {
+      if (!ctx.auth.orgId)
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Organization ID is required',
+        });
+      if (!ctx.auth.userId)
+        throw new ORPCError('BAD_REQUEST', { message: 'User ID is required' });
 
       try {
         const [usage] = await ctx.db
@@ -97,14 +124,19 @@ export const apiKeyUsageRouter = createTRPCRouter({
         return usage;
       } catch (error) {
         console.error(error);
-        throw new Error('Failed to create API key usage record');
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Failed to create API key usage record',
+        });
       }
     }),
 
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      if (!ctx.auth.orgId) throw new Error('Organization ID is required');
+    .handler(async ({ context: ctx, input }) => {
+      if (!ctx.auth.orgId)
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Organization ID is required',
+        });
 
       const [usage] = await ctx.db
         .delete(ApiKeyUsage)
@@ -128,8 +160,12 @@ export const apiKeyUsageRouter = createTRPCRouter({
         type: z.enum(['mcp-server']).optional(),
       }),
     )
-    .query(async ({ ctx, input }) => {
-      if (!ctx.auth.orgId) throw new Error('Organization ID is required');
+    .route({ method: 'GET' })
+    .handler(async ({ context: ctx, input }) => {
+      if (!ctx.auth.orgId)
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Organization ID is required',
+        });
 
       const { limit, apiKeyId, type } = input;
 
@@ -162,8 +198,12 @@ export const apiKeyUsageRouter = createTRPCRouter({
         type: z.enum(['mcp-server']).optional(),
       }),
     )
-    .query(async ({ ctx, input }) => {
-      if (!ctx.auth.orgId) throw new Error('Organization ID is required');
+    .route({ method: 'GET' })
+    .handler(async ({ context: ctx, input }) => {
+      if (!ctx.auth.orgId)
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Organization ID is required',
+        });
 
       const { apiKeyId, type, days } = input;
       const startDate = new Date();
@@ -171,7 +211,7 @@ export const apiKeyUsageRouter = createTRPCRouter({
 
       const conditions = [
         eq(ApiKeyUsage.organizationId, ctx.auth.orgId),
-        sql`${ApiKeyUsage.createdAt} >= ${startDate}`,
+        gte(ApiKeyUsage.createdAt, startDate),
       ];
 
       if (apiKeyId) {
@@ -193,4 +233,4 @@ export const apiKeyUsageRouter = createTRPCRouter({
 
       return stats;
     }),
-});
+};

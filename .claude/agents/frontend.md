@@ -30,7 +30,7 @@ Your core competencies include:
 - State and data management:
   • Zustand stores with proper patterns
   • Server state caching
-  • tRPC with Next.js integration
+  • oRPC with Next.js integration
   • Zod schema validation
 - Authentication and security:
   • Clerk with Next.js middleware
@@ -76,7 +76,7 @@ When improving frontend code, you will:
      • Loading state animations
      • Modal and dialog transitions
    - Data management and API integration:
-     • Server Components with tRPC
+     • Server Components with oRPC
      • Efficient Zustand store patterns
      • Server state caching strategies
      • Optimistic updates with Server Actions
@@ -115,7 +115,7 @@ When improving frontend code, you will:
 5. **Maintain Code Quality**: While focusing on polish:
    - Type Safety and Validation:
      • Zod schemas for runtime validation
-     • tRPC procedures with proper types
+     • oRPC procedures with proper types
      • TypeScript strict mode compliance
      • Proper error type handling
    - State Management:
@@ -149,7 +149,7 @@ Your approach should be iterative and user-focused. Start with quick wins that i
 When reviewing existing code, look for opportunities to:
 - Enhance Type Safety:
   • Add Zod schemas for data validation
-  • Implement tRPC procedures with proper types
+  • Implement oRPC procedures with proper types
   • Strengthen TypeScript type definitions
   • Add runtime type checks where needed
 - Improve State Management:
@@ -188,7 +188,7 @@ Remember: Great frontend polish in Next.js 15 is about creating a cohesive syste
   • View Transitions API usage
 - Type-safe foundations:
   • Zod schemas for validation
-  • tRPC with RSC support
+  • oRPC with RSC support
   • TypeScript strict mode
   • Error boundary handling
 - State and data management:

@@ -1,5 +1,6 @@
+import { getSessionCookie } from 'better-auth/cookies';
 import { type NextRequest, NextResponse } from 'next/server';
-import { auth } from './server';
+import { readSession } from './session-reader';
 
 export interface AuthMiddlewareOptions {
   /**
@@ -31,21 +32,15 @@ const defaultOptions: AuthMiddlewareOptions = {
   signInUrl: '/sign-in',
 };
 
-/**
- * Get the session from the request
- */
+// The signed-in session for a proxy request, or null.
 export async function getSessionFromRequest(request: NextRequest) {
-  const sessionCookie = request.cookies.get('better-auth.session_token')?.value;
-
-  if (!sessionCookie) {
-    return null;
-  }
-
+  // No session cookie (either name: production adds the `__Secure-` prefix)
+  // means no session; skip the lookup.
+  if (!getSessionCookie(request)) return null;
   try {
-    const session = await auth.api.getSession({
-      headers: request.headers,
-    });
-    return session;
+    // The session-only reader: the proxy runs in front of every page and
+    // needs none of the sign-in code.
+    return await readSession(request.headers);
   } catch {
     return null;
   }

@@ -1,64 +1,25 @@
 import 'server-only';
 
-import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query';
-import { headers } from 'next/headers';
+import { createRouterClient } from '@orpc/server';
+import { createTanstackQueryUtils } from '@orpc/tanstack-query';
 import { cache } from 'react';
-import { createTRPCContext } from '../context';
+import { createORPCContext } from '../context';
 import { appRouter } from '../root';
 import { createQueryClient } from './query-client';
 
-/**
- * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when
- * handling a tRPC call from a React Server Component.
- */
-const createContext = cache(async () => {
-  const heads = new Headers(await headers());
-  heads.set('x-trpc-source', 'rsc');
-
-  return createTRPCContext();
-});
-
-// IMPORTANT: Create a stable getter for the query client that
-//            will return the same client during the same request.
+// One context (one session lookup) and one query client per request.
+const createContext = cache(() => createORPCContext());
 export const getQueryClient = cache(createQueryClient);
 
 /**
- * tRPC proxy for server components using the new tRPC v11 pattern.
- * Use this to prefetch queries in React Server Components.
+ * The API for server components: calls procedures in process and fills the
+ * query client that HydrationBoundary hands to the browser.
  *
  * @example
  * ```tsx
- * import { getQueryClient, trpc } from '@seawatts/api/server';
- * import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
- *
- * export default async function Page() {
- *   const queryClient = getQueryClient();
- *   void queryClient.prefetchQuery(trpc.greeting.queryOptions({ name: 'World' }));
- *
- *   return (
- *     <HydrationBoundary state={dehydrate(queryClient)}>
- *       <ClientComponent />
- *     </HydrationBoundary>
- *   );
- * }
+ * void getQueryClient().prefetchQuery(orpc.org.current.queryOptions());
  * ```
  */
-export const trpc = createTRPCOptionsProxy({
-  ctx: createContext,
-  queryClient: getQueryClient,
-  router: appRouter,
-});
-
-/**
- * @deprecated Use `trpc` from this module instead. This is kept for backward compatibility.
- * The new pattern uses `createTRPCOptionsProxy` which provides better type safety.
- */
-export const getApi = cache(async () => {
-  const queryClient = getQueryClient();
-  return {
-    queryClient,
-    // For backward compatibility, provide a similar interface
-    // but recommend using trpc directly
-    trpc: trpc,
-  };
-});
+export const orpc = createTanstackQueryUtils(
+  createRouterClient(appRouter, { context: createContext }),
+);

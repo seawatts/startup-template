@@ -3,6 +3,7 @@
 import { auth } from '@seawatts/auth/server';
 import { db } from '@seawatts/db/client';
 import { AuthCodes } from '@seawatts/db/schema/api-keys';
+import { and, eq, gt, isNull } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import { createSafeActionClient } from 'next-safe-action';
 
@@ -33,15 +34,19 @@ export const createAuthCode = action.action(async () => {
   const sessionId = session.session.id;
 
   // First check for an existing unused and non-expired auth code
-  const existingAuthCode = await db.query.AuthCodes.findFirst({
-    where: (authCode, { and, eq, isNull, gt }) =>
+  const existingAuthCode = await db
+    .select()
+    .from(AuthCodes)
+    .where(
       and(
-        eq(authCode.userId, userId),
-        eq(authCode.organizationId, orgId),
-        isNull(authCode.usedAt),
-        gt(authCode.expiresAt, new Date()),
+        eq(AuthCodes.userId, userId),
+        eq(AuthCodes.organizationId, orgId),
+        isNull(AuthCodes.usedAt),
+        gt(AuthCodes.expiresAt, new Date()),
       ),
-  });
+    )
+    .limit(1)
+    .then((rows) => rows[0]);
 
   if (existingAuthCode) {
     return {

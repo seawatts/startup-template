@@ -204,105 +204,52 @@ cd packages/db && infisical run --env=dev -- bun run seed
 ---
 
 ### 4. Create API Endpoints
-**Goal**: Build the API layer following tRPC patterns.
+**Goal**: Build the API layer following the oRPC patterns in `docs/agents/api.md`.
 
 #### Implementation:
 Create a new router file in `packages/api/src/router/your-feature.ts`:
 
 ```typescript
-import { and, eq } from '@b612/db';
-import {
-  CreateYourTableSchema,
-  YourTable,
-  UpdateYourTableSchema
-} from '@b612/db/schema';
-import type { TRPCRouterRecord } from '@trpc/server';
+import { YourTable } from '@seawatts/db/schema/your-table';
+import { and, desc, eq } from 'drizzle-orm';
 import { z } from 'zod';
-
-import { protectedProcedure } from '../trpc';
+import { protectedProcedure } from '../orpc';
 
 export const yourFeatureRouter = {
-  // Get all records
-  all: protectedProcedure.query(({ ctx }) => {
-    return ctx.db.query.YourTable.findMany({
-      orderBy: (items, { desc }) => [desc(items.createdAt)],
-      where: eq(YourTable.userId, ctx.auth.userId),
-    });
-  }),
+  // A read: marked GET so the web app can batch it with the screen's
+  // other reads.
+  all: protectedProcedure
+    .route({ method: 'GET' })
+    .handler(({ context }) =>
+      context.db
+        .select()
+        .from(YourTable)
+        .where(eq(YourTable.userId, context.auth.userId))
+        .orderBy(desc(YourTable.createdAt)),
+    ),
 
-  // Get by ID
-  byId: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .query(({ ctx, input }) => {
-      return ctx.db.query.YourTable.findFirst({
-        where: and(
-          eq(YourTable.id, input.id),
-          eq(YourTable.userId, ctx.auth.userId),
-        ),
-      });
-    }),
-
-  // Create
-  create: protectedProcedure
-    .input(CreateYourTableSchema)
-    .mutation(async ({ ctx, input }) => {
-      const [item] = await ctx.db
-        .insert(YourTable)
-        .values(input)
-        .returning();
-      return item;
-    }),
-
-  // Update
-  update: protectedProcedure
-    .input(
-      z.object({
-        id: z.string(),
-        data: UpdateYourTableSchema,
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const [item] = await ctx.db
-        .update(YourTable)
-        .set(input.data)
-        .where(
-          and(
-            eq(YourTable.id, input.id),
-            eq(YourTable.userId, ctx.auth.userId),
-          ),
-        )
-        .returning();
-      return item;
-    }),
-
-  // Delete
+  // A write: no route marker, always a POST.
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      await ctx.db
+    .handler(async ({ context, input }) => {
+      await context.db
         .delete(YourTable)
         .where(
           and(
             eq(YourTable.id, input.id),
-            eq(YourTable.userId, ctx.auth.userId),
+            eq(YourTable.userId, context.auth.userId),
           ),
         );
       return { success: true };
     }),
-} satisfies TRPCRouterRecord;
+};
 ```
 
 #### Register Router:
-Add your router to `packages/api/src/root.ts`:
-
-```typescript
-import { yourFeatureRouter } from './router/your-feature';
-
-export const appRouter = createTRPCRouter({
-  // ... existing routers
-  yourFeature: yourFeatureRouter,
-});
-```
+Add the area to both `packages/api/src/root.ts` (types and server
+components) and `packages/api/src/rpc-router.ts` (the lazily loaded router
+`/api/rpc` serves); `packages/api/tests/rpc-router.test.ts` fails when the
+two differ.
 
 ---
 
@@ -313,42 +260,27 @@ export const appRouter = createTRPCRouter({
 Create `apps/web-app/src/hooks/use-your-feature.ts`:
 
 ```typescript
-import { api } from '@b612/api/react';
+'use client';
+
+import { useORPC } from '@seawatts/api/react/react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export function useYourFeature() {
-  const {
-    data: items,
-    isLoading,
-    error,
-    refetch
-  } = api.yourFeature.all.useQuery();
+  const api = useORPC();
+  const queryClient = useQueryClient();
+  const items = useQuery(api.yourFeature.all.queryOptions());
 
-  const createItem = api.yourFeature.create.useMutation({
-    onSuccess: () => {
-      refetch();
-    },
-  });
+  // Invalidate only the query the save changed.
+  const deleteItem = useMutation(
+    api.yourFeature.delete.mutationOptions({
+      onSuccess: () =>
+        queryClient.invalidateQueries({
+          queryKey: api.yourFeature.all.key(),
+        }),
+    }),
+  );
 
-  const updateItem = api.yourFeature.update.useMutation({
-    onSuccess: () => {
-      refetch();
-    },
-  });
-
-  const deleteItem = api.yourFeature.delete.useMutation({
-    onSuccess: () => {
-      refetch();
-    },
-  });
-
-  return {
-    items,
-    isLoading,
-    error,
-    createItem,
-    updateItem,
-    deleteItem,
-  };
+  return { deleteItem, items };
 }
 ```
 

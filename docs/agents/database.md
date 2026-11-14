@@ -5,7 +5,7 @@ Drizzle on Postgres through postgres.js, in `packages/db`. Hosted, the app conne
 ## Schema and imports
 
 - One file per table group under `packages/db/src/schema`; import each table from its file: `import { Users } from '@seawatts/db/schema/users'`. There is no schema barrel, so a request loads only the tables its code imports.
-- Write new queries with the query builder (`db.select().from(Users)…`). `db.query.*` (relational queries) needs a registry of every table on the client, which makes every request load every table; the registry in `packages/db/src/client.ts` exists only for the relational queries that remain. When the last one is gone, delete the registry and `schema/relations.ts`.
+- Write queries with the query builder (`db.select().from(Users)…`), joining what you need in one query. Do not use `db.query.*` (relational queries): it needs a registry of every table on the client, which makes every request load every table. The client has no registry.
 - Migrations in `packages/db/drizzle` are append-only. Never edit an applied one. When two branches add migrations, renumber the newer one after main's right before merging.
 
 ## The client

@@ -3,6 +3,7 @@
 import { auth } from '@seawatts/auth/server';
 import { db } from '@seawatts/db/client';
 import { OrgMembers, Orgs } from '@seawatts/db/schema/organizations';
+import { Users } from '@seawatts/db/schema/users';
 import { isEntitled } from '@seawatts/stripe/guards/server';
 import { and, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
@@ -68,21 +69,29 @@ export const inviteMemberAction = action
     const orgId = session.session.activeOrganizationId;
 
     // Get the organization
-    const org = await db.query.Orgs.findFirst({
-      where: eq(Orgs.id, orgId),
-    });
+    const org = await db
+      .select()
+      .from(Orgs)
+      .where(eq(Orgs.id, orgId))
+      .limit(1)
+      .then((rows) => rows[0]);
 
     if (!org) {
       throw new Error('Organization not found');
     }
 
     // Check if user is admin/owner
-    const currentMember = await db.query.OrgMembers.findFirst({
-      where: and(
-        eq(OrgMembers.organizationId, org.id),
-        eq(OrgMembers.userId, userId),
-      ),
-    });
+    const currentMember = await db
+      .select()
+      .from(OrgMembers)
+      .where(
+        and(
+          eq(OrgMembers.organizationId, org.id),
+          eq(OrgMembers.userId, userId),
+        ),
+      )
+      .limit(1)
+      .then((rows) => rows[0]);
 
     if (
       !currentMember ||
@@ -126,21 +135,29 @@ export const updateTeamNameAction = action
     const orgId = session.session.activeOrganizationId;
 
     // Get the organization
-    const org = await db.query.Orgs.findFirst({
-      where: eq(Orgs.id, orgId),
-    });
+    const org = await db
+      .select()
+      .from(Orgs)
+      .where(eq(Orgs.id, orgId))
+      .limit(1)
+      .then((rows) => rows[0]);
 
     if (!org) {
       throw new Error('Organization not found');
     }
 
     // Check if user is admin/owner
-    const currentMember = await db.query.OrgMembers.findFirst({
-      where: and(
-        eq(OrgMembers.organizationId, org.id),
-        eq(OrgMembers.userId, userId),
-      ),
-    });
+    const currentMember = await db
+      .select()
+      .from(OrgMembers)
+      .where(
+        and(
+          eq(OrgMembers.organizationId, org.id),
+          eq(OrgMembers.userId, userId),
+        ),
+      )
+      .limit(1)
+      .then((rows) => rows[0]);
 
     if (
       !currentMember ||
@@ -184,21 +201,29 @@ export const deleteTeamAction = action
     }
 
     // Get the organization
-    const org = await db.query.Orgs.findFirst({
-      where: eq(Orgs.id, orgId),
-    });
+    const org = await db
+      .select()
+      .from(Orgs)
+      .where(eq(Orgs.id, orgId))
+      .limit(1)
+      .then((rows) => rows[0]);
 
     if (!org) {
       throw new Error('Organization not found');
     }
 
     // Check if user is owner
-    const currentMember = await db.query.OrgMembers.findFirst({
-      where: and(
-        eq(OrgMembers.organizationId, org.id),
-        eq(OrgMembers.userId, userId),
-      ),
-    });
+    const currentMember = await db
+      .select()
+      .from(OrgMembers)
+      .where(
+        and(
+          eq(OrgMembers.organizationId, org.id),
+          eq(OrgMembers.userId, userId),
+        ),
+      )
+      .limit(1)
+      .then((rows) => rows[0]);
 
     if (!currentMember || currentMember.role !== 'owner') {
       throw new Error('Only the organization owner can delete the team');
@@ -227,30 +252,33 @@ export const getOrganizationMembersAction = action.action(async () => {
   const orgId = session.session.activeOrganizationId;
 
   // Get the organization
-  const org = await db.query.Orgs.findFirst({
-    where: eq(Orgs.id, orgId),
-  });
+  const org = await db
+    .select()
+    .from(Orgs)
+    .where(eq(Orgs.id, orgId))
+    .limit(1)
+    .then((rows) => rows[0]);
 
   if (!org) {
     throw new Error('Organization not found');
   }
 
   // Get organization members with user details
-  const members = await db.query.OrgMembers.findMany({
-    where: eq(OrgMembers.organizationId, org.id),
-    with: {
-      user: true,
-    },
-  });
+  // One query: only the columns the members list shows.
+  const members = await db
+    .select({
+      createdAt: OrgMembers.createdAt,
+      email: Users.email,
+      id: OrgMembers.id,
+      name: Users.name,
+      role: OrgMembers.role,
+      userId: OrgMembers.userId,
+    })
+    .from(OrgMembers)
+    .leftJoin(Users, eq(Users.id, OrgMembers.userId))
+    .where(eq(OrgMembers.organizationId, org.id));
 
-  return members.map((m: (typeof members)[0]) => ({
-    createdAt: m.createdAt,
-    email: m.user?.email || 'Unknown',
-    id: m.id,
-    name: m.user?.name,
-    role: m.role,
-    userId: m.userId,
-  }));
+  return members.map((m) => ({ ...m, email: m.email || 'Unknown' }));
 });
 
 // Remove member action
@@ -267,21 +295,29 @@ export const removeMemberAction = action
     const orgId = session.session.activeOrganizationId;
 
     // Get the organization
-    const org = await db.query.Orgs.findFirst({
-      where: eq(Orgs.id, orgId),
-    });
+    const org = await db
+      .select()
+      .from(Orgs)
+      .where(eq(Orgs.id, orgId))
+      .limit(1)
+      .then((rows) => rows[0]);
 
     if (!org) {
       throw new Error('Organization not found');
     }
 
     // Check if user is admin/owner
-    const currentMember = await db.query.OrgMembers.findFirst({
-      where: and(
-        eq(OrgMembers.organizationId, org.id),
-        eq(OrgMembers.userId, userId),
-      ),
-    });
+    const currentMember = await db
+      .select()
+      .from(OrgMembers)
+      .where(
+        and(
+          eq(OrgMembers.organizationId, org.id),
+          eq(OrgMembers.userId, userId),
+        ),
+      )
+      .limit(1)
+      .then((rows) => rows[0]);
 
     if (
       !currentMember ||
@@ -291,9 +327,12 @@ export const removeMemberAction = action
     }
 
     // Get the member to be removed
-    const memberToRemove = await db.query.OrgMembers.findFirst({
-      where: eq(OrgMembers.id, parsedInput.memberId),
-    });
+    const memberToRemove = await db
+      .select()
+      .from(OrgMembers)
+      .where(eq(OrgMembers.id, parsedInput.memberId))
+      .limit(1)
+      .then((rows) => rows[0]);
 
     if (!memberToRemove || memberToRemove.organizationId !== org.id) {
       throw new Error('Member not found');
@@ -332,21 +371,29 @@ export const updateMemberRoleAction = action
     const orgId = session.session.activeOrganizationId;
 
     // Get the organization
-    const org = await db.query.Orgs.findFirst({
-      where: eq(Orgs.id, orgId),
-    });
+    const org = await db
+      .select()
+      .from(Orgs)
+      .where(eq(Orgs.id, orgId))
+      .limit(1)
+      .then((rows) => rows[0]);
 
     if (!org) {
       throw new Error('Organization not found');
     }
 
     // Check if user is admin/owner
-    const currentMember = await db.query.OrgMembers.findFirst({
-      where: and(
-        eq(OrgMembers.organizationId, org.id),
-        eq(OrgMembers.userId, userId),
-      ),
-    });
+    const currentMember = await db
+      .select()
+      .from(OrgMembers)
+      .where(
+        and(
+          eq(OrgMembers.organizationId, org.id),
+          eq(OrgMembers.userId, userId),
+        ),
+      )
+      .limit(1)
+      .then((rows) => rows[0]);
 
     if (
       !currentMember ||
@@ -356,9 +403,12 @@ export const updateMemberRoleAction = action
     }
 
     // Get the member to be updated
-    const memberToUpdate = await db.query.OrgMembers.findFirst({
-      where: eq(OrgMembers.id, parsedInput.memberId),
-    });
+    const memberToUpdate = await db
+      .select()
+      .from(OrgMembers)
+      .where(eq(OrgMembers.id, parsedInput.memberId))
+      .limit(1)
+      .then((rows) => rows[0]);
 
     if (!memberToUpdate || memberToUpdate.organizationId !== org.id) {
       throw new Error('Member not found');
@@ -397,21 +447,29 @@ export const leaveOrganizationAction = action
     const userId = session.user.id;
 
     // Get the organization
-    const org = await db.query.Orgs.findFirst({
-      where: eq(Orgs.id, parsedInput.organizationId),
-    });
+    const org = await db
+      .select()
+      .from(Orgs)
+      .where(eq(Orgs.id, parsedInput.organizationId))
+      .limit(1)
+      .then((rows) => rows[0]);
 
     if (!org) {
       throw new Error('Organization not found');
     }
 
     // Get the user's membership
-    const currentMember = await db.query.OrgMembers.findFirst({
-      where: and(
-        eq(OrgMembers.organizationId, org.id),
-        eq(OrgMembers.userId, userId),
-      ),
-    });
+    const currentMember = await db
+      .select()
+      .from(OrgMembers)
+      .where(
+        and(
+          eq(OrgMembers.organizationId, org.id),
+          eq(OrgMembers.userId, userId),
+        ),
+      )
+      .limit(1)
+      .then((rows) => rows[0]);
 
     if (!currentMember) {
       throw new Error('You are not a member of this organization');

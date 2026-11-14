@@ -1,17 +1,18 @@
-import { getQueryClient, HydrationBoundary, trpc } from '@seawatts/api/server';
+import { HydrationBoundary } from '@seawatts/api/react/hydration-boundary';
+import { getQueryClient, orpc } from '@seawatts/api/react/server';
 import { ChartAreaInteractive } from './_components/chart-area-interactive';
 import { RecentEventsTable } from './_components/recent-events-table';
 import { SectionCards } from './_components/section-cards';
 
-// Dynamic because tRPC queries require authenticated session context
+// Dynamic because oRPC queries require authenticated session context
 export const dynamic = 'force-dynamic';
 
 export default async function Page() {
   const queryClient = getQueryClient();
 
   // Prefetch data for the dashboard components
-  void queryClient.prefetchQuery(trpc.apiKeys.allWithLastUsage.queryOptions());
-  void queryClient.prefetchQuery(trpc.org.current.queryOptions());
+  void queryClient.prefetchQuery(orpc.apiKeys.allWithLastUsage.queryOptions());
+  void queryClient.prefetchQuery(orpc.org.current.queryOptions());
 
   return (
     <HydrationBoundary>
