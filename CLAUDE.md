@@ -2,7 +2,7 @@
 
 A Bun + Turborepo monorepo: apps in `apps/` (`web-app` is one Next.js app with marketing at `/` and the product at `/app`; plus `expo`, `cli`, `chrome-extension`, `vscode-extension`, `ios`), shared code in `packages/`, build tooling in `tooling/`. This file is the whole rule set; `docs/agents/` holds the detail for each rule. Read a detail file only when the change touches its area.
 
-Stack: Next.js 16 (App Router), React 19, TypeScript strict, Tailwind 4, shadcn/ui (`packages/ui`), Drizzle on Supabase Postgres (`packages/db`), Better Auth (`packages/auth`), oRPC (`packages/api`), Stripe, PostHog (`packages/analytics`), Biome, Lefthook, Infisical.
+Stack: Next.js 16 (App Router), React 19, TypeScript strict, Tailwind 4, shadcn/ui (`packages/ui`), Drizzle on Supabase Postgres (`packages/db`), Better Auth (`packages/auth`), oRPC (`packages/api`), Vercel Workflow, Stripe, PostHog (`packages/analytics`), Biome, Lefthook, Infisical.
 
 ## Commands
 
@@ -28,6 +28,7 @@ Stack: Next.js 16 (App Router), React 19, TypeScript strict, Tailwind 4, shadcn/
 - API procedures are oRPC in `packages/api`: mark every read `.route({ method: 'GET' })`, fail with `ORPCError` when the caller can act on the reason, and add a new area to both `root.ts` and the lazily loaded `rpc-router.ts` (`docs/agents/api.md`).
 - Every interface: a new or changed procedure goes in the operation catalog (`packages/api/src/operations.ts`), which generates REST, OpenAPI, the SDK, the CLI, MCP tools and the docs reference, or in `sessionOnly` with the reason; then call it once for real (`docs/agents/interfaces.md`).
 - Read the session on the request path with `readSession` (`@seawatts/auth/session-reader`), never the full auth instance; session and cookie settings live in `session-options.ts` so both agree (`docs/agents/api.md`).
+- A read never writes: GET procedures run under `readingOnly` and the database client refuses their writes. A save publishes a domain event after commit (`publishEvent`); the event map routes it to idempotent Vercel Workflow steps; anything due later is a per-subject workflow that sleeps until then and re-reads on waking. Crons only for truly periodic work, no logic in database triggers (`docs/agents/events.md`).
 - Work after the response (email, third-party calls, analytics) goes through `after`/`waitUntil`, never a bare `void promise` (`docs/agents/database.md`).
 - Speed: measure before and after, no N+1, a read never writes, share "who is asking" lookups across one request's reads with `requestRead` (`docs/agents/speed.md`).
 

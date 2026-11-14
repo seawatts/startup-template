@@ -6,7 +6,7 @@ oRPC in `packages/api`, served by the web app at `/api/rpc`. One set of procedur
 
 - An area is one file in `packages/api/src/router/`, exporting a plain object of procedures built from `publicProcedure` or `protectedProcedure` (`packages/api/src/orpc.ts`). `protectedProcedure` refuses a signed-out caller and makes `context.auth.userId` a string.
 - A read is marked `.route({ method: 'GET' })`. A write has no marker and is always a POST. The route refuses a GET for an unmarked procedure, so a link, an image tag or a prefetch can never trigger a write, and reads can be batched and told apart from writes by method.
-- A read never writes. If a read needs to record something (last used, a view count), do it after the response (`after`), or make it its own write.
+- A read never writes, and the database client enforces it: a GET procedure runs inside `readingOnly` and a writing statement is refused. Work a change causes is published as an event by the save ([events.md](events.md)); a record of the request itself (last used) runs after the response inside `notReading`.
 - Fail with `new ORPCError('NOT_FOUND', { message })` (or `BAD_REQUEST`, `FORBIDDEN`, `UNAUTHORIZED`) when the caller can act on the reason. Anything else thrown is logged in full on the server and answered as a plain 500, so no stack or SQL reaches the browser.
 - Validate input with zod (`.input(z.object({ … }))`). The first three problems are returned as the message.
 

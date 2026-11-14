@@ -362,7 +362,8 @@ export const authRouter = {
           });
         }
 
-        // Get organization from database
+        // A read: the organization was created when the person signed up or
+        // was invited, never here.
         const org = await db
           .select()
           .from(Orgs)
@@ -370,17 +371,16 @@ export const authRouter = {
           .limit(1)
           .then((rows) => rows[0]);
 
-        // Use the upsertOrg utility function
-        await upsertOrg({
-          name: org?.name || `org-${orgId}`,
-          orgId,
-          userId,
-        });
+        if (!org) {
+          throw new ORPCError('NOT_FOUND', {
+            message: 'Organization not found',
+          });
+        }
 
         return {
           authToken: input.sessionId,
           orgId,
-          orgName: org?.name || '',
+          orgName: org.name,
           user: {
             email: user.email,
             fullName: user.name || '',

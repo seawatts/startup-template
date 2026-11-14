@@ -2,6 +2,7 @@ import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import { databaseTls, idleTimeout, poolMax } from './connection-config';
 import { env } from './env';
+import { guardWritesInReads } from './read-only';
 
 // The longest one statement may run inside `inTransaction`. Without a limit
 // a stuck query keeps its connection forever, and a few of them leave every
@@ -28,7 +29,9 @@ export function connectDatabase(url: string) {
   });
 }
 
-export const connection = connectDatabase(env.POSTGRES_URL);
+// Every statement passes the read guard: inside `readingOnly` (a GET
+// procedure, for one) a write is refused before it is sent (read-only.ts).
+export const connection = guardWritesInReads(connectDatabase(env.POSTGRES_URL));
 
 // No schema registry: nothing uses Drizzle's relational queries
 // (`db.query.*`), and a registry makes every request load every table.

@@ -1,7 +1,14 @@
 import type { Instrumentation } from 'next';
 
-export function register() {
-  // No-op for initialization
+export async function register() {
+  // Published domain events are delivered to the event workflow
+  // (docs/agents/events.md). Node only: workflows do not start from the edge.
+  if (process.env.NEXT_RUNTIME !== 'nodejs') return;
+  const [{ deliverEventsWith }, { deliverEvent }] = await Promise.all([
+    import('@seawatts/api/events/publish'),
+    import('./server/event-delivery'),
+  ]);
+  deliverEventsWith(deliverEvent);
 }
 
 export const onRequestError: Instrumentation.onRequestError = async (
