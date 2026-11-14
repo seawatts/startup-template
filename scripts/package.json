@@ -17,6 +17,7 @@
   "private": true,
   "scripts": {
     "clean": "git clean -xdf .turbo node_modules",
+    "test": "bun test",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "type": "module",
