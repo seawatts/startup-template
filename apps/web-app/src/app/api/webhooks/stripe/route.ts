@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     const body = await req.text();
 
     // Construct and verify the webhook event
-    const event = constructWebhookEvent(body, signature);
+    const event = await constructWebhookEvent(body, signature);
 
     // Handle different event types
     switch (event.type) {
