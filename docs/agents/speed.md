@@ -4,7 +4,7 @@ What made a real app built on this template fast, in the order to apply it. Meas
 
 ## Measure
 
-- Time to content for the screen, in a browser spec, as a median over several loads with network latency and CPU throttling for a phone.
+- Time to content for the screen, with `SPEED=enabled bun test:e2e speed` ([tests.md](tests.md#the-speed-measurement)), as a median over several loads with network latency and CPU throttling for a phone.
 - Database round trips with a delay in front of the local database, and query count per load from the statement log ([database.md](database.md#measuring)).
 - Server code loaded per route: after a build, read `.next/server/**/*.nft.json`.
 - The host's request logs for cold starts and per-request time, a few days before and after a deploy.

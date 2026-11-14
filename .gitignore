@@ -58,3 +58,6 @@ apps/cli/bin
 apps/cli/certificates
 
 .plasmo
+# playwright
+test-results/
+playwright-report/

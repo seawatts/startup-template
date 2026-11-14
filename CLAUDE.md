@@ -7,7 +7,7 @@ Stack: Next.js 16 (App Router), React 19, TypeScript strict, Tailwind 4, shadcn/
 ## Commands
 
 - `bun install`, `bun dev` (everything) or `bun dev:next` (web app only).
-- `bun typecheck` (run `bun run build --filter @seawatts/stripe` once first: it generates the billing ids), `bun test`, `bun format:fix` (Biome + knip).
+- `bun typecheck` (run `bun run build --filter @seawatts/stripe` once first: it generates the billing ids), `bun test`, `bun test:e2e` (browser tests against a running app), `bun format:fix` (Biome + knip).
 - Database: `bun db:gen-migration`, `bun db:migrate`, `bun db:push`, `bun db:seed`, `bun db:studio`. Migrations in `packages/db/drizzle` are append-only; never edit an applied one.
 - `bun ui-add` adds a shadcn component to `packages/ui`.
 
@@ -30,7 +30,8 @@ Stack: Next.js 16 (App Router), React 19, TypeScript strict, Tailwind 4, shadcn/
 - Read the session on the request path with `readSession` (`@seawatts/auth/session-reader`), never the full auth instance; session and cookie settings live in `session-options.ts` so both agree (`docs/agents/api.md`).
 - A read never writes: GET procedures run under `readingOnly` and the database client refuses their writes. A save publishes a domain event after commit (`publishEvent`); the event map routes it to idempotent Vercel Workflow steps; anything due later is a per-subject workflow that sleeps until then and re-reads on waking. Crons only for truly periodic work, no logic in database triggers (`docs/agents/events.md`).
 - Work after the response (email, third-party calls, analytics) goes through `after`/`waitUntil`, never a bare `void promise` (`docs/agents/database.md`).
-- Speed: measure before and after, no N+1, a read never writes, share "who is asking" lookups across one request's reads with `requestRead` (`docs/agents/speed.md`).
+- Tests go where the behavior lives: logic and procedures in `bun test` suites, screens in `apps/web-app/e2e` at desktop and 390px; never skip or loosen a failing test (`docs/agents/tests.md`).
+- Speed: measure before and after (`SPEED=enabled bun test:e2e speed`), no N+1, a read never writes, share "who is asking" lookups across one request's reads with `requestRead` (`docs/agents/speed.md`).
 
 ## UI
 

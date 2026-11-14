@@ -83,6 +83,7 @@
     "release:dry-run": "bun scripts/release/index.ts --dry-run",
     "scripts": "bun run scripts/run.ts",
     "test": "bun test",
+    "test:e2e": "cd apps/web-app && bun run test:e2e",
     "test:integ": "turbo run test --filter=@seawatts/integ-test",
     "test:integ:ci": "turbo run test:ci --filter=@seawatts/integ-test",
     "test:integ:watch": "turbo run test:watch --filter=@seawatts/integ-test",

@@ -12,6 +12,7 @@
 | [interfaces.md](interfaces.md) | Adding or changing a procedure: the catalog that feeds REST, OpenAPI, the SDK, the CLI, MCP and the docs reference |
 | [events.md](events.md) | A save that causes other work, anything scheduled for later, a cron, or a read tempted to write |
 | [speed.md](speed.md) | Making a screen or a save faster, or adding reads to a hot path |
+| [tests.md](tests.md) | Adding or moving a test, running the browser tests, measuring a screen's speed |
 | [ui.md](ui.md) | Any visible change: themes, phone layout, loading states, saves |
 | [buttons.md](buttons.md) | Adding an action, link or button anywhere, including email |
 | [copy.md](copy.md) | Writing or editing marketing or docs copy |
