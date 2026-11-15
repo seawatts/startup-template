@@ -17,7 +17,15 @@ export const productEvents = {
   organization_created: [],
   organization_renamed: [],
   // One per API procedure call: where server time and database work go.
-  procedure_timed: ['path', 'ms', 'statements', 'transactions', 'ok'],
+  // `waited_ms` is the longest any of its transactions waited to start.
+  procedure_timed: [
+    'path',
+    'ms',
+    'statements',
+    'transactions',
+    'waited_ms',
+    'ok',
+  ],
   subscription_canceled: [],
   subscription_reactivated: [],
 } as const satisfies Record<string, readonly string[]>;

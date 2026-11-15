@@ -21,6 +21,13 @@ export type StatementCounts = {
   /** begin, commit, rollback, savepoints and settings. */
   wrapper: number;
   transactions: number;
+  /**
+   * The longest any of its transactions took to start, in milliseconds: a
+   * free connection (or opening one) plus `begin`. A warm server starts one
+   * in a round trip, so a large number says the read stood in line for a
+   * connection, not that its queries were slow.
+   */
+  waited?: number;
 };
 
 // Every scope the current call is inside: a request and, within it, one
@@ -75,14 +82,25 @@ export function countStatements<T>(sql: T): T {
     const open = client[key]?.bind(client);
     if (!open) continue;
     client[key] = (...args: unknown[]) => {
-      for (const counts of counting.getStore() ?? []) {
+      const scopes = counting.getStore() ?? [];
+      for (const counts of scopes) {
         counts.wrapper += 2;
         if (key === 'begin') counts.transactions++;
       }
+      const asked = performance.now();
       return open(
         ...args.map((arg) =>
           typeof arg === 'function'
-            ? (inner: unknown) => (arg as Callable)(countStatements(inner))
+            ? (inner: unknown) => {
+                // The driver calls back once it holds a connection and
+                // `begin` has answered.
+                if (key === 'begin') {
+                  const waited = Math.round(performance.now() - asked);
+                  for (const counts of scopes)
+                    counts.waited = Math.max(counts.waited ?? 0, waited);
+                }
+                return (arg as Callable)(countStatements(inner));
+              }
             : arg,
         ),
       );

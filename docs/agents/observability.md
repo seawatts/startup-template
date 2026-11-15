@@ -42,7 +42,7 @@ How the app is watched in production and measured in development. CLAUDE.md keep
 - Production: `log_min_duration_statement` around 200 ms per runtime role, with bind parameters off (`log_parameter_max_length = 0`) so the log holds the query's shape, never its values; tag the area (`application_name` or a comment) so a slow query maps to a procedure.
 - Development: every API answer carries a `Server-Timing` header with its server time, content statements, wrapper statements (begin, commit, settings) and transactions (`packages/db/src/statement-count.ts`; [database.md](database.md#measuring)). Keep the numbers for speed PRs.
 - Record pool waits, connection timeouts and connection errors as metrics or events per role, so pool exhaustion shows up before users report it.
-- Production: every API procedure call records one content-free `procedure_timed` event with its path, milliseconds, statements, transactions and `ok` (`recordTiming` in `packages/api/src/orpc.ts`). It is the truth for speed work; local timings are not ([speed.md](speed.md#measure)).
+- Production: every API procedure call records one content-free `procedure_timed` event with its path, milliseconds, statements, transactions, `waited_ms` (the longest wait for a transaction to start) and `ok` (`recordTiming` in `packages/api/src/orpc.ts`). A request during which the server opened database connections logs one `rpc.connections` line: counts and milliseconds only ([speed.md](speed.md#connections-at-startup)). It is the truth for speed work; local timings are not ([speed.md](speed.md#measure)).
 
 ## App
 - Page views, page load speed (web vitals sent as numbers; drop the raw entries, which can name an element) and every save are events.
