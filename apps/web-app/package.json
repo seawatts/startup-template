@@ -61,9 +61,10 @@
   "private": true,
   "scripts": {
     "build": "NODE_ENV=production NEXT_PUBLIC_APP_TYPE=nextjs bun --bun next build",
+    "check:trace": "bun scripts/check-traced-functions.ts",
     "clean": "git clean -xdf .turbo node_modules dist .next",
     "dev": "bun --bun next dev --turbo",
-    "postbuild": "next-sitemap --config next-sitemap.config.cjs",
+    "postbuild": "next-sitemap --config next-sitemap.config.cjs && bun scripts/check-traced-functions.ts",
     "start": "bun --bun next start",
     "test": "bun test",
     "test:e2e": "playwright test --config e2e/playwright.config.ts",
