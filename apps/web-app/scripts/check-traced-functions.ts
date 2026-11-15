@@ -10,6 +10,7 @@
 //
 // Run after a build: `bun run check:trace` (docs/agents/bun.md).
 import {
+  copyFile,
   link,
   lstat,
   mkdir,
@@ -58,9 +59,21 @@ async function materialise(trace: string, into: string): Promise<string[]> {
     const stats = await lstat(path);
     if (stats.isSymbolicLink())
       await symlink(await readlink(path), target).catch(ignoreExisting);
-    else if (stats.isFile()) await link(path, target).catch(ignoreExisting);
+    else if (stats.isFile()) await place(path, target);
   }
   return paths;
+}
+
+// A hard link is instant; the temp folder on a build machine is often
+// another filesystem, where only a copy works.
+async function place(path: string, target: string) {
+  try {
+    await link(path, target);
+  } catch (error) {
+    const code = (error as NodeJS.ErrnoException).code;
+    if (code === 'EXDEV') await copyFile(path, target);
+    else if (code !== 'EEXIST') throw error;
+  }
 }
 
 function ignoreExisting(error: NodeJS.ErrnoException) {
