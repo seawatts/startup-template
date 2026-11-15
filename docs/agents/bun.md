@@ -29,6 +29,8 @@ Reach for these before a Node module or an npm package:
 | SQLite | `bun:sqlite` |
 | Postgres | `Bun.sql` (see below) |
 
+These are for scripts, tests, tools and standalone servers. Code that runs inside a deployed function (`apps/web-app/src` and the packages it imports) stays free of `Bun.*` and `bun:*`, so the one-step rollback to Node below keeps working; today none of it uses them.
+
 Use a `node:*` module or a Node-only package only where Bun has no equivalent or a framework requires it, and say why in a comment next to the import. `AsyncLocalStorage` from `node:async_hooks` is one of those: Bun has no primitive of its own for it.
 
 Move one area at a time and measure before and after. One benchmark pass is not evidence: run it twice and compare the runs with each other before comparing before with after. Cloud sessions export `BUN_OPTIONS=--smol`, which trades speed for memory, so unset it for a server you are timing (`env -u BUN_OPTIONS bun --bun next start`).
@@ -54,6 +56,8 @@ Local suites cannot prove a runtime switch on the host. `next start` and the tes
 - `bun run check:trace` (in `apps/web-app`, after a build) links each function's traced files (routes, pages, the proxy and instrumentation) into an empty folder, starts the runtime there and loads the function's external packages and its entry file. It runs at the end of every build, so a function that cannot load fails the deployment before it goes live. `TRACE_RUNTIME=node` runs the same check on Node. Each external package is loaded the way its chunk asks for it (`import()` or `require()`).
 - A package with a `bun` export condition (Stripe has one) has a separate build for Bun, and the trace, which resolves as Node does, leaves that build out. The template bundles Stripe and jose, so nothing is missing today. If you mark such a package external (`serverExternalPackages`), `check:trace` fails on Bun and passes on Node; name the files of the Bun build in `outputFileTracingIncludes`, for Stripe `'/**': ['../../node_modules/stripe/{esm,cjs}/**/*.{js,json}']`. Both halves were run on a real build.
 - `bun check:deploy <url>` after a deploy sends one request to every kind of function: plain route, auth, Stripe webhook, cron, oRPC, REST, MCP, a database read, static and rendered pages, the proxy redirect, and a page that loads an external package. Each expects the answer a caller with no credentials gets, so it signs in to nothing and writes nothing. Add a probe when you add a kind of function. The workflow routes take only signed queue calls and have no probe; `check:trace` loads them.
+- The host's runtime logs show no lines at all for a function on the Bun runtime (seen on a production app running there). Verify a release from the app's own telemetry: `bun check:deploy`, server events, the dependency heartbeat and reported exceptions ([observability.md](observability.md)). An empty log is not a clean release.
+- Expect a cold first request of 3 to 6 s and warm ones of 0.1 to 0.4 s on the Bun runtime; that was measured on another production app, not on this template.
 - Roll back in one step: delete `bunVersion` from `apps/web-app/vercel.json` and merge, which puts the functions back on Node and leaves Bun as package manager, test runner and script runner. Revert main at once and do not rely on the host's rollback alone: a rolled-back build may skip crons while the schema is ahead.
 
 Promotion gates, rollback and dependency bumps are in [releases.md](releases.md).
