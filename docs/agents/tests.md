@@ -28,6 +28,14 @@ They run against an app that is already running, on the same database:
 - Wait for what a person would see (`expect(locator).toBeVisible()`), never `networkidle`: analytics keeps the network busy.
 - Files end in `.e2e.ts` so `bun test` leaves them alone. Playwright stays at the version in `apps/web-app/package.json`.
 
+## Tests that stay true as the app grows
+
+- A suite that a hook or CI splits into shards also runs whole now and then: tests that disturb each other only show in a whole run.
+- A test of a global job (a cron over every tenant) filters the job's results to its own tenant and never asserts a global count.
+- Compare captured events unordered. A new domain event or a shift in timing must not break an exact-list assertion.
+- An API test changes data through the API, never by writing a row by hand and then ticking a cron.
+- A patched dependency has a guard test that fails when the patch did not apply (`packages/db/tests/unit/driver-patch.test.ts`).
+
 ## The speed measurement
 
 `speed.e2e.ts` loads each listed screen as a signed-in person with a network round trip in front of every request, and reports the median time from navigation to content shown, plus every API request on the way with when it was sent and how long it took.

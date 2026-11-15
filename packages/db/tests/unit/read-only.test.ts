@@ -2,8 +2,10 @@ import { afterAll, describe, expect, it } from 'bun:test';
 import { sql } from 'drizzle-orm';
 import {
   guardWritesInReads,
+  LockInReadError,
   notReading,
   readingOnly,
+  takesAdvisoryLock,
   WriteInReadError,
   writesData,
 } from '../../src/read-only';
@@ -34,6 +36,25 @@ describe('writesData', () => {
       'select "updatedAt", "deleted" from x',
     ])
       expect(writesData(statement)).toBe(false);
+  });
+});
+
+describe('takesAdvisoryLock', () => {
+  it('knows a lock that waits from one that does not', () => {
+    for (const statement of [
+      'select pg_advisory_xact_lock(1)',
+      'select pg_advisory_lock($1, $2)',
+      'select pg_advisory_xact_lock_shared (hashtext($1))',
+      'with fence as (select pg_advisory_lock_shared(1)) select * from x',
+    ])
+      expect(takesAdvisoryLock(statement)).toBe(true);
+    for (const statement of [
+      'select pg_try_advisory_xact_lock(1)',
+      'select * from x for share',
+      '-- pg_advisory_lock(1)\nselect 1',
+      'select pg_advisory_unlock(1)',
+    ])
+      expect(takesAdvisoryLock(statement)).toBe(false);
   });
 });
 
@@ -81,11 +102,30 @@ describe.skipIf(!url)('readingOnly', () => {
     expect(inside).toBeInstanceOf(WriteInReadError);
   });
 
-  it('lets reads, locks and work outside a read through', async () => {
+  it('refuses an advisory lock inside a read and allows it in a save', async () => {
+    const { db } = await loaded;
+    const fence = sql`select pg_advisory_xact_lock(7)`;
+    const refused = await readingOnly('test.read', () =>
+      db
+        .transaction((tx) => tx.execute(fence))
+        .then(
+          () => null,
+          (caught) => cause(caught),
+        ),
+    );
+    expect(refused).toBeInstanceOf(LockInReadError);
+    expect((refused as LockInReadError).code).toBe('LOCK_IN_READ');
+    await db.transaction((tx) => tx.execute(fence));
+  });
+
+  it('lets reads, row locks, try-locks and work outside a read through', async () => {
     const { db } = await loaded;
     const rows = await readingOnly('test.read', () =>
       db.transaction(async (tx) => {
-        await tx.execute(sql`select pg_advisory_xact_lock(7)`);
+        await tx.execute(sql`select pg_try_advisory_xact_lock(7)`);
+        await tx.execute(
+          sql`select 1 from pg_class where relname = 'pg_class' for share`,
+        );
         return tx.execute(sql`select 1 as one`);
       }),
     );

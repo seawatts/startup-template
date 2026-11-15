@@ -1,0 +1,31 @@
+diff --git a/src/connection.js b/src/connection.js
+index 1cf7a3527a12b800d7cb6b775cf85e846b79a646..cf7b6d1a3496038d59f269a1990780011a779088 100644
+--- a/src/connection.js
++++ b/src/connection.js
+@@ -502,12 +502,25 @@ export function Connection(ready, options, events) {
+ 
+     const { oids, values } = built
+     for (let i = 0; i < oids.length; i++) {
+-      if (!oids[i] && values[i] !== null && !(typeof values[i] === 'number' && isFinite(values[i])))
++      if (!oids[i] && values[i] !== null && !sendsAsText(values[i]))
+         return false
+     }
+     return x.loose = true
+   }
+ 
++  // Template patch: a string, boolean or bigint goes as text the server
++  // reads by the query's own types, as finite numbers already do, so the
++  // statement runs in the same round trip as its Parse and Describe instead of
++  // waiting a round trip for the description first. With unnamed statements
++  // (prepare: false behind the transaction pooler) every query would otherwise
++  // pay that round trip, and inside a transaction it also stops pipelining.
++  function sendsAsText(x) {
++    return typeof x === 'string'
++      || typeof x === 'boolean'
++      || typeof x === 'bigint'
++      || (typeof x === 'number' && isFinite(x))
++  }
++
+   function untyped(built) {
+     const { oids, values } = built
+         , out = new Array(values.length)

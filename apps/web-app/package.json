@@ -53,7 +53,7 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "next-sitemap": "4.2.3",
-    "postgres": "3.4.9",
+    "postgres": "4.1.1",
     "tailwindcss": "catalog:",
     "typescript": "catalog:"
   },
@@ -70,6 +70,5 @@
     "test:e2e": "playwright test --config e2e/playwright.config.ts",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
-  "type": "module",
   "version": "0.1.34"
 }

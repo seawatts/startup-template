@@ -84,3 +84,57 @@ test('a save records its event with ids and the surface; a read records nothing'
     },
   ]);
 });
+
+test('every procedure call records one timing event, failed calls too', async () => {
+  const sent: { event: string; properties: Record<string, unknown> }[] = [];
+  sendProductEventsTo((event) => {
+    sent.push(event);
+  });
+  const [{ createRouterClient }, { publicProcedure, recordTimingsInTests }] =
+    await Promise.all([import('@orpc/server'), import('../src/orpc')]);
+  recordTimingsInTests(true);
+  try {
+    const api = createRouterClient(
+      {
+        apiKeys: {
+          all: publicProcedure.route({ method: 'GET' }).handler(() => []),
+          broken: publicProcedure.route({ method: 'GET' }).handler(() => {
+            throw new Error('no');
+          }),
+        },
+      },
+      { context: { apiKey: null, auth: { orgId: 'org_1' } } as never },
+    );
+    await api.apiKeys.all();
+    await api.apiKeys.broken().catch(() => undefined);
+    await new Promise((resolve) => setTimeout(resolve, 10));
+  } finally {
+    recordTimingsInTests(false);
+    sendProductEventsTo(null);
+  }
+  // Unordered: the sends are not awaited.
+  const timings = sent
+    .filter((event) => event.event === 'procedure_timed')
+    .map(({ properties }) => ({ ...properties, ms: typeof properties.ms }))
+    .sort((a, b) => String(a.path).localeCompare(String(b.path)));
+  expect(timings).toEqual([
+    {
+      $process_person_profile: false,
+      ms: 'number',
+      ok: true,
+      path: 'apiKeys.all',
+      statements: 0,
+      surface: 'web',
+      transactions: 0,
+    },
+    {
+      $process_person_profile: false,
+      ms: 'number',
+      ok: false,
+      path: 'apiKeys.broken',
+      statements: 0,
+      surface: 'web',
+      transactions: 0,
+    },
+  ]);
+});

@@ -87,7 +87,11 @@ describe.skipIf(!url)('inTransaction', () => {
 describe.skipIf(!url)('the patched driver over a slow link', () => {
   it('sends reads issued together in a transaction without waiting between them', async () => {
     const proxy = await delayProxy(new URL(url as string), roundTrip / 2);
-    const slow = postgres(proxy.url, { max: 1, prepare: false });
+    const slow = postgres(proxy.url, {
+      max: 1,
+      max_pipeline: 1,
+      prepare: false,
+    });
     try {
       await slow`select 1`;
       const reads = 10;
@@ -115,7 +119,11 @@ describe.skipIf(!url)('the patched driver over a slow link', () => {
 
   it('does not pipeline outside a transaction, which a transaction pooler would drop', async () => {
     const proxy = await delayProxy(new URL(url as string), roundTrip / 2);
-    const slow = postgres(proxy.url, { max: 1, prepare: false });
+    const slow = postgres(proxy.url, {
+      max: 1,
+      max_pipeline: 1,
+      prepare: false,
+    });
     try {
       await slow`select 1`;
       const reads = 5;
