@@ -12,7 +12,7 @@ How a build reaches production, how it comes back, and how dependencies change. 
 
 ## Rollback
 
-- On the Bun runtime the host's runtime logs are empty for every function, so judge a release and a rollback by the deploy probes and the app's own events and exceptions, never by the host's logs ([bun.md](bun.md#changing-the-hosted-runtime)).
+- Judge a release and a rollback by the deploy probes and the app's own events and exceptions; a quiet host log only means no traffic ([bun.md](bun.md#changing-the-hosted-runtime)).
 
 - Keep one tested command that promotes the previous deployment (the host's promote or rollback), and practise it before it is needed.
 - After rolling back, revert main and release at once. The rolled-back build is older than the schema, and jobs that check the schema version skip until main catches up.
