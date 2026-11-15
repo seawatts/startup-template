@@ -1,6 +1,8 @@
-import { db } from '@seawatts/db/client';
+import { authDb } from '@seawatts/db/auth-client';
 import { notReading } from '@seawatts/db/read-only';
 import { ApiKeys } from '@seawatts/db/schema/api-keys';
+import { tenantOf } from '@seawatts/db/tenant-lookup';
+import { inTenant } from '@seawatts/db/transaction';
 import { and, eq, gt, isNull, or } from 'drizzle-orm';
 import type { Context } from './context';
 
@@ -17,27 +19,32 @@ export function bearerToken(headers: Headers) {
   return scheme?.toLowerCase() === 'bearer' && token ? token : null;
 }
 
-// An active, unexpired key, or null. One indexed read (the key is unique).
+// An active, unexpired key, or null. Two indexed reads: which organization
+// the key belongs to (the key is unique), then the key inside it.
 export async function readApiKey(
   headers: Headers,
 ): Promise<ApiKeyPrincipal | null> {
   const token = bearerToken(headers);
   if (!token) return null;
-  const [key] = await db
-    .select({
-      apiKeyId: ApiKeys.id,
-      orgId: ApiKeys.organizationId,
-      userId: ApiKeys.userId,
-    })
-    .from(ApiKeys)
-    .where(
-      and(
-        eq(ApiKeys.key, token),
-        eq(ApiKeys.isActive, true),
-        or(isNull(ApiKeys.expiresAt), gt(ApiKeys.expiresAt, new Date())),
-      ),
-    )
-    .limit(1);
+  const organizationId = await tenantOf('api_key', token);
+  if (!organizationId) return null;
+  const [key] = await inTenant(organizationId, (tx) =>
+    tx
+      .select({
+        apiKeyId: ApiKeys.id,
+        orgId: ApiKeys.organizationId,
+        userId: ApiKeys.userId,
+      })
+      .from(ApiKeys)
+      .where(
+        and(
+          eq(ApiKeys.key, token),
+          eq(ApiKeys.isActive, true),
+          or(isNull(ApiKeys.expiresAt), gt(ApiKeys.expiresAt, new Date())),
+        ),
+      )
+      .limit(1),
+  );
   return key ?? null;
 }
 
@@ -46,7 +53,7 @@ export async function readApiKey(
 export const apiKeyContext = (principal: ApiKeyPrincipal): Context => ({
   apiKey: { id: principal.apiKeyId },
   auth: { orgId: principal.orgId, userId: principal.userId },
-  db,
+  authDb,
   organizationId: principal.orgId,
   session: null,
   user: null,
@@ -56,9 +63,11 @@ export const apiKeyContext = (principal: ApiKeyPrincipal): Context => ({
 // A record of the request itself, so it is allowed beside a read.
 export async function recordApiKeyUse(principal: ApiKeyPrincipal) {
   await notReading(() =>
-    db
-      .update(ApiKeys)
-      .set({ lastUsedAt: new Date() })
-      .where(eq(ApiKeys.id, principal.apiKeyId)),
+    inTenant(principal.orgId, (tx) =>
+      tx
+        .update(ApiKeys)
+        .set({ lastUsedAt: new Date() })
+        .where(eq(ApiKeys.id, principal.apiKeyId)),
+    ),
   );
 }

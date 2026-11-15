@@ -1,7 +1,7 @@
 'use server';
 
 import { auth } from '@seawatts/auth/server';
-import { db } from '@seawatts/db/client';
+import { authDb } from '@seawatts/db/auth-client';
 import { OrgMembers, Orgs } from '@seawatts/db/schema/organizations';
 import { Users } from '@seawatts/db/schema/users';
 import { isEntitled } from '@seawatts/stripe/guards/server';
@@ -69,7 +69,7 @@ export const inviteMemberAction = action
     const orgId = session.session.activeOrganizationId;
 
     // Get the organization
-    const org = await db
+    const org = await authDb
       .select()
       .from(Orgs)
       .where(eq(Orgs.id, orgId))
@@ -81,7 +81,7 @@ export const inviteMemberAction = action
     }
 
     // Check if user is admin/owner
-    const currentMember = await db
+    const currentMember = await authDb
       .select()
       .from(OrgMembers)
       .where(
@@ -135,7 +135,7 @@ export const updateTeamNameAction = action
     const orgId = session.session.activeOrganizationId;
 
     // Get the organization
-    const org = await db
+    const org = await authDb
       .select()
       .from(Orgs)
       .where(eq(Orgs.id, orgId))
@@ -147,7 +147,7 @@ export const updateTeamNameAction = action
     }
 
     // Check if user is admin/owner
-    const currentMember = await db
+    const currentMember = await authDb
       .select()
       .from(OrgMembers)
       .where(
@@ -201,7 +201,7 @@ export const deleteTeamAction = action
     }
 
     // Get the organization
-    const org = await db
+    const org = await authDb
       .select()
       .from(Orgs)
       .where(eq(Orgs.id, orgId))
@@ -213,7 +213,7 @@ export const deleteTeamAction = action
     }
 
     // Check if user is owner
-    const currentMember = await db
+    const currentMember = await authDb
       .select()
       .from(OrgMembers)
       .where(
@@ -252,7 +252,7 @@ export const getOrganizationMembersAction = action.action(async () => {
   const orgId = session.session.activeOrganizationId;
 
   // Get the organization
-  const org = await db
+  const org = await authDb
     .select()
     .from(Orgs)
     .where(eq(Orgs.id, orgId))
@@ -265,7 +265,7 @@ export const getOrganizationMembersAction = action.action(async () => {
 
   // Get organization members with user details
   // One query: only the columns the members list shows.
-  const members = await db
+  const members = await authDb
     .select({
       createdAt: OrgMembers.createdAt,
       email: Users.email,
@@ -295,7 +295,7 @@ export const removeMemberAction = action
     const orgId = session.session.activeOrganizationId;
 
     // Get the organization
-    const org = await db
+    const org = await authDb
       .select()
       .from(Orgs)
       .where(eq(Orgs.id, orgId))
@@ -307,7 +307,7 @@ export const removeMemberAction = action
     }
 
     // Check if user is admin/owner
-    const currentMember = await db
+    const currentMember = await authDb
       .select()
       .from(OrgMembers)
       .where(
@@ -327,7 +327,7 @@ export const removeMemberAction = action
     }
 
     // Get the member to be removed
-    const memberToRemove = await db
+    const memberToRemove = await authDb
       .select()
       .from(OrgMembers)
       .where(eq(OrgMembers.id, parsedInput.memberId))
@@ -371,7 +371,7 @@ export const updateMemberRoleAction = action
     const orgId = session.session.activeOrganizationId;
 
     // Get the organization
-    const org = await db
+    const org = await authDb
       .select()
       .from(Orgs)
       .where(eq(Orgs.id, orgId))
@@ -383,7 +383,7 @@ export const updateMemberRoleAction = action
     }
 
     // Check if user is admin/owner
-    const currentMember = await db
+    const currentMember = await authDb
       .select()
       .from(OrgMembers)
       .where(
@@ -403,7 +403,7 @@ export const updateMemberRoleAction = action
     }
 
     // Get the member to be updated
-    const memberToUpdate = await db
+    const memberToUpdate = await authDb
       .select()
       .from(OrgMembers)
       .where(eq(OrgMembers.id, parsedInput.memberId))
@@ -447,7 +447,7 @@ export const leaveOrganizationAction = action
     const userId = session.user.id;
 
     // Get the organization
-    const org = await db
+    const org = await authDb
       .select()
       .from(Orgs)
       .where(eq(Orgs.id, parsedInput.organizationId))
@@ -459,7 +459,7 @@ export const leaveOrganizationAction = action
     }
 
     // Get the user's membership
-    const currentMember = await db
+    const currentMember = await authDb
       .select()
       .from(OrgMembers)
       .where(

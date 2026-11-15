@@ -1,6 +1,7 @@
 import { timingSafeEqual } from 'node:crypto';
 import { unlazy } from '@orpc/server';
 import { rpcRouter } from '@seawatts/api/rpc-router';
+import { authConnection } from '@seawatts/db/auth-client';
 import { connection } from '@seawatts/db/client';
 
 // A cron pings /api/rpc/__warm (app/api/cron/warm): a server that has sat
@@ -29,10 +30,12 @@ export async function warmApi(request: Request) {
   )
     return new Response('Unauthorized', { status: 401 });
   const started = performance.now();
-  // One query, outside any transaction: nothing is pipelined.
+  // One query per role a request uses, outside any transaction: nothing is
+  // pipelined.
   await Promise.all([
     ...Object.values(rpcRouter).map((area) => unlazy(area)),
     connection`select 1`,
+    authConnection`select 1`,
   ]);
   return Response.json(
     { ms: Math.round(performance.now() - started) },

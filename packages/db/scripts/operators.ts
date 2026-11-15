@@ -1,6 +1,6 @@
 import { userInfo } from 'node:os';
 import { eq } from 'drizzle-orm';
-import { connection, db } from '../src/client';
+import { authConnection, authDb } from '../src/auth-client';
 import { Operators } from '../src/schema/operators';
 import { Users } from '../src/schema/users';
 
@@ -10,7 +10,7 @@ import { Users } from '../src/schema/users';
 //   bun operators add person@example.com
 //   bun operators remove person@example.com
 //
-// Runs against the database in POSTGRES_URL. For a hosted database wrap it:
+// Runs against the database in POSTGRES_AUTH_URL (the auth role). For a hosted database wrap it:
 // `bun with-env bun operators add person@example.com`. The person signs up
 // first; the console also requires their email to be verified.
 
@@ -18,7 +18,7 @@ const [command = 'list', email] = process.argv.slice(2);
 
 async function person(address: string | undefined) {
   if (!address) throw new Error('Give the email of someone who has signed up.');
-  const [user] = await db
+  const [user] = await authDb
     .select({ email: Users.email, id: Users.id })
     .from(Users)
     .where(eq(Users.email, address.trim().toLowerCase()))
@@ -30,7 +30,7 @@ async function person(address: string | undefined) {
 async function run() {
   if (command === 'add') {
     const user = await person(email);
-    await db
+    await authDb
       .insert(Operators)
       .values({
         addedBy: process.env.USER || userInfo().username,
@@ -40,10 +40,10 @@ async function run() {
     console.log(`${user.email} is an operator.`);
   } else if (command === 'remove') {
     const user = await person(email);
-    await db.delete(Operators).where(eq(Operators.userId, user.id));
+    await authDb.delete(Operators).where(eq(Operators.userId, user.id));
     console.log(`${user.email} is no longer an operator.`);
   } else if (command === 'list') {
-    const rows = await db
+    const rows = await authDb
       .select({
         addedBy: Operators.addedBy,
         createdAt: Operators.createdAt,
@@ -65,4 +65,4 @@ run()
     console.error(error.message);
     process.exitCode = 1;
   })
-  .finally(() => connection.end());
+  .finally(() => authConnection.end());

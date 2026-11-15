@@ -44,21 +44,23 @@
   "name": "@seawatts/db",
   "private": true,
   "scripts": {
+    "bootstrap": "bun scripts/bootstrap-roles.ts",
     "build.skip": "bun run gen-supabase-types",
     "clean": "git clean -xdf .turbo node_modules dist",
-    "create-supabase-policies": "bun scripts/create-supabase-policies.ts",
     "dev": "bun scripts/watch.ts",
     "enable-supabase-realtime": "bun scripts/enable-supabase-realtime.ts",
     "gen-migration": "drizzle-kit generate",
     "gen-supabase-types": "bun scripts/generate-supabase-types.ts",
-    "migrate": "drizzle-kit migrate && bun gen-supabase-types && bun create-supabase-policies && bun enable-supabase-realtime",
-    "push": "drizzle-kit push && bun gen-supabase-types && bun create-supabase-policies && bun enable-supabase-realtime",
+    "local": "bun scripts/local-database.ts",
+    "migrate": "drizzle-kit migrate && bun gen-supabase-types && bun enable-supabase-realtime",
+    "push": "drizzle-kit push && bun gen-supabase-types && bun enable-supabase-realtime",
     "seed": "bun src/seed.ts",
     "start": "supabase start",
     "studio": "drizzle-kit studio",
     "test:integ": "bun test --test=integ",
     "test:unit": "bun test --test=unit",
-    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "verify": "bun scripts/verify-isolation.ts"
   },
   "type": "module",
   "version": "0.1.0"

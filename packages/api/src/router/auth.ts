@@ -1,10 +1,12 @@
 import { ORPCError } from '@orpc/server';
-import { db } from '@seawatts/db/client';
+import { authDb } from '@seawatts/db/auth-client';
 import { Accounts } from '@seawatts/db/schema/accounts';
 import { AuthCodes } from '@seawatts/db/schema/api-keys';
 import { Orgs } from '@seawatts/db/schema/organizations';
 import { Sessions } from '@seawatts/db/schema/sessions';
 import { Users } from '@seawatts/db/schema/users';
+import { tenantOf } from '@seawatts/db/tenant-lookup';
+import { inTenant } from '@seawatts/db/transaction';
 import { createId } from '@seawatts/id';
 import { and, desc, eq, gte, isNull } from 'drizzle-orm';
 import { z } from 'zod';
@@ -22,33 +24,38 @@ export const authRouter = {
     .handler(async ({ input }) => {
       const { code } = input;
 
-      const authCode = await db.transaction(async (tx) => {
-        const foundCode = await tx
-          .select()
-          .from(AuthCodes)
-          .where(
-            and(
-              eq(AuthCodes.id, code),
-              isNull(AuthCodes.usedAt),
-              gte(AuthCodes.expiresAt, new Date()),
-            ),
-          )
-          .limit(1)
-          .then((rows) => rows[0]);
+      // The code arrives before any organization is known: find the code's
+      // organization, then use it up inside that organization.
+      const organizationId = await tenantOf('auth_code', code);
+      const authCode =
+        organizationId &&
+        (await inTenant(organizationId, async (tx) => {
+          const foundCode = await tx
+            .select()
+            .from(AuthCodes)
+            .where(
+              and(
+                eq(AuthCodes.id, code),
+                isNull(AuthCodes.usedAt),
+                gte(AuthCodes.expiresAt, new Date()),
+              ),
+            )
+            .limit(1)
+            .then((rows) => rows[0]);
 
-        if (!foundCode) {
-          return null;
-        }
+          if (!foundCode) {
+            return null;
+          }
 
-        await tx
-          .update(AuthCodes)
-          .set({
-            usedAt: new Date(),
-          })
-          .where(eq(AuthCodes.id, code));
+          await tx
+            .update(AuthCodes)
+            .set({
+              usedAt: new Date(),
+            })
+            .where(eq(AuthCodes.id, code));
 
-        return foundCode;
-      });
+          return foundCode;
+        }));
 
       if (!authCode) {
         throw new ORPCError('BAD_REQUEST', {
@@ -59,7 +66,7 @@ export const authRouter = {
 
       try {
         // Get user from database
-        const user = await db
+        const user = await authDb
           .select()
           .from(Users)
           .where(eq(Users.id, authCode.userId))
@@ -195,7 +202,7 @@ export const authRouter = {
 
       try {
         // Upsert user
-        const [upsertedUser] = await db
+        const [upsertedUser] = await authDb
           .insert(Users)
           .values({
             email: user.email,
@@ -220,7 +227,7 @@ export const authRouter = {
         // Better Auth uses composite unique key on (accountId, providerId, userId)
         if (account) {
           // First, try to find existing account
-          const existingAccount = await db
+          const existingAccount = await authDb
             .select()
             .from(Accounts)
             .where(
@@ -235,7 +242,7 @@ export const authRouter = {
 
           if (existingAccount) {
             // Update existing account
-            await db
+            await authDb
               .update(Accounts)
               .set({
                 accessToken: account.accessToken,
@@ -245,7 +252,7 @@ export const authRouter = {
               .where(eq(Accounts.id, existingAccount.id));
           } else {
             // Insert new account
-            await db.insert(Accounts).values({
+            await authDb.insert(Accounts).values({
               accessToken: account.accessToken,
               accountId: account.accountId,
               id: createId({ prefix: 'acc' }),
@@ -260,7 +267,7 @@ export const authRouter = {
         const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
 
         // Check for existing valid session for this user
-        const existingSession = await db
+        const existingSession = await authDb
           .select()
           .from(Sessions)
           .where(
@@ -280,7 +287,7 @@ export const authRouter = {
           // Extend existing session
           sessionId = existingSession.id;
           sessionToken = existingSession.token;
-          await db
+          await authDb
             .update(Sessions)
             .set({
               expiresAt,
@@ -291,7 +298,7 @@ export const authRouter = {
           // Create new session
           sessionToken = createId({ prefix: 'session' });
           sessionId = createId({ prefix: 'sess' });
-          await db.insert(Sessions).values({
+          await authDb.insert(Sessions).values({
             expiresAt,
             id: sessionId,
             token: sessionToken,
@@ -339,7 +346,7 @@ export const authRouter = {
         }
 
         // Get user from database
-        const user = await db
+        const user = await authDb
           .select()
           .from(Users)
           .where(eq(Users.id, userId))
@@ -364,7 +371,7 @@ export const authRouter = {
 
         // A read: the organization was created when the person signed up or
         // was invited, never here.
-        const org = await db
+        const org = await authDb
           .select()
           .from(Orgs)
           .where(eq(Orgs.id, orgId))

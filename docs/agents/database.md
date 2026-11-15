@@ -11,6 +11,7 @@ Drizzle on Postgres through postgres.js, in `packages/db`. Hosted, the app conne
 ## Queries
 
 - Every query filters by its tenant id explicitly (`where organizationId = …`), even where row-level security would also filter. The explicit filter is what the planner uses and what a reader can check; row-level security is the backstop for the query that forgot.
+- Tenant tables force row-level security, so their rows are read and written inside `inTenant(organizationId, (tx) => …)`; people, organizations and sessions go through `authDb`, jobs through `workerDb`. Roles, grants and what a new table needs: [database-roles.md](database-roles.md).
 - A badge or tile that shows a number reads a `count(*)`, not the list.
 - A queue of pending work (deliveries to send, jobs to retry) gets a partial index on just the pending rows: `create index … on deliveries (dueAt) where status in ('pending', 'retrying')`. The table grows with history; the index stays the size of the backlog.
 
@@ -46,7 +47,7 @@ Inside `readingOnly` the client refuses `pg_advisory_lock`, `pg_advisory_xact_lo
 
 ## Transactions
 
-- `inTransaction(fn, { settings })` from `@seawatts/db/transaction` runs one transaction with a 30 s statement limit and optional transaction-local settings (for example a tenant id that row-level security reads with `current_setting`). The settings are the first statement and the callback's first reads are sent right behind them.
+- `inTransaction(fn, { settings })` from `@seawatts/db/transaction` runs one transaction with a 30 s statement limit and optional transaction-local settings; `inTenant` is the same with the organization setting row-level security reads. The settings are the first statement and the callback's first reads are sent right behind them.
 - Reads that belong together run together: `await Promise.all([...])` inside `inTransaction` costs about one round trip, not one per read.
 - Never fire queries together outside a transaction expecting them to overlap on one connection; they queue, one on the wire at a time.
 - Give each database role its own defaults as well: `alter role … set statement_timeout = '30s'` and `set idle_in_transaction_session_timeout = '30s'` for app roles, longer for workers.

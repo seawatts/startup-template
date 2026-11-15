@@ -1,5 +1,5 @@
 import { auth } from '@seawatts/auth/server';
-import { db } from '@seawatts/db/client';
+import { authDb } from '@seawatts/db/auth-client';
 import { Orgs } from '@seawatts/db/schema/organizations';
 import { eq } from 'drizzle-orm';
 import { headers } from 'next/headers';
@@ -22,7 +22,7 @@ export async function getOrgSubscriptionStatus(): Promise<{
   }
 
   // Get the organization
-  const org = await db
+  const org = await authDb
     .select()
     .from(Orgs)
     .where(eq(Orgs.id, orgId))

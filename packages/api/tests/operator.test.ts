@@ -8,7 +8,7 @@ describe.skipIf(!url)('with a database', () => {
   process.env.POSTGRES_URL = url;
   process.env.CI ??= 'true';
   const loaded = Promise.all([
-    import('@seawatts/db/client'),
+    import('@seawatts/db/auth-client').then(({ authDb }) => ({ db: authDb })),
     import('@seawatts/db/schema/api-keys'),
     import('@seawatts/db/schema/organizations'),
     import('@seawatts/db/schema/users'),
@@ -52,11 +52,15 @@ describe.skipIf(!url)('with a database', () => {
         { organizationId: ours, role: 'owner', userId: staff.id },
         { organizationId: theirs, role: 'owner', userId: customer.id },
       ]);
-      await db.insert(ApiKeys).values({
-        name: 'Their key',
-        organizationId: theirs,
-        userId: customer.id,
-      });
+      // A tenant row: written inside its organization, as the web role.
+      const { inTenant } = await import('@seawatts/db/transaction');
+      await inTenant(theirs, (tx) =>
+        tx.insert(ApiKeys).values({
+          name: 'Their key',
+          organizationId: theirs,
+          userId: customer.id,
+        }),
+      );
     },
   );
   afterAll(async () => {
@@ -73,7 +77,7 @@ describe.skipIf(!url)('with a database', () => {
     return createCaller({
       apiKey: apiKey ? { id: 'ak_1' } : null,
       auth: { orgId: null, userId: user?.id ?? null },
-      db,
+      authDb: db,
       organizationId: null,
       session: null,
       user,

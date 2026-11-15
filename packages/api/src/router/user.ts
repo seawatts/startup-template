@@ -11,7 +11,7 @@ export const userRouter = {
     .handler(({ context: ctx }) => {
       if (!ctx.auth.userId)
         throw new ORPCError('BAD_REQUEST', { message: 'User ID is required' });
-      return ctx.db
+      return ctx.authDb
         .select()
         .from(Users)
         .where(eq(Users.id, ctx.auth.userId))
@@ -28,7 +28,7 @@ export const userRouter = {
           message: 'You can only delete your own account',
         });
       }
-      const result = await ctx.db
+      const result = await ctx.authDb
         .delete(Users)
         .where(eq(Users.id, input))
         .returning();

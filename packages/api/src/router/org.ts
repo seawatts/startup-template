@@ -1,6 +1,7 @@
 import { ORPCError } from '@orpc/server';
 import { ApiKeys } from '@seawatts/db/schema/api-keys';
 import { OrgMembers, Orgs } from '@seawatts/db/schema/organizations';
+import { inTenant } from '@seawatts/db/transaction';
 import { and, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { protectedProcedure } from '../orpc';
@@ -20,7 +21,7 @@ export const orgRouter = {
         throw new ORPCError('BAD_REQUEST', { message: 'User ID is required' });
 
       // First check if the user already has access to an organization with this name
-      const existingOrgWithAccess = await ctx.db
+      const existingOrgWithAccess = await ctx.authDb
         .select({ id: Orgs.id })
         .from(Orgs)
         .innerJoin(OrgMembers, eq(OrgMembers.organizationId, Orgs.id))
@@ -41,7 +42,7 @@ export const orgRouter = {
         };
       }
 
-      const existingOrg = await ctx.db
+      const existingOrg = await ctx.authDb
         .select()
         .from(Orgs)
         .where(eq(Orgs.name, input.name))
@@ -66,7 +67,7 @@ export const orgRouter = {
         throw new ORPCError('BAD_REQUEST', {
           message: 'Organization ID is required',
         });
-      return ctx.db
+      return ctx.authDb
         .select()
         .from(Orgs)
         .where(eq(Orgs.id, ctx.auth.orgId))
@@ -94,7 +95,7 @@ export const orgRouter = {
         });
 
       // Check if organization name already exists
-      const existingOrg = await ctx.db
+      const existingOrg = await ctx.authDb
         .select()
         .from(Orgs)
         .where(eq(Orgs.name, input.name))
@@ -107,7 +108,7 @@ export const orgRouter = {
         });
       }
 
-      const [updatedOrg] = await ctx.db
+      const [updatedOrg] = await ctx.authDb
         .update(Orgs)
         .set({
           name: input.name,
@@ -133,39 +134,51 @@ export const orgRouter = {
         throw new ORPCError('BAD_REQUEST', { message: 'User ID is required' });
       }
 
-      try {
-        const existingOrg = await ctx.db
-          .select()
-          .from(Orgs)
-          .where(eq(Orgs.name, input.name))
-          .limit(1)
-          .then((rows) => rows[0]);
+      const [existingOrg] = await ctx.authDb
+        .select({
+          id: Orgs.id,
+          member: OrgMembers.userId,
+          name: Orgs.name,
+          stripeCustomerId: Orgs.stripeCustomerId,
+        })
+        .from(Orgs)
+        .leftJoin(
+          OrgMembers,
+          and(
+            eq(OrgMembers.organizationId, Orgs.id),
+            eq(OrgMembers.userId, ctx.auth.userId),
+          ),
+        )
+        .where(eq(Orgs.name, input.name))
+        .limit(1);
 
-        if (existingOrg) {
-          const apiKey = await ctx.db
+      if (existingOrg) {
+        // Only a member gets the organization and its key back. Anyone else
+        // learns the name is taken and nothing more.
+        if (!existingOrg.member)
+          throw new ORPCError('BAD_REQUEST', {
+            message: `Organization name '${input.name}' already exists`,
+          });
+        const apiKey = await inTenant(existingOrg.id, (tx) =>
+          tx
             .select()
             .from(ApiKeys)
             .where(eq(ApiKeys.organizationId, existingOrg.id))
             .limit(1)
-            .then((rows) => rows[0]);
-          return {
-            apiKey: {
-              id: apiKey?.id,
-              key: apiKey?.key,
-              name: apiKey?.name,
-            },
-            org: {
-              id: existingOrg.id,
-              name: existingOrg.name,
-              stripeCustomerId: existingOrg.stripeCustomerId,
-            },
-          };
-        }
-      } catch (error) {
-        console.error('Failed to check organization name:', error);
-        throw new ORPCError('BAD_REQUEST', {
-          message: 'Failed to check organization name',
-        });
+            .then((rows) => rows[0]),
+        );
+        return {
+          apiKey: {
+            id: apiKey?.id,
+            key: apiKey?.key,
+            name: apiKey?.name,
+          },
+          org: {
+            id: existingOrg.id,
+            name: existingOrg.name,
+            stripeCustomerId: existingOrg.stripeCustomerId,
+          },
+        };
       }
 
       try {

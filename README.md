@@ -26,11 +26,24 @@ bun install
 ```
 
 ### 2. Environment Setup
+Secrets live in Infisical (`.infisical.json`), never in `.env` files.
+
 ```bash
-cp .env.example .env
-# Configure your environment variables
-bun with-env -- bun db:push
+# A local PostgreSQL with the app's database roles, every migration applied
+# and the connection URLs in .env.database.local
+bun db:local
+. ./.env.database.local
 ```
+
+For a hosted database, open a "Database setup" issue from the template in
+`.github/ISSUE_TEMPLATE/database-setup.md` and follow
+`docs/agents/database-setup.md`: the admin connection string goes into
+Infisical, `bun db:bootstrap` makes the roles, `bun db:migrate` applies the
+grants and row-level security, and `bun db:verify` proves the isolation.
+A Claude session with the admin URL in Infisical (or the Supabase connector)
+can run the bootstrap, extensions, migrations and verification by itself.
+Copying the admin connection string, turning off Supabase's public Data API
+and downloading the database CA need the owner's browser.
 
 ### 3. Start Development
 ```bash
@@ -138,8 +151,11 @@ bun clean:ws
 # Open database studio
 bun db:studio
 
-# Push schema changes
-bun db:push
+# Prepare a local database (roles, migrations, isolation check)
+bun db:local
+
+# Prove role and tenant isolation against the configured database
+bun db:verify
 
 # Generate migrations
 bun db:gen-migration

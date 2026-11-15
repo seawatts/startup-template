@@ -13,7 +13,7 @@ export const orgMembersRouter = {
           message: 'Organization ID is required',
         });
       // Fetch all org members for the current org, including user info
-      const rows = await ctx.db
+      const rows = await ctx.authDb
         .select({ member: OrgMembers, user: Users })
         .from(OrgMembers)
         .innerJoin(Users, eq(Users.id, OrgMembers.userId))

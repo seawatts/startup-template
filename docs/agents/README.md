@@ -8,6 +8,8 @@
 | [bun.md](bun.md) | Adding a script, a dependency or a Node import; anything about the runtime |
 | [imports.md](imports.md) | Adding modules, package entries or imports |
 | [database.md](database.md) | Touching the schema, the database client, transactions or after-response work |
+| [database-roles.md](database-roles.md) | Adding a table or a function, reading tenant rows, anything about roles, grants or row-level security |
+| [database-setup.md](database-setup.md) | Setting up a hosted database for a new project or environment |
 | [analytics-internal.md](analytics-internal.md) | Adding a feature, a save, or anything staff will want to see per customer |
 | [api.md](api.md) | Adding or calling an API procedure, touching the `/api/rpc` route or how the session is read |
 | [interfaces.md](interfaces.md) | Adding or changing a procedure: the catalog that feeds REST, OpenAPI, the SDK, the CLI, MCP and the docs reference |

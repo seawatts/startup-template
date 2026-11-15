@@ -14,6 +14,13 @@
       "tag": "0001_operators",
       "version": "7",
       "when": 1794639023881
+    },
+    {
+      "breakpoints": true,
+      "idx": 2,
+      "tag": "0002_database_roles",
+      "version": "7",
+      "when": 1794725532009
     }
   ],
   "version": "7"

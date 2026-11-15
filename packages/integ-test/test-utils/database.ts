@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { ensureRoles } from '@seawatts/db/roles';
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { migrate } from 'drizzle-orm/postgres-js/migrator';
@@ -54,6 +55,8 @@ async function getLocalDatabase(): Promise<TestDatabase> {
   const sql = postgres(connectionString, { max: 1 });
   const db = drizzle(sql);
 
+  // The migrations grant to the database roles, so those come first.
+  await ensureRoles(sql);
   // Run migrations
   const migrationsPath = path.join(__dirname, '../../db/drizzle');
   await migrate(db, { migrationsFolder: migrationsPath });
@@ -120,6 +123,8 @@ async function getContainerDatabase(): Promise<TestDatabase> {
 
   const db = drizzle(sql);
 
+  // The migrations grant to the database roles, so those come first.
+  await ensureRoles(sql);
   // Run migrations
   const migrationsPath = path.join(__dirname, '../../db/drizzle');
   try {

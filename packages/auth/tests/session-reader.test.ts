@@ -18,12 +18,12 @@ describe.skipIf(!url)('readSession', () => {
     import('../src/server'),
     import('../src/session-reader'),
     import('better-auth/crypto'),
-    import('@seawatts/db/client'),
+    import('@seawatts/db/auth-client'),
   ]);
 
   afterAll(async () => {
-    const [, , , { connection }] = await loaded;
-    await connection.end();
+    const [, , , { authConnection }] = await loaded;
+    await authConnection.end();
   });
 
   const signedIn = async () => {

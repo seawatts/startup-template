@@ -1,8 +1,8 @@
 'use server';
 
 import { auth } from '@seawatts/auth/server';
-import { db } from '@seawatts/db/client';
 import { AuthCodes } from '@seawatts/db/schema/api-keys';
+import { inTenant } from '@seawatts/db/transaction';
 import { and, eq, gt, isNull } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import { createSafeActionClient } from 'next-safe-action';
@@ -34,19 +34,21 @@ export const createAuthCode = action.action(async () => {
   const sessionId = session.session.id;
 
   // First check for an existing unused and non-expired auth code
-  const existingAuthCode = await db
-    .select()
-    .from(AuthCodes)
-    .where(
-      and(
-        eq(AuthCodes.userId, userId),
-        eq(AuthCodes.organizationId, orgId),
-        isNull(AuthCodes.usedAt),
-        gt(AuthCodes.expiresAt, new Date()),
-      ),
-    )
-    .limit(1)
-    .then((rows) => rows[0]);
+  const existingAuthCode = await inTenant(orgId, (tx) =>
+    tx
+      .select()
+      .from(AuthCodes)
+      .where(
+        and(
+          eq(AuthCodes.userId, userId),
+          eq(AuthCodes.organizationId, orgId),
+          isNull(AuthCodes.usedAt),
+          gt(AuthCodes.expiresAt, new Date()),
+        ),
+      )
+      .limit(1)
+      .then((rows) => rows[0]),
+  );
 
   if (existingAuthCode) {
     return {
@@ -57,14 +59,16 @@ export const createAuthCode = action.action(async () => {
 
   console.log('creating auth code', orgId, userId, sessionId);
   // If no valid auth code exists, create a new one
-  const [authCode] = await db
-    .insert(AuthCodes)
-    .values({
-      organizationId: orgId,
-      sessionId,
-      userId,
-    })
-    .returning();
+  const [authCode] = await inTenant(orgId, (tx) =>
+    tx
+      .insert(AuthCodes)
+      .values({
+        organizationId: orgId,
+        sessionId,
+        userId,
+      })
+      .returning(),
+  );
 
   if (!authCode) {
     throw new Error('Failed to create auth code');

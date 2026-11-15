@@ -1,5 +1,5 @@
 import { ORPCError } from '@orpc/server';
-import { db } from '@seawatts/db/client';
+import { authDb } from '@seawatts/db/auth-client';
 import { requestRead } from '@seawatts/db/request-reads';
 import { Operators } from '@seawatts/db/schema/operators';
 import { eq } from 'drizzle-orm';
@@ -25,7 +25,7 @@ export async function isOperator(user: Person | null | undefined) {
   if (!id || !user.emailVerified) return false;
   // A screen's reads ask once between them.
   return requestRead(`operator:${id}`, async () => {
-    const [row] = await db
+    const [row] = await authDb
       .select({ userId: Operators.userId })
       .from(Operators)
       .where(eq(Operators.userId, id))

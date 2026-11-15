@@ -1,6 +1,6 @@
 import type { Session } from '@seawatts/auth/server';
 import { readSession } from '@seawatts/auth/session-reader';
-import { db } from '@seawatts/db/client';
+import { authDb } from '@seawatts/db/auth-client';
 import { headers } from 'next/headers';
 
 // Pass the request's headers from a route handler; a server component call
@@ -21,7 +21,9 @@ export const createORPCContext = async (requestHeaders?: Headers) => {
     // signed-in session.
     apiKey: null as { id: string } | null,
     auth: { orgId, userId },
-    db,
+    // People, organizations and memberships (the auth role). Tenant tables
+    // are read inside `inTenant(organizationId, …)`, never through here.
+    authDb,
     organizationId: orgId,
     session,
     user: session?.user ?? null,
