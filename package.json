@@ -57,6 +57,7 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
+    "check:deploy": "bun scripts/check-deploy.ts",
     "clean": "git clean -xdf node_modules .turbo",
     "clean:ws": "turbo run clean",
     "clone-project": "bun run scripts/clone-project.ts",

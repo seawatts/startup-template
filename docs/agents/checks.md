@@ -10,6 +10,8 @@ Run the smallest check that covers the change while you work, and the full set o
 | A screen | `bun test:e2e <file>` against the running app ([tests.md](tests.md)) |
 | A screen's speed or its reads | `SPEED=enabled bun test:e2e speed`, before and after |
 | Formatting and lint | `bunx biome check --write <paths>` |
+| The build's functions load from their traced files | `bun run check:trace` in `apps/web-app`, after a build ([bun.md](bun.md#changing-the-hosted-runtime)) |
+| A deployment | `bun check:deploy <url>`: one request to every kind of function |
 | Everything, before a push | `bun format:ci && bun typecheck:ci && bun test` |
 
 - `bun typecheck` needs the generated Stripe billing ids. `bun typecheck:ci` builds them first; locally run `bun run build --filter @seawatts/stripe` once.
