@@ -77,7 +77,7 @@ describe.skipIf(!url)('with a database', () => {
   process.env.POSTGRES_URL = url;
   process.env.CI ??= 'true';
   const loaded = Promise.all([
-    import('@seawatts/db/client'),
+    import('@seawatts/db/auth-client').then(({ authDb }) => ({ db: authDb })),
     import('@seawatts/db/schema/api-keys'),
     import('@seawatts/db/schema/organizations'),
     import('@seawatts/db/schema/users'),
@@ -105,17 +105,20 @@ describe.skipIf(!url)('with a database', () => {
 
   test('a key is switched off once, and only when it is due', async () => {
     await seeded;
-    const [{ db }, { ApiKeys }, , , { expireApiKeyIfDue }] = await loaded;
+    const [, { ApiKeys }, , , { expireApiKeyIfDue }] = await loaded;
+    const { inTenant } = await import('@seawatts/db/transaction');
     const soon = new Date(Date.now() + 60_000);
-    const [key] = await db
-      .insert(ApiKeys)
-      .values({
-        expiresAt: soon,
-        name: 'expiring',
-        organizationId: orgId,
-        userId,
-      })
-      .returning();
+    const [key] = await inTenant(orgId, (tx) =>
+      tx
+        .insert(ApiKeys)
+        .values({
+          expiresAt: soon,
+          name: 'expiring',
+          organizationId: orgId,
+          userId,
+        })
+        .returning(),
+    );
     if (!key) throw new Error('no key');
     expect(await expireApiKeyIfDue(key.id)).toEqual({
       status: 'waiting',
@@ -183,5 +186,26 @@ describe.skipIf(!url)('with a database', () => {
         payload: { apiKeyId: key.id, expiresAt: null, organizationId: orgId },
       },
     ]);
+  });
+
+  test('an API key is found before its organization is known, and only while it is on', async () => {
+    await seeded;
+    const [, , , , , { createCaller }, { apiKeyContext, readApiKey }] =
+      await loaded;
+    const api = createCaller(
+      apiKeyContext({ apiKeyId: 'ak_caller', orgId, userId }),
+    );
+    const key = await api.apiKeys.create({ name: 'for a header' });
+    if (!key) throw new Error('no key');
+    const bearer = (token: string) =>
+      new Headers({ authorization: `Bearer ${token}` });
+    expect(await readApiKey(bearer(key.key))).toEqual({
+      apiKeyId: key.id,
+      orgId,
+      userId,
+    });
+    expect(await readApiKey(bearer('usk-live-unknown'))).toBeNull();
+    await api.apiKeys.update({ id: key.id, isActive: false });
+    expect(await readApiKey(bearer(key.key))).toBeNull();
   });
 });

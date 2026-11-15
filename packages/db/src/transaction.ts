@@ -3,7 +3,12 @@ import { db, requestStatementLimit } from './client';
 
 export type Transaction = Parameters<Parameters<typeof db.transaction>[0]>[0];
 
+/** The setting row-level security reads: one organization per transaction. */
+export const tenantSetting = 'app.tenant_id';
+
 type Options = {
+  /** Which role's connection: the web role unless a job passes its own. */
+  client?: Pick<typeof db, 'transaction'>;
   /** Transaction-local settings, such as the tenant id row-level security reads. */
   settings?: Record<string, string>;
   statementLimit?: string;
@@ -25,6 +30,7 @@ type Options = {
 export function inTransaction<T>(
   fn: (tx: Transaction) => Promise<T>,
   {
+    client = db,
     settings = {},
     statementLimit = requestStatementLimit,
     isolationLevel,
@@ -34,7 +40,7 @@ export function inTransaction<T>(
     ...settings,
     statement_timeout: statementLimit,
   }).map(([name, value]) => sql`set_config(${name}, ${value}, true)`);
-  return db.transaction(
+  return client.transaction(
     async (tx) => {
       const configured = tx
         .execute(sql`select ${sql.join(configs, sql`, `)}`)
@@ -53,4 +59,24 @@ export function inTransaction<T>(
     // TRANSACTION: one less round trip before the first read.
     isolationLevel ? { isolationLevel } : undefined,
   );
+}
+
+/**
+ * One organization's rows. Every tenant table forces row-level security on
+ * `app.tenant_id`, so a query outside `inTenant` sees nothing and writes
+ * nothing. The setting is local to the transaction and travels with its
+ * first query, so it cannot reach the next request on a pooled connection.
+ * Keep the explicit organization filter in each query as well: row-level
+ * security is the backstop, and the filter is what the indexes serve.
+ */
+export function inTenant<T>(
+  organizationId: string,
+  fn: (tx: Transaction) => Promise<T>,
+  options: Options = {},
+): Promise<T> {
+  if (!organizationId) throw new Error('inTenant needs an organization id');
+  return inTransaction(fn, {
+    ...options,
+    settings: { ...options.settings, [tenantSetting]: organizationId },
+  });
 }

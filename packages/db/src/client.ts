@@ -38,9 +38,23 @@ export function connectDatabase(url: string) {
 // procedure, for one) a write or an advisory lock is refused before it is
 // sent (read-only.ts). Statements are also counted per request and per
 // procedure (statement-count.ts).
-export const connection = countStatements(
-  guardWritesInReads(connectDatabase(env.POSTGRES_URL)),
-);
+const pools = new Map<string, ReturnType<typeof connectDatabase>>();
+/** One guarded pool per URL: two roles that share a URL share its pool. */
+export function guardedConnection(url: string) {
+  let pool = pools.get(url);
+  if (!pool) {
+    pool = countStatements(guardWritesInReads(connectDatabase(url)));
+    pools.set(url, pool);
+  }
+  return pool;
+}
+
+// The web role: what a request connects as. It reaches the tenant tables
+// only, and row-level security shows it one organization's rows, the one
+// named by the transaction (`inTenant`, transaction.ts). People,
+// organizations and sessions belong to the auth role (auth-client.ts); jobs
+// use the worker role (worker-client.ts).
+export const connection = guardedConnection(env.POSTGRES_URL);
 
 // No schema registry: nothing uses Drizzle's relational queries
 // (`db.query.*`), and a registry makes every request load every table.

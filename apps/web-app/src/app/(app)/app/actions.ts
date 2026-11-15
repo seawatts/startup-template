@@ -2,7 +2,7 @@
 
 import { upsertOrg } from '@seawatts/api/services/upsert-org';
 import { auth } from '@seawatts/auth/server';
-import { db } from '@seawatts/db/client';
+import { authDb } from '@seawatts/db/auth-client';
 import { OrgMembers, Orgs } from '@seawatts/db/schema/organizations';
 import { eq } from 'drizzle-orm';
 import { headers } from 'next/headers';
@@ -47,7 +47,7 @@ export const upsertOrgAction = action
     // If no orgId is provided (creating new org), check if user already has an organization via membership
     if (!orgId) {
       // Find existing org through membership
-      const existingOrg = await db
+      const existingOrg = await authDb
         .select({ id: Orgs.id, name: Orgs.name })
         .from(OrgMembers)
         .innerJoin(Orgs, eq(Orgs.id, OrgMembers.organizationId))

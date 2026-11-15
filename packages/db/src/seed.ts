@@ -1,10 +1,16 @@
 import { subDays } from 'date-fns';
+import { drizzle } from 'drizzle-orm/postgres-js';
 import { seed } from 'drizzle-seed';
-
-import { db } from './client';
+import postgres from 'postgres';
 import { ApiKeys, ApiKeyUsage, AuthCodes } from './schema/api-keys';
 import { OrgMembers, Orgs } from './schema/organizations';
 import { Users } from './schema/users';
+
+// A development script that fills every table, across organizations, so it
+// connects as the migrator: the one role allowed past row-level security.
+const url = process.env.POSTGRES_MIGRATOR_URL || process.env.POSTGRES_URL;
+if (!url) throw new Error('POSTGRES_MIGRATOR_URL is not set');
+const db = drizzle(postgres(url, { max: 1, prepare: false }));
 
 // Reset all tables
 

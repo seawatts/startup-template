@@ -6,7 +6,8 @@ Run the smallest check that covers the change while you work, and the full set o
 | --- | --- |
 | One package's types | `bun run --filter @seawatts/<package> typecheck` |
 | One test file | `bun test <path>` from that package |
-| The database client, transactions or the driver patch | `TEST_POSTGRES_URL=<disposable database> bun test packages/db/tests/unit` |
+| A migration, a grant, a policy or which role a query uses | `bun db:local` (migrates a local database and checks isolation), then the isolation test and `bun db:verify` |
+| The database client, transactions or the driver patch | `bun db:local && . ./.env.database.local && bun test packages/db/tests/unit` (runs as the real database roles) |
 | A screen | `bun test:e2e <file>` against the running app ([tests.md](tests.md)) |
 | A screen's speed or its reads | `SPEED=enabled bun test:e2e speed`, before and after |
 | Formatting and lint | `bunx biome check --write <paths>` |

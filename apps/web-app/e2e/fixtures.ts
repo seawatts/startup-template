@@ -9,7 +9,10 @@ import postgres from 'postgres';
 // organization and removes them afterwards.
 //
 // Needs the same database and auth secret as the running app:
-// POSTGRES_URL and BETTER_AUTH_SECRET.
+// POSTGRES_URL, POSTGRES_AUTH_URL and BETTER_AUTH_SECRET. The person, the
+// organization and the session are written as the auth role; the
+// organization's first API key is a tenant row, written as the web role
+// inside that organization (docs/agents/database-roles.md).
 
 type Person = {
   email: string;
@@ -43,7 +46,14 @@ export const test = base.extend<{
   },
   // biome-ignore lint/correctness/noEmptyPattern: Playwright reads the fixture names from this pattern
   person: async ({}, use) => {
-    const sql = postgres(required('POSTGRES_URL'), { max: 1, prepare: false });
+    const web = postgres(required('POSTGRES_URL'), { max: 1, prepare: false });
+    const sql = postgres(
+      process.env.POSTGRES_AUTH_URL || required('POSTGRES_URL'),
+      {
+        max: 1,
+        prepare: false,
+      },
+    );
     const id = randomBytes(8).toString('hex');
     const token = randomBytes(24).toString('hex');
     const person: Person = {
@@ -62,12 +72,15 @@ export const test = base.extend<{
     await sql`insert into ${table('session')} (id, token, "userId", "expiresAt", "activeOrganizationId")
       values (${`session_e2e_${id}`}, ${token}, ${person.userId}, now() + interval '1 hour', ${person.organizationId})`;
     // Every new organization starts with one API key, as sign-up gives it.
-    await sql`insert into ${table('apiKeys')} (id, key, name, "organizationId", "userId")
-      values (${`ak_e2e_${id}`}, ${`usk-live-e2e-${token}`}, 'First key', ${person.organizationId}, ${person.userId})`;
+    await web.begin(async (tx) => {
+      await tx`select set_config('app.tenant_id', ${person.organizationId}, true)`;
+      await tx`insert into startup_template."apiKeys" (id, key, name, "organizationId", "userId")
+        values (${`ak_e2e_${id}`}, ${`usk-live-e2e-${token}`}, 'First key', ${person.organizationId}, ${person.userId})`;
+    });
     await use(person);
     await sql`delete from ${table('organization')} where id = ${person.organizationId}`;
     await sql`delete from ${table('user')} where id = ${person.userId}`;
-    await sql.end();
+    await Promise.all([sql.end(), web.end()]);
   },
   signIn: async ({ baseURL, person }, use) => {
     await use(async (context) => {

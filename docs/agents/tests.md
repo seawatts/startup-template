@@ -7,7 +7,7 @@ Put a test in the suite its behavior needs, and check for existing coverage befo
 | What is being verified | Where | Run |
 | --- | --- | --- |
 | Logic with no I/O (parsing, mapping, catalogs, rules) | `packages/<name>/tests/*.test.ts`, or beside the file | `bun test <path>` |
-| Database behavior: constraints, transactions, the driver patch, the read guard | `packages/db/tests/unit`, skipped without `TEST_POSTGRES_URL` | `TEST_POSTGRES_URL=<disposable database> bun test packages/db/tests/unit` |
+| Database behavior: constraints, transactions, the driver patch, the read guard, role and tenant isolation (`isolation.test.ts`, needs `TEST_POSTGRES_ADMIN_URL`) | `packages/db/tests/unit`, skipped without `TEST_POSTGRES_URL` | `bun db:local && . ./.env.database.local && bun test packages/db/tests/unit` |
 | Procedures, access rules, events, operator reads | `packages/api/tests`, database parts skipped without `TEST_POSTGRES_URL` | `bun test packages/api/tests` |
 | Rendering, layout at both sizes, focus, dialogs, loading and error states | `apps/web-app/e2e/*.e2e.ts` (Playwright) | `bun test:e2e` |
 | How fast a screen shows its content | `apps/web-app/e2e/speed.e2e.ts` | `SPEED=enabled bun test:e2e speed` |

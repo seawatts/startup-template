@@ -40,7 +40,10 @@ jobs:
       - name: Run database migration
         run: cd packages/db && bun run migrate
         env:
-          # Production database environment variables
+          # Production database environment variables. Migrations run as the
+          # migrator role (docs/agents/database-roles.md); the role bootstrap
+          # is a one-time operator step and never runs here.
+          POSTGRES_MIGRATOR_URL: ${{ secrets.POSTGRES_MIGRATOR_URL }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
           POSTGRES_URL_NON_POOLING: ${{ secrets.POSTGRES_URL_NON_POOLING }}

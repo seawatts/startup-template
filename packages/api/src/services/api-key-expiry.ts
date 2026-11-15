@@ -1,5 +1,7 @@
-import { db } from '@seawatts/db/client';
 import { ApiKeys } from '@seawatts/db/schema/api-keys';
+import { tenantOf } from '@seawatts/db/tenant-lookup';
+import { inTenant } from '@seawatts/db/transaction';
+import { workerDb } from '@seawatts/db/worker-client';
 import { and, eq, lte } from 'drizzle-orm';
 
 export type ApiKeyExpiry =
@@ -18,26 +20,36 @@ export async function expireApiKeyIfDue(
   apiKeyId: string,
   now = new Date(),
 ): Promise<ApiKeyExpiry> {
-  const [expired] = await db
-    .update(ApiKeys)
-    .set({ isActive: false })
-    .where(
-      and(
-        eq(ApiKeys.id, apiKeyId),
-        eq(ApiKeys.isActive, true),
-        lte(ApiKeys.expiresAt, now),
-      ),
-    )
-    .returning({ organizationId: ApiKeys.organizationId });
-  if (expired)
-    return { organizationId: expired.organizationId, status: 'expired' };
-  const [key] = await db
-    .select({ expiresAt: ApiKeys.expiresAt, isActive: ApiKeys.isActive })
-    .from(ApiKeys)
-    .where(eq(ApiKeys.id, apiKeyId))
-    .limit(1);
-  if (!key?.isActive || !key.expiresAt) return { status: 'nothing_due' };
-  return { status: 'waiting', until: key.expiresAt.toISOString() };
+  // A job, so the worker role. The run knows the key, not its organization:
+  // find that first, then work inside it.
+  const organizationId = await tenantOf('api_key_by_id', apiKeyId, workerDb);
+  if (!organizationId) return { status: 'nothing_due' };
+  return inTenant(
+    organizationId,
+    async (tx): Promise<ApiKeyExpiry> => {
+      const [expired] = await tx
+        .update(ApiKeys)
+        .set({ isActive: false })
+        .where(
+          and(
+            eq(ApiKeys.id, apiKeyId),
+            eq(ApiKeys.isActive, true),
+            lte(ApiKeys.expiresAt, now),
+          ),
+        )
+        .returning({ organizationId: ApiKeys.organizationId });
+      if (expired)
+        return { organizationId: expired.organizationId, status: 'expired' };
+      const [key] = await tx
+        .select({ expiresAt: ApiKeys.expiresAt, isActive: ApiKeys.isActive })
+        .from(ApiKeys)
+        .where(eq(ApiKeys.id, apiKeyId))
+        .limit(1);
+      if (!key?.isActive || !key.expiresAt) return { status: 'nothing_due' };
+      return { status: 'waiting', until: key.expiresAt.toISOString() };
+    },
+    { client: workerDb },
+  );
 }
 
 // A workflow run stays on the release that started it, so no run sleeps

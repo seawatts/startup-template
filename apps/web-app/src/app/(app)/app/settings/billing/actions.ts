@@ -1,7 +1,7 @@
 'use server';
 
 import { auth } from '@seawatts/auth/server';
-import { db } from '@seawatts/db/client';
+import { authDb } from '@seawatts/db/auth-client';
 import { Orgs } from '@seawatts/db/schema/organizations';
 import {
   BILLING_INTERVALS,
@@ -39,7 +39,7 @@ export const createCheckoutSessionAction = action.action(async () => {
   const orgId = session.session.activeOrganizationId;
 
   // Get the organization
-  const org = await db
+  const org = await authDb
     .select()
     .from(Orgs)
     .where(eq(Orgs.id, orgId))
@@ -74,7 +74,7 @@ export const createCheckoutSessionAction = action.action(async () => {
     customerId = customer.id;
 
     // Update org with customer ID
-    await db
+    await authDb
       .update(Orgs)
       .set({
         stripeCustomerId: customerId,
@@ -110,7 +110,7 @@ export const createBillingPortalSessionAction = action.action(async () => {
   const orgId = session.session.activeOrganizationId;
 
   // Get the organization
-  const org = await db
+  const org = await authDb
     .select()
     .from(Orgs)
     .where(eq(Orgs.id, orgId))
@@ -146,7 +146,7 @@ export const getInvoicesAction = action.action(async () => {
   const orgId = session.session.activeOrganizationId;
 
   // Get the organization
-  const org = await db
+  const org = await authDb
     .select()
     .from(Orgs)
     .where(eq(Orgs.id, orgId))

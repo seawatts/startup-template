@@ -1,4 +1,4 @@
-import { db } from '@seawatts/db/client';
+import { authDb } from '@seawatts/db/auth-client';
 import type { stripeSubscriptionStatusEnum } from '@seawatts/db/schema/enums';
 import { Orgs } from '@seawatts/db/schema/organizations';
 import { constructWebhookEvent } from '@seawatts/stripe';
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
           session.customer &&
           session.subscription
         ) {
-          await db
+          await authDb
             .update(Orgs)
             .set({
               stripeCustomerId: session.customer as string,
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
 
         // Update subscription status
         if (subscription.metadata?.orgId) {
-          await db
+          await authDb
             .update(Orgs)
             .set({
               stripeSubscriptionId: subscription.id,
@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
 
         // Update subscription status to canceled
         if (subscription.metadata?.orgId) {
-          await db
+          await authDb
             .update(Orgs)
             .set({
               stripeSubscriptionStatus: 'canceled',
@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
             : invoice.subscription?.id;
 
         if (subscriptionId) {
-          const org = await db
+          const org = await authDb
             .select()
             .from(Orgs)
             .where(eq(Orgs.stripeSubscriptionId, subscriptionId))
@@ -112,7 +112,7 @@ export async function POST(req: NextRequest) {
             .then((rows) => rows[0]);
 
           if (org && org.stripeSubscriptionStatus === 'past_due') {
-            await db
+            await authDb
               .update(Orgs)
               .set({
                 stripeSubscriptionStatus: 'active',
@@ -135,7 +135,7 @@ export async function POST(req: NextRequest) {
             : invoice.subscription?.id;
 
         if (subscriptionId) {
-          const org = await db
+          const org = await authDb
             .select()
             .from(Orgs)
             .where(eq(Orgs.stripeSubscriptionId, subscriptionId))
@@ -143,7 +143,7 @@ export async function POST(req: NextRequest) {
             .then((rows) => rows[0]);
 
           if (org) {
-            await db
+            await authDb
               .update(Orgs)
               .set({
                 stripeSubscriptionStatus: 'past_due',

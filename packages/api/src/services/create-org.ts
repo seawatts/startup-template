@@ -1,7 +1,8 @@
-import { db } from '@seawatts/db/client';
+import { authDb } from '@seawatts/db/auth-client';
 import { ApiKeys } from '@seawatts/db/schema/api-keys';
 import { OrgMembers, Orgs } from '@seawatts/db/schema/organizations';
 import { Users } from '@seawatts/db/schema/users';
+import { inTenant } from '@seawatts/db/transaction';
 import { generateRandomName } from '@seawatts/id';
 import {
   BILLING_INTERVALS,
@@ -13,7 +14,7 @@ import {
 import { eq } from 'drizzle-orm';
 import type Stripe from 'stripe';
 
-type Transaction = Parameters<Parameters<typeof db.transaction>[0]>[0];
+type Transaction = Parameters<Parameters<typeof authDb.transaction>[0]>[0];
 
 type CreateOrgParams = {
   name: string;
@@ -34,48 +35,52 @@ type CreateOrgResult = {
 };
 
 // Helper function to create default API key
+// The default API key is a tenant row: it is written in the organization's
+// own transaction, as the web role, after the organization itself has been
+// committed by the auth role. Safe to run again: an organization that has a
+// key keeps it.
 async function ensureDefaultApiKey({
   organizationId,
   userId,
-  tx,
 }: {
   organizationId: string;
   userId: string;
-  tx: Transaction;
 }) {
-  const existingApiKey = await tx
-    .select()
-    .from(ApiKeys)
-    .where(eq(ApiKeys.organizationId, organizationId))
-    .limit(1)
-    .then((rows) => rows[0]);
+  return inTenant(organizationId, async (tx) => {
+    const existingApiKey = await tx
+      .select()
+      .from(ApiKeys)
+      .where(eq(ApiKeys.organizationId, organizationId))
+      .limit(1)
+      .then((rows) => rows[0]);
 
-  if (existingApiKey) {
-    return existingApiKey;
-  }
+    if (existingApiKey) {
+      return existingApiKey;
+    }
 
-  const [apiKey] = await tx
-    .insert(ApiKeys)
-    .values({
-      name: 'Default',
-      organizationId,
-      userId,
-    })
-    .onConflictDoUpdate({
-      set: {
-        updatedAt: new Date(),
-      },
-      target: ApiKeys.key,
-    })
-    .returning();
+    const [apiKey] = await tx
+      .insert(ApiKeys)
+      .values({
+        name: 'Default',
+        organizationId,
+        userId,
+      })
+      .onConflictDoUpdate({
+        set: {
+          updatedAt: new Date(),
+        },
+        target: ApiKeys.key,
+      })
+      .returning();
 
-  if (!apiKey) {
-    throw new Error(
-      `Failed to create API key for organizationId: ${organizationId}, userId: ${userId}`,
-    );
-  }
+    if (!apiKey) {
+      throw new Error(
+        `Failed to create API key for organizationId: ${organizationId}, userId: ${userId}`,
+      );
+    }
 
-  return apiKey;
+    return apiKey;
+  });
 }
 
 // Helper function to create org in database
@@ -208,7 +213,10 @@ export async function createOrg({
   name,
   userId,
 }: CreateOrgParams): Promise<CreateOrgResult> {
-  return await db.transaction(async (tx) => {
+  // People and organizations belong to the auth role; the API key belongs to
+  // the organization's tenant rows. Two roles, so two transactions: the
+  // organization commits first, then its key is made.
+  const org = await authDb.transaction(async (tx) => {
     // Get user from database
     const existingUser = await tx
       .select()
@@ -254,24 +262,10 @@ export async function createOrg({
         finalCheckOrg.id,
       );
 
-      // Get or create API key for existing org
-      const apiKey = await ensureDefaultApiKey({
-        organizationId: finalCheckOrg.id,
-        tx,
-        userId,
-      });
-
       return {
-        apiKey: {
-          id: apiKey.id,
-          key: apiKey.key,
-          name: apiKey.name,
-        },
-        org: {
-          id: finalCheckOrg.id,
-          name: finalCheckOrg.name,
-          stripeCustomerId: finalCheckOrg.stripeCustomerId || '',
-        },
+        id: finalCheckOrg.id,
+        name: finalCheckOrg.name,
+        stripeCustomerId: finalCheckOrg.stripeCustomerId || '',
       };
     }
 
@@ -339,24 +333,19 @@ export async function createOrg({
       tx,
     });
 
-    // Create default API key
-    const apiKey = await ensureDefaultApiKey({
-      organizationId: org.id,
-      tx,
-      userId,
-    });
-
     return {
-      apiKey: {
-        id: apiKey.id,
-        key: apiKey.key,
-        name: apiKey.name,
-      },
-      org: {
-        id: org.id,
-        name: org.name,
-        stripeCustomerId: stripeCustomer.id,
-      },
+      id: org.id,
+      name: org.name,
+      stripeCustomerId: stripeCustomer.id,
     };
   });
+
+  const apiKey = await ensureDefaultApiKey({
+    organizationId: org.id,
+    userId,
+  });
+  return {
+    apiKey: { id: apiKey.id, key: apiKey.key, name: apiKey.name },
+    org,
+  };
 }

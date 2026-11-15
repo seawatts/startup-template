@@ -3,6 +3,7 @@ import {
   ApiKeyUsage,
   CreateApiKeyUsageSchema,
 } from '@seawatts/db/schema/api-keys';
+import { inTenant } from '@seawatts/db/transaction';
 import { and, desc, eq, gte, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { protectedProcedure } from '../orpc';
@@ -15,12 +16,15 @@ export const apiKeyUsageRouter = {
         throw new ORPCError('BAD_REQUEST', {
           message: 'Organization ID is required',
         });
+      const orgId = ctx.auth.orgId;
 
-      const apiKeyUsage = await ctx.db
-        .select()
-        .from(ApiKeyUsage)
-        .where(eq(ApiKeyUsage.organizationId, ctx.auth.orgId))
-        .orderBy(desc(ApiKeyUsage.createdAt));
+      const apiKeyUsage = await inTenant(orgId, (tx) =>
+        tx
+          .select()
+          .from(ApiKeyUsage)
+          .where(eq(ApiKeyUsage.organizationId, orgId))
+          .orderBy(desc(ApiKeyUsage.createdAt)),
+      );
 
       return apiKeyUsage;
     }),
@@ -33,17 +37,20 @@ export const apiKeyUsageRouter = {
         throw new ORPCError('BAD_REQUEST', {
           message: 'Organization ID is required',
         });
+      const orgId = ctx.auth.orgId;
 
-      const usage = await ctx.db
-        .select()
-        .from(ApiKeyUsage)
-        .where(
-          and(
-            eq(ApiKeyUsage.apiKeyId, input.apiKeyId),
-            eq(ApiKeyUsage.organizationId, ctx.auth.orgId),
-          ),
-        )
-        .orderBy(desc(ApiKeyUsage.createdAt));
+      const usage = await inTenant(orgId, (tx) =>
+        tx
+          .select()
+          .from(ApiKeyUsage)
+          .where(
+            and(
+              eq(ApiKeyUsage.apiKeyId, input.apiKeyId),
+              eq(ApiKeyUsage.organizationId, orgId),
+            ),
+          )
+          .orderBy(desc(ApiKeyUsage.createdAt)),
+      );
 
       return usage;
     }),
@@ -56,18 +63,21 @@ export const apiKeyUsageRouter = {
         throw new ORPCError('BAD_REQUEST', {
           message: 'Organization ID is required',
         });
+      const orgId = ctx.auth.orgId;
 
-      const usage = await ctx.db
-        .select()
-        .from(ApiKeyUsage)
-        .where(
-          and(
-            eq(ApiKeyUsage.id, input.id),
-            eq(ApiKeyUsage.organizationId, ctx.auth.orgId),
-          ),
-        )
-        .limit(1)
-        .then((rows) => rows[0]);
+      const usage = await inTenant(orgId, (tx) =>
+        tx
+          .select()
+          .from(ApiKeyUsage)
+          .where(
+            and(
+              eq(ApiKeyUsage.id, input.id),
+              eq(ApiKeyUsage.organizationId, orgId),
+            ),
+          )
+          .limit(1)
+          .then((rows) => rows[0]),
+      );
 
       if (!usage) return null;
 
@@ -86,17 +96,20 @@ export const apiKeyUsageRouter = {
         throw new ORPCError('BAD_REQUEST', {
           message: 'Organization ID is required',
         });
+      const orgId = ctx.auth.orgId;
 
-      const usage = await ctx.db
-        .select()
-        .from(ApiKeyUsage)
-        .where(
-          and(
-            eq(ApiKeyUsage.type, input.type),
-            eq(ApiKeyUsage.organizationId, ctx.auth.orgId),
-          ),
-        )
-        .orderBy(desc(ApiKeyUsage.createdAt));
+      const usage = await inTenant(orgId, (tx) =>
+        tx
+          .select()
+          .from(ApiKeyUsage)
+          .where(
+            and(
+              eq(ApiKeyUsage.type, input.type),
+              eq(ApiKeyUsage.organizationId, orgId),
+            ),
+          )
+          .orderBy(desc(ApiKeyUsage.createdAt)),
+      );
 
       return usage;
     }),
@@ -108,18 +121,21 @@ export const apiKeyUsageRouter = {
         throw new ORPCError('BAD_REQUEST', {
           message: 'Organization ID is required',
         });
+      const orgId = ctx.auth.orgId;
       if (!ctx.auth.userId)
         throw new ORPCError('BAD_REQUEST', { message: 'User ID is required' });
 
       try {
-        const [usage] = await ctx.db
-          .insert(ApiKeyUsage)
-          .values({
-            ...input,
-            organizationId: ctx.auth.orgId,
-            userId: ctx.auth.userId,
-          })
-          .returning();
+        const [usage] = await inTenant(orgId, (tx) =>
+          tx
+            .insert(ApiKeyUsage)
+            .values({
+              ...input,
+              organizationId: orgId,
+              userId: ctx.auth.userId,
+            })
+            .returning(),
+        );
 
         return usage;
       } catch (error) {
@@ -137,16 +153,19 @@ export const apiKeyUsageRouter = {
         throw new ORPCError('BAD_REQUEST', {
           message: 'Organization ID is required',
         });
+      const orgId = ctx.auth.orgId;
 
-      const [usage] = await ctx.db
-        .delete(ApiKeyUsage)
-        .where(
-          and(
-            eq(ApiKeyUsage.id, input.id),
-            eq(ApiKeyUsage.organizationId, ctx.auth.orgId),
-          ),
-        )
-        .returning();
+      const [usage] = await inTenant(orgId, (tx) =>
+        tx
+          .delete(ApiKeyUsage)
+          .where(
+            and(
+              eq(ApiKeyUsage.id, input.id),
+              eq(ApiKeyUsage.organizationId, orgId),
+            ),
+          )
+          .returning(),
+      );
 
       return usage;
     }),
@@ -166,10 +185,11 @@ export const apiKeyUsageRouter = {
         throw new ORPCError('BAD_REQUEST', {
           message: 'Organization ID is required',
         });
+      const orgId = ctx.auth.orgId;
 
       const { limit, apiKeyId, type } = input;
 
-      const conditions = [eq(ApiKeyUsage.organizationId, ctx.auth.orgId)];
+      const conditions = [eq(ApiKeyUsage.organizationId, orgId)];
 
       if (apiKeyId) {
         conditions.push(eq(ApiKeyUsage.apiKeyId, apiKeyId));
@@ -179,12 +199,14 @@ export const apiKeyUsageRouter = {
         conditions.push(eq(ApiKeyUsage.type, type));
       }
 
-      const recent = await ctx.db
-        .select()
-        .from(ApiKeyUsage)
-        .where(and(...conditions))
-        .orderBy(desc(ApiKeyUsage.createdAt))
-        .limit(limit);
+      const recent = await inTenant(orgId, (tx) =>
+        tx
+          .select()
+          .from(ApiKeyUsage)
+          .where(and(...conditions))
+          .orderBy(desc(ApiKeyUsage.createdAt))
+          .limit(limit),
+      );
 
       return recent;
     }),
@@ -204,13 +226,14 @@ export const apiKeyUsageRouter = {
         throw new ORPCError('BAD_REQUEST', {
           message: 'Organization ID is required',
         });
+      const orgId = ctx.auth.orgId;
 
       const { apiKeyId, type, days } = input;
       const startDate = new Date();
       startDate.setDate(startDate.getDate() - days);
 
       const conditions = [
-        eq(ApiKeyUsage.organizationId, ctx.auth.orgId),
+        eq(ApiKeyUsage.organizationId, orgId),
         gte(ApiKeyUsage.createdAt, startDate),
       ];
 
@@ -222,14 +245,16 @@ export const apiKeyUsageRouter = {
         conditions.push(eq(ApiKeyUsage.type, type));
       }
 
-      const stats = await ctx.db
-        .select({
-          count: sql<number>`cast(count(*) as integer)`,
-          type: ApiKeyUsage.type,
-        })
-        .from(ApiKeyUsage)
-        .where(and(...conditions))
-        .groupBy(ApiKeyUsage.type);
+      const stats = await inTenant(orgId, (tx) =>
+        tx
+          .select({
+            count: sql<number>`cast(count(*) as integer)`,
+            type: ApiKeyUsage.type,
+          })
+          .from(ApiKeyUsage)
+          .where(and(...conditions))
+          .groupBy(ApiKeyUsage.type),
+      );
 
       return stats;
     }),

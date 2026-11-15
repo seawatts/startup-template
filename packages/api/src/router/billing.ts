@@ -21,7 +21,7 @@ export const billingRouter = {
         message: 'Organization ID is required',
       });
 
-    const org = await ctx.db
+    const org = await ctx.authDb
       .select()
       .from(Orgs)
       .where(eq(Orgs.id, ctx.auth.orgId))
@@ -43,7 +43,7 @@ export const billingRouter = {
       )) as Stripe.Subscription;
 
       // Update local database
-      await ctx.db
+      await ctx.authDb
         .update(Orgs)
         .set({
           stripeSubscriptionStatus: subscription.status,
@@ -75,7 +75,7 @@ export const billingRouter = {
           message: 'Organization ID is required',
         });
 
-      const org = await ctx.db
+      const org = await ctx.authDb
         .select()
         .from(Orgs)
         .where(eq(Orgs.id, ctx.auth.orgId))
@@ -121,7 +121,7 @@ export const billingRouter = {
           message: 'Organization ID is required',
         });
 
-      const org = await ctx.db
+      const org = await ctx.authDb
         .select()
         .from(Orgs)
         .where(eq(Orgs.id, ctx.auth.orgId))
@@ -164,7 +164,7 @@ export const billingRouter = {
         customerId = customer.id;
 
         // Update org with customer ID
-        await ctx.db
+        await ctx.authDb
           .update(Orgs)
           .set({
             stripeCustomerId: customerId,
@@ -206,7 +206,7 @@ export const billingRouter = {
           message: 'Organization ID is required',
         });
 
-      const org = await ctx.db
+      const org = await ctx.authDb
         .select()
         .from(Orgs)
         .where(eq(Orgs.id, ctx.auth.orgId))
@@ -242,7 +242,7 @@ export const billingRouter = {
           message: 'Organization ID is required',
         });
 
-      const org = await ctx.db
+      const org = await ctx.authDb
         .select()
         .from(Orgs)
         .where(eq(Orgs.id, ctx.auth.orgId))
@@ -281,7 +281,7 @@ export const billingRouter = {
           message: 'Organization ID is required',
         });
 
-      const org = await ctx.db
+      const org = await ctx.authDb
         .select()
         .from(Orgs)
         .where(eq(Orgs.id, ctx.auth.orgId))
@@ -342,7 +342,7 @@ export const billingRouter = {
           message: 'Organization ID is required',
         });
 
-      const org = await ctx.db
+      const org = await ctx.authDb
         .select()
         .from(Orgs)
         .where(eq(Orgs.id, ctx.auth.orgId))
@@ -392,7 +392,7 @@ export const billingRouter = {
           message: 'Organization ID is required',
         });
 
-      const org = await ctx.db
+      const org = await ctx.authDb
         .select()
         .from(Orgs)
         .where(eq(Orgs.id, ctx.auth.orgId))
@@ -445,7 +445,7 @@ export const billingRouter = {
           message: 'Organization ID is required',
         });
 
-      const org = await ctx.db
+      const org = await ctx.authDb
         .select()
         .from(Orgs)
         .where(eq(Orgs.id, ctx.auth.orgId))
@@ -467,7 +467,7 @@ export const billingRouter = {
         )) as Stripe.Subscription;
 
         // Update local database
-        await ctx.db
+        await ctx.authDb
           .update(Orgs)
           .set({
             stripeSubscriptionStatus: subscription.status,

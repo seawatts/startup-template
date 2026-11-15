@@ -124,7 +124,7 @@ describe.skipIf(!url)('readingOnly', () => {
       db.transaction(async (tx) => {
         await tx.execute(sql`select pg_try_advisory_xact_lock(7)`);
         await tx.execute(
-          sql`select 1 from pg_class where relname = 'pg_class' for share`,
+          sql`select 1 from startup_template."shortUrls" limit 1 for share`,
         );
         return tx.execute(sql`select 1 as one`);
       }),

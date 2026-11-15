@@ -1,4 +1,4 @@
-import { db } from '@seawatts/db/client';
+import { authDb } from '@seawatts/db/auth-client';
 import { Accounts, Verifications } from '@seawatts/db/schema/accounts';
 import {
   Invitations,
@@ -45,7 +45,7 @@ export const sessionOptions = {
     },
   },
   baseURL: baseUrl,
-  database: drizzleAdapter(db, {
+  database: drizzleAdapter(authDb, {
     provider: 'pg',
     schema: {
       account: Accounts,
