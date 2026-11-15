@@ -3,7 +3,7 @@
     "@seawatts/db": "workspace:*",
     "@seawatts/id": "workspace:*",
     "drizzle-orm": "catalog:",
-    "postgres": "3.4.9"
+    "postgres": "4.1.1"
   },
   "devDependencies": {
     "@faker-js/faker": "10.3.0",

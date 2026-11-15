@@ -52,7 +52,7 @@
   },
   "packageManager": "bun@1.2.23",
   "patchedDependencies": {
-    "postgres@3.4.9": "patches/postgres@3.4.9.patch"
+    "postgres@4.1.1": "patches/postgres@4.1.1.patch"
   },
   "private": true,
   "scripts": {
@@ -61,6 +61,7 @@
     "clean": "git clean -xdf node_modules .turbo",
     "clean:ws": "turbo run clean",
     "clone-project": "bun run scripts/clone-project.ts",
+    "db:delay": "bun scripts/db-delay-proxy.ts",
     "db:gen-migration": "turbo -F @seawatts/db gen-migration",
     "db:migrate": "turbo -F @seawatts/db migrate",
     "db:push": "turbo -F @seawatts/db push",

@@ -132,11 +132,17 @@ async function check(trace: string): Promise<Result> {
 
 if (import.meta.main) {
   const traces: string[] = [];
-  for await (const path of new Bun.Glob('app/**/{route,page}.js.nft.json').scan(
-    { cwd: server, dot: true },
-  )) {
-    if (only.length === 0 || only.some((part) => path.includes(part)))
-      traces.push(join(server, path));
+  // Routes and pages, and the two functions every request passes: the proxy
+  // (traced as middleware) and instrumentation.
+  const functions = [
+    new Bun.Glob('app/**/{route,page}.js.nft.json'),
+    new Bun.Glob('{middleware,instrumentation}.js.nft.json'),
+  ];
+  for (const glob of functions) {
+    for await (const path of glob.scan({ cwd: server, dot: true })) {
+      if (only.length === 0 || only.some((part) => path.includes(part)))
+        traces.push(join(server, path));
+    }
   }
   if (traces.length === 0) {
     console.error(

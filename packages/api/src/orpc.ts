@@ -1,5 +1,9 @@
 import { ORPCError, os, ValidationError } from '@orpc/server';
 import { handleWritesInReads, readingOnly } from '@seawatts/db/read-only';
+import {
+  countingStatements,
+  type StatementCounts,
+} from '@seawatts/db/statement-count';
 import { debug } from '@seawatts/logger';
 import type { Context } from './context';
 import { productEventFor } from './product-events';
@@ -13,14 +17,15 @@ const log = debug('seawatts:orpc');
 // as a plain 500 so no stack or SQL reaches the browser.
 //
 // A GET procedure is a read and never writes: it runs inside `readingOnly`,
-// so a statement that would write is refused before it reaches the database.
+// so a statement that would write, or wait for an advisory lock, is refused
+// before it reaches the database.
 // Production reports the write and lets it through, so a path the tests
 // missed is found without breaking the page.
 if (process.env.VERCEL_ENV === 'production')
   handleWritesInReads((error) =>
     console.error(
       JSON.stringify({
-        event: 'write_in_read',
+        event: error.code === 'LOCK_IN_READ' ? 'lock_in_read' : 'write_in_read',
         read: error.read,
         statement: error.statement,
       }),
@@ -30,13 +35,19 @@ if (process.env.VERCEL_ENV === 'production')
 export const publicProcedure = os
   .$context<Context>()
   .use(async ({ context, next, path, procedure }, input) => {
-    const start = Date.now();
+    const start = performance.now();
+    const name = path.join('.');
     const read = procedure['~orpc'].route.method === 'GET';
+    const counts: StatementCounts = { content: 0, transactions: 0, wrapper: 0 };
+    let ok = false;
     try {
-      if (read) return await readingOnly(`rpc.${path.join('.')}`, () => next());
-      const result = await next();
+      const { result } = await countingStatements(
+        async () => (read ? readingOnly(`rpc.${name}`, () => next()) : next()),
+        counts,
+      );
       // The save succeeded: record its product event, after the response.
-      await recordProductEvent(path.join('.'), context, input, result.output);
+      if (!read) await recordProductEvent(name, context, input, result.output);
+      ok = true;
       return result;
     } catch (error) {
       if (
@@ -61,9 +72,46 @@ export const publicProcedure = os
         message: 'The request could not be completed.',
       });
     } finally {
-      log(`${path.join('.')} took ${Date.now() - start}ms`);
+      const ms = Math.round(performance.now() - start);
+      log(`${name} took ${ms}ms`);
+      void recordTiming(name, context, { counts, ms, ok });
     }
   });
+
+// One content-free event per procedure call in production: its path, server
+// time, statements, transactions and whether it answered. This is the truth
+// for speed work; local timings are not (docs/agents/speed.md).
+async function recordTiming(
+  name: string,
+  context: Context,
+  timing: { counts: StatementCounts; ms: number; ok: boolean },
+) {
+  if (process.env.VERCEL_ENV !== 'production' && !timingsInTests) return;
+  try {
+    const { captureProductEvent } = await import('@seawatts/analytics/capture');
+    void captureProductEvent({
+      event: 'procedure_timed',
+      organizationId: context.auth?.orgId,
+      properties: {
+        ms: timing.ms,
+        ok: timing.ok,
+        path: name,
+        statements: timing.counts.content,
+        transactions: timing.counts.transactions,
+      },
+      surface: context.apiKey ? 'api' : 'web',
+      userId: context.auth?.userId,
+    });
+  } catch (error) {
+    console.error(`timing event for ${name} failed`, error);
+  }
+}
+
+// Tests turn the timing event on to see it; elsewhere only production sends.
+let timingsInTests = false;
+export function recordTimingsInTests(on: boolean) {
+  timingsInTests = on;
+}
 
 // Loads the analytics code only when a save has an event to record, and
 // never fails the save.

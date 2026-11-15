@@ -9,8 +9,12 @@ import { AsyncLocalStorage } from 'node:async_hooks';
 // development) or reported (in production, so a missed one is found without
 // breaking the page).
 //
-// Not `begin read only`: a read may take FOR SHARE row locks or advisory
-// locks, and PostgreSQL refuses row locks in a read-only transaction.
+// Not `begin read only`: a read may take FOR SHARE row locks, and PostgreSQL
+// refuses row locks in a read-only transaction.
+//
+// A read takes no advisory lock either. It cannot write, so the fence
+// protects nothing, and one exclusive holder queues every page load behind
+// it. A fence that a save needs skips itself when `currentRead()` is set.
 const reads = new AsyncLocalStorage<string>();
 
 /** Runs `fn` as a read named `name`: the statements it sends may not write. */
@@ -42,6 +46,17 @@ export class WriteInReadError extends Error {
   }
 }
 
+export class LockInReadError extends Error {
+  override name = 'LockInReadError';
+  readonly code = 'LOCK_IN_READ';
+  constructor(
+    readonly read: string,
+    readonly statement: string,
+  ) {
+    super(`A read took an advisory lock (${read}): ${statement}`);
+  }
+}
+
 const writeVerb =
   /^(insert|update|delete|merge|upsert|truncate|copy|create|alter|drop|grant|revoke|comment|reindex|vacuum|cluster|refresh)\b/i;
 // A data-modifying CTE: `with x as (insert …)` or `with … ) update …`.
@@ -58,12 +73,25 @@ export function writesData(statement: string) {
   return /^with\b/i.test(text) && cteWrite.test(text);
 }
 
+// `pg_advisory_lock`, `pg_advisory_xact_lock` and their shared forms. The
+// `pg_try_…` forms never wait, so they are left alone.
+const advisoryLock = /\bpg_advisory_(xact_)?lock(_shared)?\s*\(/i;
+
+/** Whether a statement waits for an advisory lock. */
+export function takesAdvisoryLock(statement: string) {
+  return advisoryLock.test(
+    statement.replace(/--[^\n]*/g, ' ').replace(/\/\*[\s\S]*?\*\//g, ' '),
+  );
+}
+
 // Logged even when thrown, so a caller that swallows the error still leaves
 // a line a test run can find.
-let onWriteInRead: (error: WriteInReadError) => void = (error) => {
+let onWriteInRead: (error: WriteInReadError | LockInReadError) => void = (
+  error,
+) => {
   console.error(
     JSON.stringify({
-      event: 'write_in_read',
+      event: error.code === 'LOCK_IN_READ' ? 'lock_in_read' : 'write_in_read',
       read: error.read,
       statement: error.statement,
     }),
@@ -75,17 +103,18 @@ let onWriteInRead: (error: WriteInReadError) => void = (error) => {
  * report and carry on.
  */
 export function handleWritesInReads(
-  handler: (error: WriteInReadError) => void,
+  handler: (error: WriteInReadError | LockInReadError) => void,
 ) {
   onWriteInRead = handler;
 }
 
 function check(statement: unknown) {
   const read = reads.getStore();
-  if (!read || typeof statement !== 'string' || !writesData(statement)) return;
-  onWriteInRead(
-    new WriteInReadError(read, statement.replace(/\s+/g, ' ').slice(0, 120)),
-  );
+  if (!read || typeof statement !== 'string') return;
+  const shown = statement.replace(/\s+/g, ' ').slice(0, 120);
+  if (writesData(statement)) onWriteInRead(new WriteInReadError(read, shown));
+  else if (takesAdvisoryLock(statement))
+    onWriteInRead(new LockInReadError(read, shown));
 }
 
 type Callable = (...args: unknown[]) => unknown;

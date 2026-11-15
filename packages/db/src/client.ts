@@ -3,7 +3,7 @@ import postgres from 'postgres';
 import { databaseTls, idleTimeout, poolMax } from './connection-config';
 import { env } from './env';
 import { guardWritesInReads } from './read-only';
-import { countStatements, countsStatements } from './statement-count';
+import { countStatements } from './statement-count';
 
 // The longest one statement may run inside `inTransaction`. Without a limit
 // a stuck query keeps its connection forever, and a few of them leave every
@@ -20,23 +20,27 @@ export function connectDatabase(url: string) {
     connect_timeout: 5,
     idle_timeout: idleTimeout(),
     max: poolMax(),
-    // Required behind a transaction pooler (Supabase's port 6543): a
-    // prepared statement belongs to one server connection and the pooler
-    // hands out a different one per transaction. The patched driver
-    // (patches/postgres@3.4.9.patch) makes unprepared queries cost one round
-    // trip and pipeline inside a transaction.
+    // Behind a transaction pooler (Supabase's port 6543) queries pipelined
+    // outside a transaction hang or get another query's rows, so the shared
+    // pool sends one at a time. A connection leased by `begin` still
+    // pipelines, which is what makes `Promise.all` in a transaction fast.
+    max_pipeline: 1,
+    // Required behind a transaction pooler: a prepared statement belongs to
+    // one server connection and the pooler hands out a different one per
+    // transaction. The patched driver (patches/postgres@4.1.1.patch) makes
+    // an unprepared query cost one round trip instead of two.
     prepare: false,
     ssl: databaseTls(url),
   });
 }
 
 // Every statement passes the read guard: inside `readingOnly` (a GET
-// procedure, for one) a write is refused before it is sent (read-only.ts).
-// In development they are also counted per request (statement-count.ts).
-const guarded = guardWritesInReads(connectDatabase(env.POSTGRES_URL));
-export const connection = countsStatements()
-  ? countStatements(guarded)
-  : guarded;
+// procedure, for one) a write or an advisory lock is refused before it is
+// sent (read-only.ts). Statements are also counted per request and per
+// procedure (statement-count.ts).
+export const connection = countStatements(
+  guardWritesInReads(connectDatabase(env.POSTGRES_URL)),
+);
 
 // No schema registry: nothing uses Drizzle's relational queries
 // (`db.query.*`), and a registry makes every request load every table.

@@ -16,6 +16,8 @@ export const productEvents = {
   checkout_started: [],
   organization_created: [],
   organization_renamed: [],
+  // One per API procedure call: where server time and database work go.
+  procedure_timed: ['path', 'ms', 'statements', 'transactions', 'ok'],
   subscription_canceled: [],
   subscription_reactivated: [],
 } as const satisfies Record<string, readonly string[]>;

@@ -11,7 +11,7 @@
     "drizzle-zod": "catalog:",
     "lodash-es": "4.17.23",
     "next": "catalog:",
-    "postgres": "3.4.9",
+    "postgres": "4.1.1",
     "react": "catalog:",
     "react-dom": "catalog:",
     "zod": "catalog:",

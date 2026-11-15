@@ -24,14 +24,25 @@ Drizzle on Postgres through postgres.js, in `packages/db`. Hosted, the app conne
 - Pool size 10 per server; `DATABASE_POOL_MAX` overrides it. It bounds your share of the pooler's client limit.
 - Put the app's functions in the database's region.
 
-## The driver patch
+## The driver and its patch
 
-`patches/postgres@3.4.9.patch` (applied by Bun's `patchedDependencies`) changes four things in postgres.js. Keep it when upgrading the driver, port it if the file moved, and run `packages/db/tests/unit/transaction.test.ts` against a real database afterwards.
+The driver is postgres.js 4 with two settings for a transaction pooler and one patch.
 
-1. An unprepared query with only scalar parameters skips the Describe round trip. Upstream waited a round trip for parameter types before every query and blocked the connection meanwhile, so `Promise.all` on one transaction ran serially at two round trips per query. Measured over a 60 ms link, ten reads in one transaction: 1342 ms unpatched, 184 ms patched.
-2. Queries pipeline only while the connection is inside a transaction. A transaction pooler hands the server connection back after each query outside one, and drops queries pipelined behind it or answers them with another query's rows. A plain local Postgres never shows this.
-3. A `BEGIN` reserves its connection even when the socket reports backpressure. Upstream could leave a pool connection open inside a transaction nobody committed.
-4. A failed type lookup on a new connection no longer raises an unhandled rejection; the query that opened the connection already carries the error.
+- `max_pipeline: 1`. The shared pool sends one query at a time per connection. The driver's default (100) pipelines queries outside a transaction, and behind Supavisor those hang or come back with another query's rows; a plain local Postgres never shows this. A connection leased by `begin` still pipelines, which is what makes `Promise.all` inside `inTransaction` cost about one round trip.
+- `prepare: false`, as above.
+- `patches/postgres@4.1.1.patch` (applied by Bun's `patchedDependencies`) adds `sendsAsText`: an unprepared query whose parameters are strings, booleans, bigints or finite numbers runs in the round trip of its own Parse. Upstream waits a round trip for the parameter types first, on every query, and inside a transaction that also stops pipelining. Over a 60 ms link, ten reads in one transaction: about 1.3 s unpatched, under 0.2 s patched.
+
+Version 4 itself fixes what the older patch carried: a connection closed mid-transaction no longer hangs the pool, and `BEGIN` keeps its connection under backpressure.
+
+The patch names one driver version, so a bump silently drops it. Two tests fail first: `packages/db/tests/unit/driver-patch.test.ts` (the patched function is in the installed driver, and the patch names the installed version) and the slow-link test in `transaction.test.ts`. On every bump re-make the patch (`bun patch postgres`, apply the hunk, `bun patch --commit`), check upstream still needs it, remove `node_modules` and reinstall, then run `packages/db/tests/unit` against a real database ([releases.md](releases.md#dependencies)).
+
+## No advisory locks in reads
+
+Inside `readingOnly` the client refuses `pg_advisory_lock`, `pg_advisory_xact_lock` and their shared forms with `LockInReadError` (`LOCK_IN_READ`), the same way it refuses a write. A read cannot write, so a fence protects nothing there, and one exclusive holder queues every page load behind it.
+
+- A fence that a save needs skips itself when `currentRead()` is set.
+- Row locks (`FOR SHARE`) stay allowed, and so do the `pg_try_…` forms, which never wait.
+- A sweep uses `pg_try_advisory_xact_lock` and skips what a save holds. A save locks per subject, never per tenant.
 
 ## Transactions
 

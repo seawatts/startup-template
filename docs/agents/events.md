@@ -9,7 +9,7 @@ Loading a page or calling a GET procedure changes nothing: no backfilling, no "c
 - Every GET procedure runs inside `readingOnly` (`packages/db/src/read-only.ts`, wired in `packages/api/src/orpc.ts`). The database client refuses a writing statement (by verb, or a data-modifying CTE) before it is sent. Tests and development throw `WriteInReadError`; production logs `write_in_read` and lets it through, so a missed path is found without breaking the page.
 - Wrap any other read path the same way: `readingOnly('page.dashboard', () => load())`.
 - A record of the request itself (API key last used, a flag exposure, an error report) opts out with `notReading(() => …)`. Never use it for a change to the data.
-- Not `begin read only`: a read may take `FOR SHARE` or advisory locks, which a read-only transaction refuses.
+- Not `begin read only`: a read may take `FOR SHARE` row locks, which a read-only transaction refuses. Advisory locks are refused in a read as well ([database.md](database.md#no-advisory-locks-in-reads)).
 - A read that must name something not stored yet gives it a stable id (a hash of its natural key); the save that acts on it stores it under that id first.
 
 ## Publish what happened
@@ -52,3 +52,11 @@ The example: `apiKeys.create` and `apiKeys.update` publish `apiKey.expirySet`; i
 - `instrumentation.ts` registers delivery (`server/event-delivery.ts`). The proxy matcher skips `/.well-known/workflow/`.
 - Locally runs are files under `apps/web-app/.next/workflow-data`; on Vercel they show under the project's Workflows tab. No extra environment variables.
 - Tests: `packages/db/tests/unit/read-only.test.ts`, `packages/api/tests/events.test.ts` (database parts need `TEST_POSTGRES_URL`). After changing a workflow, run the built app, make the save and watch the run finish.
+
+## Backstops and what stays periodic
+
+- A reconciliation may back the events up, at most once a day. Each thing it repairs is reported as an error with a code (`EVENT_MISSED`, `SCHEDULE_MISSED`), because a repair means an event path is broken. Work that is the pass's own job is not a repair and is not reported.
+- Outgoing webhooks wake from the save that changes the data: an event in its transaction, delivery that reads what changed since a cursor, retries on a per-tenant schedule, and an hourly reconcile that reports what it had to send. No every-minute pass and no outbox table.
+- A big import (a directory of tens of thousands of people) runs one page per workflow step with the run's state saved, so a failed step resumes where it stopped. Its writes are set-based, never a query per row. Test it at that size.
+- Keep a short written list of what stays periodic on purpose (digests, vendor polling, lease recovery, the warm ping), so nobody turns it into events.
+- Publishing after commit from inside an auth library's own transaction is not possible: publish once that call has returned.
