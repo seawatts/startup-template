@@ -126,6 +126,7 @@ test('every procedure call records one timing event, failed calls too', async ()
       statements: 0,
       surface: 'web',
       transactions: 0,
+      waited_ms: 0,
     },
     {
       $process_person_profile: false,
@@ -135,6 +136,7 @@ test('every procedure call records one timing event, failed calls too', async ()
       statements: 0,
       surface: 'web',
       transactions: 0,
+      waited_ms: 0,
     },
   ]);
 });

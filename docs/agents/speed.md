@@ -14,9 +14,9 @@ A read costs about its serial round trips times the round-trip time, and a page 
 
 - Time to content for the screen, with `SPEED=enabled bun test:e2e speed` ([tests.md](tests.md#the-speed-measurement)), as a median over several loads with network latency and CPU throttling for a phone.
 - Server time, statements and transactions per request: the `Server-Timing` header on every API answer in development ([database.md](database.md#measuring)).
-- Through a delay proxy and with production's pool size: `bun db:delay 55433 5 5432` holds every chunk 5 ms each way, and the app runs with the same `POSTGRES_URL` on port 55433 and `DATABASE_POOL_MAX` set to production's. Without the delay local timings are bound by CPU and mislead; with a smaller pool than production a batch with more transactions than connections queues and overstates the page (about 60 ms on a real app).
+- Through a delay proxy and with production's pool size: `bun db:delay 55433 5 5432` holds every chunk 5 ms each way, and the app runs with the same `POSTGRES_URL` on port 55433 and `DATABASE_POOL_MAX` set to production's. Without the delay local timings are bound by CPU and mislead; with a smaller pool than production a batch with more transactions than connections queues and overstates the page (about 60 ms on a real app). A fourth argument holds each new connection's first bytes (`bun db:delay 55433 5 5432 250`), the way a pooler connection costs a TLS handshake and a password check, so a server that opens connections while a page waits shows it locally.
 - Every benchmark twice. One pass is not evidence ([bun.md](bun.md)).
-- Production is the judge: every procedure call records one content-free `procedure_timed` event with its path, milliseconds, statements, transactions and whether it answered ([observability.md](observability.md#database)). Local milliseconds say where to look; production says whether it worked.
+- Production is the judge: every procedure call records one content-free `procedure_timed` event with its path, milliseconds, statements, transactions, `waited_ms` and whether it answered ([observability.md](observability.md#database)). Local milliseconds say where to look; production says whether it worked.
 - Query count per load from the statement log ([database.md](database.md#measuring)).
 - Server code loaded per route: after a build, read `.next/server/**/*.nft.json`.
 - The host's request logs for cold starts and per-request time, a few days before and after a deploy.
@@ -77,8 +77,13 @@ A helper takes its caller's transaction (`loadThingIn(tx)`) and does not open it
 
 ## Pool and pooler
 
-- Size the per-server pool to what the pooler allows (`DATABASE_POOL_MAX`) and do not queue in the app; the pooler queues. Keep warm connections open from the warm ping.
+- Size the per-server pool to what the pooler allows (`DATABASE_POOL_MAX`) and do not queue in the app; the pooler queues. Keep warm connections open from the warm ping, and open them when the server starts ([Connections at startup](#connections-at-startup)).
 - Quick repeated reloads move the wait to the pooler: reads of two queries then take 300 to 500 ms. Fewer transactions per page is the fix, then pooler size.
+
+## Connections at startup
+
+- A fresh server opens its connections when it starts: the module that serves `/api/rpc` calls `openConnectionsAtStart()` (`apps/web-app/src/server/warm-api.ts`), which sends a pool's worth of `select 1` per role, the same share the warm ping keeps open. Hosted servers only, and never during the build. Without it the first screen on a new server pays a handshake and password check per connection while it waits: measured through the delay proxy with a 250 ms open, four reads took about 720 ms cold and about 135 ms on a server that had opened its connections.
+- Measure it. `procedure_timed` carries `waited_ms`, the longest any of the call's transactions took to start (a free connection, or opening one, plus `begin`): a warm server starts one in a round trip, so a large number says the read stood in line, not that its queries were slow. A request during which the server opened connections logs one `rpc.connections` line with how many, the slowest, the most at once and the server's uptime (`packages/db/src/connection-opens.ts`, from the driver's `postgres:connect` diagnostics channel).
 
 ## No contention on reads
 

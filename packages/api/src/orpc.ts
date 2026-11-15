@@ -79,7 +79,8 @@ export const publicProcedure = os
   });
 
 // One content-free event per procedure call in production: its path, server
-// time, statements, transactions and whether it answered. This is the truth
+// time, statements, transactions, the longest wait for a transaction to start
+// and whether it answered. This is the truth
 // for speed work; local timings are not (docs/agents/speed.md).
 async function recordTiming(
   name: string,
@@ -98,6 +99,7 @@ async function recordTiming(
         path: name,
         statements: timing.counts.content,
         transactions: timing.counts.transactions,
+        waited_ms: timing.counts.waited ?? 0,
       },
       surface: context.apiKey ? 'api' : 'web',
       userId: context.auth?.userId,

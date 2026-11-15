@@ -42,7 +42,7 @@ oRPC in `packages/api`, served by the web app at `/api/rpc`. One set of procedur
 
 ## Warm-up ping
 
-`GET /api/rpc/__warm` with `Authorization: Bearer $CRON_SECRET` loads every area and runs `select 1`, so the instance that answers next has its code loaded and a database connection open. `/api/cron/warm` sends that ping; it is a separate route because the ping has to reach the function serving `/api/rpc`. To turn it on, set `CRON_SECRET` in Infisical and add the cron to `apps/web-app/vercel.json`:
+`GET /api/rpc/__warm` with `Authorization: Bearer $CRON_SECRET` loads every area and runs a pool's worth of `select 1` per role, so the instance that answers next has its code loaded and its database connections open. A hosted server opens the same connections when it starts ([speed.md](speed.md#connections-at-startup)). `/api/cron/warm` sends that ping; it is a separate route because the ping has to reach the function serving `/api/rpc`. To turn it on, set `CRON_SECRET` in Infisical and add the cron to `apps/web-app/vercel.json`:
 
 ```json
 { "crons": [{ "path": "/api/cron/warm", "schedule": "* * * * *" }] }

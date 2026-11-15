@@ -12,7 +12,7 @@ Run the smallest check that covers the change while you work, and the full set o
 | A screen's speed or its reads | `SPEED=enabled bun test:e2e speed`, before and after |
 | Formatting and lint | `bunx biome check --write <paths>` |
 | The build's functions load from their traced files | `bun run check:trace` in `apps/web-app`, after a build ([bun.md](bun.md#changing-the-hosted-runtime)) |
-| A screen's speed at production's round trip | `bun db:delay <port> 5 <database port>`, then run the app against that port ([speed.md](speed.md#measure)) |
+| A screen's speed at production's round trip | `bun db:delay <port> 5 <database port> [open ms]`, then run the app against that port ([speed.md](speed.md#measure)) |
 | A deployment | `bun check:deploy <url>`: one request to every kind of function |
 | Everything, before a push | `bun format:ci && bun typecheck:ci && bun test` |
 

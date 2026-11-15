@@ -5,13 +5,21 @@ import {
 } from '@orpc/server/plugins';
 import { createORPCContext } from '@seawatts/api/context';
 import { rpcRouter } from '@seawatts/api/rpc-router';
+import {
+  connectionOpens,
+  connectionOpensSince,
+} from '@seawatts/db/connection-opens';
 import { sharingRequestReads } from '@seawatts/db/request-reads';
 import {
   countingStatements,
   countsStatements,
   serverTiming,
 } from '@seawatts/db/statement-count';
-import { isWarmPing, warmApi } from '~/server/warm-api';
+import { isWarmPing, openConnectionsAtStart, warmApi } from '~/server/warm-api';
+
+// A fresh server opens its database connections now, while nobody waits
+// (hosted only; docs/agents/speed.md).
+openConnectionsAtStart();
 
 // The web app sends a screen's reads as one batch (packages/api
 // react/config.ts); each read in it is still checked and answered on its
@@ -40,13 +48,31 @@ async function handler(request: Request) {
   // asking" lookups (`requestRead` in packages/db request-reads.ts). Writes
   // share nothing.
   const shared = request.method === 'GET' ? new Map() : undefined;
-  const answer = () =>
-    sharingRequestReads(shared, async () =>
+  const opensBefore = connectionOpens();
+  const began = performance.now();
+  const answer = async () => {
+    const result = await sharingRequestReads(shared, async () =>
       rpc.handle(request, {
         context: await createORPCContext(request.headers),
         prefix: '/api/rpc',
       }),
     );
+    // A request during which this server opened connections says so: how
+    // many, the slowest, how many at once and how long the server has been
+    // up, so a slow first screen on a fresh server is told apart from slow
+    // queries. Numbers only.
+    const opens = connectionOpensSince(opensBefore);
+    if (opens)
+      console.info(
+        JSON.stringify({
+          event: 'rpc.connections',
+          ms: Math.round(performance.now() - began),
+          up: Math.round(process.uptime()),
+          ...opens,
+        }),
+      );
+    return result;
+  };
   // In development every answer says how long the server took and how many
   // statements and transactions it sent (the browser's network panel shows
   // it under Timing, and the speed measurement adds it up per screen).
