@@ -1,27 +1,22 @@
 {
   "dependencies": {
     "@seawatts/analytics": "workspace:*",
-    "@seawatts/auth": "workspace:*",
-    "@seawatts/db": "workspace:*",
     "@t3-oss/env-core": "catalog:",
-    "drizzle-orm": "catalog:",
-    "next": "catalog:",
-    "next-safe-action": "8.1.8",
     "react": "catalog:",
-    "react-dom": "catalog:",
     "stripe": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@seawatts/tsconfig": "workspace:*",
     "@types/react": "catalog:",
-    "@types/react-dom": "catalog:",
     "typescript": "catalog:"
   },
   "exports": {
     ".": "./src/index.ts",
     "./guards/client": "./src/guards/client.ts",
-    "./guards/server": "./src/guards/server.ts"
+    "./guards/entitlement-types": "./src/guards/entitlement-types.ts",
+    "./guards/entitlements-server": "./src/guards/entitlements-server.ts",
+    "./guards/subscription-server": "./src/guards/subscription-server.ts"
   },
   "license": "MIT",
   "name": "@seawatts/stripe",

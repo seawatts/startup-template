@@ -6,7 +6,7 @@ A feature is not finished until you can see it being used. A change that adds so
 
 - The catalog is `packages/analytics/src/product-events.ts`: one `object_verbed` name per event, with the only properties it may carry. Properties are opaque ids, enums, counts and booleans. Never content, names, emails or free text; `productEventProperties` drops anything not listed and any string that does not look like an identifier.
 - Every save (a procedure that is not a GET) has a row in `packages/api/src/product-events.ts`: its event, or `null` with the reason it is not product usage. `packages/api/tests/product-events.test.ts` fails on a save with no row. The oRPC middleware records the event after the save succeeds, so the app, REST, the SDK, the CLI and MCP are all covered by the one row; `surface` says which way in.
-- Work that does not go through a procedure (a webhook, a workflow step, a server action) calls `captureProductEvent` from `@seawatts/analytics/capture` after its write commits. Pass a `dedupeKey` when it can be retried.
+- Work that does not go through a procedure (a webhook, a workflow step, a cron) calls `captureProductEvent` from `@seawatts/analytics/capture` after its write commits. Pass a `dedupeKey` when it can be retried.
 - UI-only moments (opened, revealed, switched tab) call `captureBrowserEvent` from `@seawatts/analytics/browser-event`. Do not call `posthog.capture` with an ad hoc name.
 - Sending is best effort: after the response (`waitUntil`), never throws, and does nothing without `POSTHOG_KEY` and `POSTHOG_HOST`. In tests, `sendProductEventsTo` collects what would be sent.
 

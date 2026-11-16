@@ -21,6 +21,7 @@ import {
   IconFileDescription,
   IconFileWord,
   IconKey,
+  IconLink,
   IconReport,
   IconSettings,
   IconShieldLock,
@@ -131,6 +132,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       //   title: 'Playground',
       //   url: '/app/playground',
       // },
+      {
+        icon: IconLink,
+        title: 'Links',
+        url: '/app/links',
+      },
       {
         icon: IconKey,
         title: 'API Keys',

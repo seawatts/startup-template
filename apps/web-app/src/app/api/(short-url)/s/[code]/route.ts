@@ -1,7 +1,7 @@
 import { ShortUrls } from '@seawatts/db/schema/short-urls';
 import { tenantOf } from '@seawatts/db/tenant-lookup';
 import { inTenant } from '@seawatts/db/transaction';
-import { eq } from 'drizzle-orm';
+import { and, eq, gt, isNull, or } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 
 export async function GET(
@@ -17,7 +17,18 @@ export async function GET(
         tx
           .select()
           .from(ShortUrls)
-          .where(eq(ShortUrls.code, params.code))
+          .where(
+            and(
+              eq(ShortUrls.code, params.code),
+              eq(ShortUrls.organizationId, organizationId),
+              // A link turned off, or past its expiry, answers 404.
+              eq(ShortUrls.isActive, true),
+              or(
+                isNull(ShortUrls.expiresAt),
+                gt(ShortUrls.expiresAt, new Date()),
+              ),
+            ),
+          )
           .limit(1)
           .then((rows) => rows[0]),
       )

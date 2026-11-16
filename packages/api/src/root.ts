@@ -3,6 +3,7 @@ import { apiKeyUsageRouter } from './router/api-key-usage';
 import { apiKeysRouter } from './router/api-keys';
 import { authRouter } from './router/auth';
 import { billingRouter } from './router/billing';
+import { linksRouter } from './router/links';
 import { operatorRouter } from './router/operator';
 import { orgRouter } from './router/org';
 import { orgMembersRouter } from './router/org-members';
@@ -16,6 +17,7 @@ export const appRouter = {
   apiKeyUsage: apiKeyUsageRouter,
   auth: authRouter,
   billing: billingRouter,
+  links: linksRouter,
   operator: operatorRouter,
   org: orgRouter,
   orgMembers: orgMembersRouter,

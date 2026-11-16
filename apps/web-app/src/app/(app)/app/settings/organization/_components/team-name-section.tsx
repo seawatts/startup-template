@@ -1,13 +1,13 @@
 'use client';
 
 import { MetricButton } from '@seawatts/analytics/components';
+import { useORPC } from '@seawatts/api/react/react';
 import { useActiveOrganization } from '@seawatts/auth/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@seawatts/ui/card';
 import { Input } from '@seawatts/ui/input';
 import { toast } from '@seawatts/ui/sonner';
-import { useAction } from 'next-safe-action/hooks';
+import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { updateTeamNameAction } from '../actions';
 
 export function TeamNameSection() {
   const { data: activeOrg } = useActiveOrganization();
@@ -19,27 +19,16 @@ export function TeamNameSection() {
     }
   }, [activeOrg]);
 
-  const { executeAsync: executeUpdateTeamName, status: updateTeamNameStatus } =
-    useAction(updateTeamNameAction);
-  const isUpdating = updateTeamNameStatus === 'executing';
+  const api = useORPC();
+  const rename = useMutation(api.org.updateName.mutationOptions());
+  const isUpdating = rename.isPending;
 
   const handleUpdateName = async () => {
     if (!name.trim() || name === activeOrg?.name) return;
 
     try {
-      const result = await executeUpdateTeamName({ name: name.trim() });
-
-      if (result?.data) {
-        toast.success('Organization name updated successfully');
-      } else if (result?.serverError) {
-        toast.error('Failed to update organization name', {
-          description: result.serverError,
-        });
-      } else if (result?.validationErrors) {
-        toast.error('Invalid input', {
-          description: 'Please check the organization name and try again.',
-        });
-      }
+      await rename.mutateAsync({ name: name.trim() });
+      toast.success('Organization name updated successfully');
     } catch (error) {
       toast.error('Failed to update organization name', {
         description:

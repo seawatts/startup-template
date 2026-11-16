@@ -1,6 +1,7 @@
 'use client';
 
 import { MetricButton, MetricLink } from '@seawatts/analytics/components';
+import { useORPC } from '@seawatts/api/react/react';
 import { useActiveOrganization } from '@seawatts/auth/client';
 import {
   Entitled,
@@ -20,9 +21,8 @@ import {
   SelectValue,
 } from '@seawatts/ui/select';
 import { toast } from '@seawatts/ui/sonner';
-import { useAction } from 'next-safe-action/hooks';
+import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
-import { inviteMemberAction } from '../actions';
 
 // Type for invitation
 interface Invitation {
@@ -41,10 +41,9 @@ export function InviteMembersSection() {
   const { data: activeOrg } = useActiveOrganization();
   const isEntitledCheck = useIsEntitled('unlimited_developers');
 
-  // Use server action for inviting members
-  const { executeAsync: executeInvite, status: inviteStatus } =
-    useAction(inviteMemberAction);
-  const isInviting = inviteStatus === 'executing';
+  const api = useORPC();
+  const invite = useMutation(api.orgMembers.invite.mutationOptions());
+  const isInviting = invite.isPending;
 
   // Fetch invitations
   const fetchInvitations = useCallback(async () => {
@@ -83,21 +82,11 @@ export function InviteMembersSection() {
     }
 
     try {
-      const result = await executeInvite({
-        email: email.trim(),
-        role: role,
-      });
-
-      if (result?.data?.success) {
-        toast.success(`Invitation sent to ${email}`);
-        setEmail('');
-        setRole('member');
-        fetchInvitations();
-      } else if (result?.serverError) {
-        toast.error('Failed to send invitation', {
-          description: result.serverError,
-        });
-      }
+      await invite.mutateAsync({ email: email.trim(), role });
+      toast.success(`Invitation sent to ${email}`);
+      setEmail('');
+      setRole('member');
+      fetchInvitations();
     } catch (error) {
       console.error('Failed to send invitation:', error);
       toast.error('Failed to send invitation', {

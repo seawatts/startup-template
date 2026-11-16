@@ -45,6 +45,10 @@ export const productEventFor: Record<string, Tracked | Untracked> = {
     reason: 'A record of a request, not something a person did.',
   },
   'apiKeyUsage.delete': { event: null, reason: 'Housekeeping.' },
+  'auth.createAuthCode': {
+    event: null,
+    reason: 'Sign-in is recorded by the auth routes.',
+  },
   'auth.exchangeAuthCode': {
     event: null,
     reason: 'Sign-in is recorded by the auth routes.',
@@ -54,8 +58,28 @@ export const productEventFor: Record<string, Tracked | Untracked> = {
   'billing.createBillingPortalSession': { event: 'billing_portal_opened' },
   'billing.createCheckoutSession': { event: 'checkout_started' },
   'billing.reactivateSubscription': { event: 'subscription_reactivated' },
+  'links.create': {
+    event: 'link_created',
+    properties: (input) => ({ custom_code: input.code != null }),
+  },
+  'links.delete': { event: 'link_deleted' },
+  'links.setActive': {
+    event: 'link_updated',
+    properties: (input) => ({ active: input.active }),
+  },
+  'org.delete': { event: 'organization_deleted' },
   'org.updateName': { event: 'organization_renamed' },
   'org.upsert': { event: 'organization_created' },
+  'orgMembers.invite': {
+    event: 'member_invited',
+    properties: (input) => ({ role: input.role }),
+  },
+  'orgMembers.leave': { event: 'organization_left' },
+  'orgMembers.remove': { event: 'member_removed' },
+  'orgMembers.updateRole': {
+    event: 'member_role_changed',
+    properties: (input) => ({ role: input.role }),
+  },
   'user.delete': {
     event: null,
     reason: 'The account is gone; nothing may be tied to it afterwards.',

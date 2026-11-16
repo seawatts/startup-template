@@ -1,6 +1,7 @@
 'use client';
 
 import { MetricButton } from '@seawatts/analytics/components';
+import { useORPC } from '@seawatts/api/react/react';
 import {
   useActiveOrganization,
   useListOrganizations,
@@ -8,9 +9,8 @@ import {
 import { Badge } from '@seawatts/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@seawatts/ui/card';
 import { Skeleton } from '@seawatts/ui/skeleton';
-import { useAction } from 'next-safe-action/hooks';
+import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
-import { leaveOrganizationAction } from '../actions';
 import { LeaveOrganizationDialog } from './leave-organization-dialog';
 
 export function MyOrganizationsSection() {
@@ -24,27 +24,17 @@ export function MyOrganizationsSection() {
     name: string;
   } | null>(null);
 
-  // Safe action
-  const {
-    executeAsync: executeLeaveOrganization,
-    status: leaveOrganizationStatus,
-  } = useAction(leaveOrganizationAction);
-  const isLeaving = leaveOrganizationStatus === 'executing';
+  const api = useORPC();
+  const leave = useMutation(api.orgMembers.leave.mutationOptions());
+  const isLeaving = leave.isPending;
 
   const handleLeaveOrganization = async () => {
     if (!targetOrganization) return;
 
     try {
-      const result = await executeLeaveOrganization({
-        organizationId: targetOrganization.id,
-      });
-
-      if (result?.data) {
-        setIsLeaveDialogOpen(false);
-        setTargetOrganization(null);
-      } else if (result?.serverError) {
-        console.error('Failed to leave organization:', result.serverError);
-      }
+      await leave.mutateAsync({ organizationId: targetOrganization.id });
+      setIsLeaveDialogOpen(false);
+      setTargetOrganization(null);
     } catch (error) {
       console.error('Failed to leave organization:', error);
     }

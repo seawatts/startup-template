@@ -18,5 +18,7 @@ pre-push:
       run: bun typecheck
     bun-version:
       run: bun test scripts/test/bun-version.test.ts
+    data-through-api:
+      run: bun test scripts/test/data-through-api.test.ts
     infisical:
       run: infisical scan git-changes --staged --verbose

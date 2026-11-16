@@ -13,10 +13,8 @@ import {
 } from '@seawatts/ui/select';
 import { Skeleton } from '@seawatts/ui/skeleton';
 import { toast } from '@seawatts/ui/sonner';
-import { useQuery } from '@tanstack/react-query';
-import { useAction } from 'next-safe-action/hooks';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { removeMemberAction, updateMemberRoleAction } from '../actions';
 import { RemoveMemberDialog } from './remove-member-dialog';
 
 export function OrganizationMembersSection() {
@@ -39,34 +37,30 @@ export function OrganizationMembersSection() {
     email: string;
   } | null>(null);
 
-  // Safe actions
-  const { executeAsync: executeRemoveMember, status: removeMemberStatus } =
-    useAction(removeMemberAction);
-  const {
-    executeAsync: executeUpdateMemberRole,
-    status: updateMemberRoleStatus,
-  } = useAction(updateMemberRoleAction);
+  // A save refreshes only the members list.
+  const queryClient = useQueryClient();
+  const refreshMembers = () =>
+    queryClient.invalidateQueries({ queryKey: api.orgMembers.all.key() });
+  const removeMember = useMutation(
+    api.orgMembers.remove.mutationOptions({ onSuccess: refreshMembers }),
+  );
+  const updateMemberRole = useMutation(
+    api.orgMembers.updateRole.mutationOptions({ onSuccess: refreshMembers }),
+  );
 
-  const isRemovingMember = removeMemberStatus === 'executing';
-  const isUpdatingRole = updateMemberRoleStatus === 'executing';
+  const isRemovingMember = removeMember.isPending;
+  const isUpdatingRole = updateMemberRole.isPending;
 
   const handleRemoveMember = async () => {
     if (!memberToRemove) return;
 
     try {
-      const result = await executeRemoveMember({ memberId: memberToRemove.id });
-
-      if (result?.data) {
-        toast.success(
-          `Successfully removed ${memberToRemove.name} from the organization`,
-        );
-        setIsRemoveMemberDialogOpen(false);
-        setMemberToRemove(null);
-      } else if (result?.serverError) {
-        toast.error('Failed to remove member', {
-          description: result.serverError,
-        });
-      }
+      await removeMember.mutateAsync({ memberId: memberToRemove.id });
+      toast.success(
+        `Successfully removed ${memberToRemove.name} from the organization`,
+      );
+      setIsRemoveMemberDialogOpen(false);
+      setMemberToRemove(null);
     } catch (error) {
       toast.error('Failed to remove member', {
         description:
@@ -80,18 +74,8 @@ export function OrganizationMembersSection() {
     newRole: 'admin' | 'owner' | 'member',
   ) => {
     try {
-      const result = await executeUpdateMemberRole({
-        memberId,
-        role: newRole,
-      });
-
-      if (result?.data) {
-        toast.success('Member role updated successfully');
-      } else if (result?.serverError) {
-        toast.error('Failed to update member role', {
-          description: result.serverError,
-        });
-      }
+      await updateMemberRole.mutateAsync({ memberId, role: newRole });
+      toast.success('Member role updated successfully');
     } catch (error) {
       toast.error('Failed to update member role', {
         description:

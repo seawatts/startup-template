@@ -6,6 +6,7 @@ import { and, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { protectedProcedure } from '../orpc';
 import { createOrg } from '../services/create-org';
+import { activeAdmin, membership } from '../services/org-role';
 
 export const orgRouter = {
   checkNameAvailability: protectedProcedure
@@ -75,6 +76,28 @@ export const orgRouter = {
         .then((rows) => rows[0]);
     }),
 
+  // Deletes the active organization and everything in it. Owner only; the
+  // caller confirms explicitly so a replayed or mistyped call cannot.
+  delete: protectedProcedure
+    .input(z.object({ confirm: z.literal(true) }))
+    .handler(async ({ context: ctx }) => {
+      if (!ctx.auth.orgId)
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Choose an organization.',
+        });
+      const member = await membership(ctx, ctx.auth.orgId);
+      if (member.role !== 'owner')
+        throw new ORPCError('FORBIDDEN', {
+          message: 'Only the owner can delete the organization.',
+        });
+      const { auth } = await import('@seawatts/auth/server');
+      await auth.api.deleteOrganization({
+        body: { organizationId: ctx.auth.orgId },
+        headers: ctx.headers,
+      });
+      return { deleted: true };
+    }),
+
   updateName: protectedProcedure
     .input(
       z.object({
@@ -89,6 +112,7 @@ export const orgRouter = {
       }),
     )
     .handler(async ({ context: ctx, input }) => {
+      await activeAdmin(ctx, 'rename the organization');
       if (!ctx.auth.orgId)
         throw new ORPCError('BAD_REQUEST', {
           message: 'Organization ID is required',
