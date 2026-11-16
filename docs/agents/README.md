@@ -15,6 +15,7 @@
 | [interfaces.md](interfaces.md) | Adding or changing a procedure: the catalog that feeds REST, OpenAPI, the SDK, the CLI, MCP and the docs reference |
 | [events.md](events.md) | A save that causes other work, anything scheduled for later, a cron, or a read tempted to write |
 | [observability.md](observability.md) | Reporting an error, adding an event or a log line, tracing a model call, setting up alerts |
+| [error-triage.md](error-triage.md) | Setting up the daily error triage routine for an app built from this template, or fixing an error it filed |
 | [releases.md](releases.md) | Shipping to production, rolling back, bumping or patching a dependency, adding a build-time check |
 | [speed.md](speed.md) | Making a screen or a save faster, or adding reads to a hot path |
 | [tests.md](tests.md) | Adding or moving a test, running the browser tests, measuring a screen's speed |

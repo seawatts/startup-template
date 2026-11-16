@@ -11,7 +11,7 @@ How the app is watched in production and measured in development. CLAUDE.md keep
 - Every surface reports: server routes and procedures, the browser, background workers, bots, scheduled jobs and workflow steps. Wrap each entry point (route handler, procedure middleware, job runner, bot event handler) so nothing reports by hand.
 - Each report carries `service` (web, worker, bot), `area` (`rpc.badges.list`, `cron.digest`, `discord.voice`), `release` (git sha), a short machine `code` (`TIMEOUT`, `WRITE_IN_READ`, `PROVIDER_429`) and in-app stack frames (upload source maps; mark library frames as not in-app).
 - Group by service + area + type + code, so one cause is one group and a new group means something new broke.
-- A daily triage summarizes the new error groups and what was done about each.
+- A daily triage routine files the new error groups as issues and asks for a fix thread for each ([error-triage.md](error-triage.md)).
 - Expected outcomes (validation errors, not found, forbidden) are not errors. Report them as events if they matter.
 - A read that writes reports itself as `write_in_read` ([events.md](events.md)).
 - A procedure or job still running near the platform's time limit reports itself as a timeout, because the platform's kill skips your catch.
