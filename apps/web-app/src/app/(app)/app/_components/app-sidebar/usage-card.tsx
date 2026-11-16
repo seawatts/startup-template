@@ -19,9 +19,8 @@ import {
   TooltipTrigger,
 } from '@seawatts/ui/tooltip';
 import { IconInfoCircle } from '@tabler/icons-react';
-import { useAction } from 'next-safe-action/hooks';
 import { useMemo } from 'react';
-import { createCheckoutSessionAction } from '~/app/(app)/app/settings/billing/actions';
+import { useCheckout } from '~/lib/use-billing-redirects';
 
 // Types for usage data
 interface UsageData {
@@ -144,16 +143,14 @@ export function UsageCard() {
   const isEntitled = useIsEntitled('unlimited_webhook_events');
   const usage = useWebhookUsage();
 
-  const { executeAsync: executeCreateCheckout, status: checkoutStatus } =
-    useAction(createCheckoutSessionAction);
-
-  const isSubscribing = checkoutStatus === 'executing';
+  const checkout = useCheckout();
+  const isSubscribing = checkout.isPending;
 
   const handleUpgrade = async () => {
     if (!activeOrg?.id) return;
 
     try {
-      await executeCreateCheckout();
+      await checkout.start();
     } catch (error) {
       console.error('Failed to create checkout session:', error);
     }

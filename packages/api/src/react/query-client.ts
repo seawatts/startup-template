@@ -1,8 +1,4 @@
-import {
-  defaultShouldDehydrateQuery,
-  QueryClient,
-} from '@tanstack/react-query';
-import SuperJSON from 'superjson';
+import { QueryClient } from '@tanstack/react-query';
 
 // A 4xx answer (not found, not allowed, bad input) is the same on every
 // try, so it isn't retried: the page shows its error state at once instead
@@ -18,19 +14,10 @@ const isFinalClientError = (error: unknown) => {
 export const createQueryClient = () =>
   new QueryClient({
     defaultOptions: {
-      dehydrate: {
-        serializeData: SuperJSON.serialize,
-        shouldDehydrateQuery: (query) =>
-          defaultShouldDehydrateQuery(query) ||
-          query.state.status === 'pending',
-      },
-      hydrate: {
-        deserializeData: SuperJSON.deserialize,
-      },
       queries: {
         retry: (failures, error) => failures < 3 && !isFinalClientError(error),
-        // With SSR, we usually want to set some default staleTime
-        // above 0 to avoid refetching immediately on the client
+        // A screen revisited within 30 s shows what it read last time
+        // without asking again; a save invalidates what it changed.
         staleTime: 30 * 1000,
       },
     },

@@ -11,7 +11,7 @@
 | [database-roles.md](database-roles.md) | Adding a table or a function, reading tenant rows, anything about roles, grants or row-level security |
 | [database-setup.md](database-setup.md) | Setting up a hosted database for a new project or environment |
 | [analytics-internal.md](analytics-internal.md) | Adding a feature, a save, or anything staff will want to see per customer |
-| [api.md](api.md) | Adding or calling an API procedure, touching the `/api/rpc` route or how the session is read |
+| [api.md](api.md) | Reading or writing any data, adding a feature end to end, touching the `/api/rpc` route or how the session is read |
 | [interfaces.md](interfaces.md) | Adding or changing a procedure: the catalog that feeds REST, OpenAPI, the SDK, the CLI, MCP and the docs reference |
 | [events.md](events.md) | A save that causes other work, anything scheduled for later, a cron, or a read tempted to write |
 | [observability.md](observability.md) | Reporting an error, adding an event or a log line, tracing a model call, setting up alerts |

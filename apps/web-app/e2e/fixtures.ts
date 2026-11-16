@@ -20,6 +20,8 @@ type Person = {
   userId: string;
   /** The signed session cookie's value. */
   cookie: string;
+  /** The organization's first API key, for the public API. */
+  apiKey: string;
 };
 
 function required(name: string) {
@@ -57,6 +59,7 @@ export const test = base.extend<{
     const id = randomBytes(8).toString('hex');
     const token = randomBytes(24).toString('hex');
     const person: Person = {
+      apiKey: `usk-live-e2e-${token}`,
       cookie: signed(token, required('BETTER_AUTH_SECRET')),
       email: `e2e-${id}@example.com`,
       organizationId: `org_e2e_${id}`,
@@ -75,7 +78,7 @@ export const test = base.extend<{
     await web.begin(async (tx) => {
       await tx`select set_config('app.tenant_id', ${person.organizationId}, true)`;
       await tx`insert into startup_template."apiKeys" (id, key, name, "organizationId", "userId")
-        values (${`ak_e2e_${id}`}, ${`usk-live-e2e-${token}`}, 'First key', ${person.organizationId}, ${person.userId})`;
+        values (${`ak_e2e_${id}`}, ${person.apiKey}, 'First key', ${person.organizationId}, ${person.userId})`;
     });
     await use(person);
     await sql`delete from ${table('organization')} where id = ${person.organizationId}`;

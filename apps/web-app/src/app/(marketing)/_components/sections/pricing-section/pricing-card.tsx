@@ -11,12 +11,11 @@ import {
 import { cn } from '@seawatts/ui/lib/utils';
 import { IconCheck } from '@tabler/icons-react';
 import { motion } from 'motion/react';
-import { useAction } from 'next-safe-action/hooks';
 import posthog from 'posthog-js';
 import { memo, useMemo, useState } from 'react';
 import type { siteConfig } from '~/app/(marketing)/_lib/config';
 import { TEAM_PRICING } from '~/app/(marketing)/_lib/config';
-import { createCheckoutSessionAction } from './actions';
+import { useCheckout } from '~/lib/use-billing-redirects';
 import { TeamPriceDisplay } from './team-price-display';
 import { TeamSeatsSlider } from './team-seats-slider';
 
@@ -97,15 +96,13 @@ export const PricingCard = memo(function PricingCard({
   const { data: activeOrg } = useActiveOrganization();
   const isAuthenticated = !!session?.user;
 
-  // Safe action for checkout
-  const { executeAsync: executeCreateCheckout, status: checkoutStatus } =
-    useAction(createCheckoutSessionAction);
+  const checkout = useCheckout();
 
   // Subscription status hooks - must be called at top level
   const hasActiveSubscription = useHasActiveSubscription();
   const hasPastDueSubscription = useHasPastDueSubscription();
 
-  const isSubscribing = checkoutStatus === 'executing';
+  const isSubscribing = checkout.isPending;
 
   // Track pricing card view
   useState(() => {
@@ -148,9 +145,8 @@ export const PricingCard = memo(function PricingCard({
     });
 
     try {
-      await executeCreateCheckout({
+      await checkout.start({
         billingInterval: billingCycle,
-        orgId: activeOrg.id,
         planType: tier.name === 'Team' ? 'team' : 'free',
       });
 

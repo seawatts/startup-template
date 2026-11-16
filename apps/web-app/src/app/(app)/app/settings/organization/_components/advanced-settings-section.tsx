@@ -1,6 +1,7 @@
 'use client';
 
 import { MetricButton } from '@seawatts/analytics/components';
+import { useORPC } from '@seawatts/api/react/react';
 import {
   Card,
   CardContent,
@@ -8,31 +9,25 @@ import {
   CardHeader,
   CardTitle,
 } from '@seawatts/ui/card';
-import { useAction } from 'next-safe-action/hooks';
+import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { deleteTeamAction } from '../actions';
 import { DeleteOrganizationDialog } from './delete-organization-dialog';
 
 export function AdvancedSettingsSection() {
   // State for delete organization dialog
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  // Safe action
-  const { executeAsync: executeDeleteTeam, status: deleteTeamStatus } =
-    useAction(deleteTeamAction);
-  const isDeleting = deleteTeamStatus === 'executing';
+  const api = useORPC();
+  const router = useRouter();
+  const deleteOrganization = useMutation(api.org.delete.mutationOptions());
+  const isDeleting = deleteOrganization.isPending;
 
   const handleDeleteOrganization = async () => {
     try {
-      const result = await executeDeleteTeam({ confirm: true });
-
-      if (result?.data) {
-        setIsDeleteDialogOpen(false);
-        // The action will redirect to dashboard
-      } else if (result?.serverError) {
-        // Error handling is done in the dialog component
-        console.error('Failed to delete organization:', result.serverError);
-      }
+      await deleteOrganization.mutateAsync({ confirm: true });
+      setIsDeleteDialogOpen(false);
+      router.push('/app/dashboard');
     } catch (error) {
       // Error handling is done in the dialog component
       console.error('Failed to delete organization:', error);

@@ -3,14 +3,15 @@ import { readSession } from '@seawatts/auth/session-reader';
 import { authDb } from '@seawatts/db/auth-client';
 import { headers } from 'next/headers';
 
-// Pass the request's headers from a route handler; a server component call
-// leaves them out and Next's own headers are read.
+// The route handler passes the request's headers; a job or test that calls
+// in process leaves them out and Next's own headers are read.
 export const createORPCContext = async (requestHeaders?: Headers) => {
+  const callerHeaders = requestHeaders ?? (await headers());
   let session: Session | null = null;
   try {
     // The session-only reader: a cold server answers a read without
     // loading the sign-in providers (packages/auth session-reader.ts).
-    session = await readSession(requestHeaders ?? (await headers()));
+    session = await readSession(callerHeaders);
   } catch {
     console.error('Authentication lookup failed');
   }
@@ -24,6 +25,10 @@ export const createORPCContext = async (requestHeaders?: Headers) => {
     // People, organizations and memberships (the auth role). Tenant tables
     // are read inside `inTenant(organizationId, …)`, never through here.
     authDb,
+    // The caller's headers, for the few writes that go through Better
+    // Auth's own API (members, invitations), which reads the session cookie
+    // itself. Empty for an API key.
+    headers: callerHeaders,
     organizationId: orgId,
     session,
     user: session?.user ?? null,

@@ -72,6 +72,42 @@ export const operations = [
     id: 'apiKeyUsage.stats',
     title: 'Count API usage',
   },
+  // The example area (router/links.ts): every procedure is public.
+  {
+    access: 'read',
+    description:
+      'Lists the organization’s short links, newest first: code, destination and whether each is on. Returns 50 unless `limit` says otherwise (100 at most).',
+    id: 'links.list',
+    title: 'List links',
+  },
+  {
+    access: 'read',
+    description: 'Returns one short link by its id.',
+    id: 'links.get',
+    title: 'Get a link',
+  },
+  {
+    access: 'write',
+    description:
+      'Makes a short link to `redirectUrl` at /s/<code>. Give `code` to choose it (3 to 64 lowercase letters, numbers or hyphens), or leave it out for a random one.',
+    id: 'links.create',
+    title: 'Create a link',
+  },
+  {
+    access: 'write',
+    description:
+      'Turns a short link on or off. An off link answers 404 until it is turned back on.',
+    id: 'links.setActive',
+    title: 'Turn a link on or off',
+  },
+  {
+    access: 'write',
+    description:
+      'Deletes a short link. Its address stops working and the code can be used again.',
+    destructive: true,
+    id: 'links.delete',
+    title: 'Delete a link',
+  },
 ] as const satisfies readonly Operation[];
 
 export type OperationId = (typeof operations)[number]['id'];
@@ -94,9 +130,12 @@ export const sessionOnly: Record<string, string> = {
   'apiKeyUsage.byType': 'Covered by `apiKeyUsage.recent` with `type`.',
   'apiKeyUsage.create': 'Recorded by the API itself on every call.',
   'apiKeyUsage.delete': 'Usage records are an audit trail.',
+  'auth.createAuthCode': 'Part of signing a device in.',
   'auth.exchangeAuthCode': 'Part of signing a device in.',
   'auth.syncFromProduction': 'Development helper for the mobile app.',
   'auth.verifySessionToken': 'Part of signing a device in.',
+  'billing.access':
+    "The app's plan guards; `billing.getSubscriptionStatus` is the key's read.",
   'billing.cancelSubscription': 'A billing decision a signed-in person makes.',
   'billing.createBillingPortalSession': 'Opens a browser page for a person.',
   'billing.createCheckoutSession': 'Opens a browser page for a person.',
@@ -112,6 +151,14 @@ export const sessionOnly: Record<string, string> = {
   'operator.organizations': 'Staff only, across customers; never by API key.',
   'operator.overview': 'Staff only, across customers; never by API key.',
   'org.checkNameAvailability': 'A form helper for the app.',
+  'org.delete': 'Deleting an organization is done by its owner, signed in.',
   'org.upsert': 'Creating an organization starts from a signed-in person.',
+  'orgMembers.invite':
+    "Better Auth's invitation API reads the signed-in session itself.",
+  'orgMembers.leave': 'A person leaves an organization themselves, signed in.',
+  'orgMembers.remove':
+    "Better Auth's member API reads the signed-in session itself.",
+  'orgMembers.updateRole':
+    "Better Auth's member API reads the signed-in session itself.",
   'user.delete': 'Deleting an account is done by its owner, signed in.',
 };

@@ -1,0 +1,2 @@
+CREATE INDEX "shortUrls_organizationId_createdAt_idx" ON "startup_template"."shortUrls" USING btree ("organizationId","createdAt");--> statement-breakpoint
+ALTER TABLE "startup_template"."shortUrls" ADD CONSTRAINT "shortUrls_code_unique" UNIQUE("code");

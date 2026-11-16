@@ -15,8 +15,6 @@
     "next": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "server-only": "^0.0.1",
-    "superjson": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
@@ -27,7 +25,6 @@
   },
   "exports": {
     "./*": "./src/*.ts",
-    "./react/hydration-boundary": "./src/react/hydration-boundary.tsx",
     "./react/react": "./src/react/react.tsx"
   },
   "license": "MIT",

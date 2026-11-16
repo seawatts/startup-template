@@ -20,6 +20,9 @@ export const rpcRouter = {
   billing: lazy(() =>
     import('./router/billing').then((m) => ({ default: m.billingRouter })),
   ),
+  links: lazy(() =>
+    import('./router/links').then((m) => ({ default: m.linksRouter })),
+  ),
   operator: lazy(() =>
     import('./router/operator').then((m) => ({ default: m.operatorRouter })),
   ),

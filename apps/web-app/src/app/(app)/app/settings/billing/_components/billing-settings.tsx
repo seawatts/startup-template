@@ -12,7 +12,7 @@ export function BillingSettings() {
       <BillingNotifications />
 
       <div className="flex flex-col gap-6">
-        <div className="space-y-6 w-1/2">
+        <div className="space-y-6 xl:w-1/2">
           <SubscriptionStatusSection />
           <SubscriptionManagementSection />
           <InvoicesSection />

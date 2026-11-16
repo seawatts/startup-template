@@ -11,6 +11,8 @@ A capability is not finished when its page works. One list, the operation catalo
 | MCP server | `/api/mcp`, one tool per operation | `packages/api/src/mcp.ts` |
 | Docs | `/docs/reference` | `apps/web-app/src/app/(marketing)/docs/reference/page.tsx` |
 
+The Links area (`packages/api/src/router/links.ts`) is the worked example: every procedure is in the catalog, so `links.list`, `links.create`, `links.setActive` and `links.delete` exist in the app, at `/api/v1/links.list`, in OpenAPI, as `sdk.links.list()`, as `<cli> api links.create`, and as MCP tools.
+
 ## Adding or changing a procedure
 
 Every procedure in the app router is in exactly one of two places; `packages/api/tests/operations.test.ts` fails until it is.

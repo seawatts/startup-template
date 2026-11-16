@@ -14,7 +14,15 @@ export const productEvents = {
   api_key_visibility_toggled: ['visible'],
   billing_portal_opened: [],
   checkout_started: [],
+  link_created: ['custom_code'],
+  link_deleted: [],
+  link_updated: ['active'],
+  member_invited: ['role'],
+  member_removed: [],
+  member_role_changed: ['role'],
   organization_created: [],
+  organization_deleted: [],
+  organization_left: [],
   organization_renamed: [],
   // One per API procedure call: where server time and database work go.
   // `waited_ms` is the longest any of its transactions waited to start.

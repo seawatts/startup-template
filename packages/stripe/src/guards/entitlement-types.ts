@@ -246,3 +246,14 @@ export type AddonEntitlement = {
     ? K
     : never;
 }[EntitlementKey];
+
+export type SubscriptionInfo = {
+  status: string | null;
+  customerId: string | null;
+  isActive: boolean;
+  isPastDue: boolean;
+  isCanceled: boolean;
+  isTrialing: boolean;
+  isPaid: boolean;
+  hasAny: boolean;
+};

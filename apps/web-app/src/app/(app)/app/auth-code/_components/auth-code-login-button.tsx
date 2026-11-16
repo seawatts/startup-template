@@ -1,11 +1,11 @@
 'use client';
 
 import { MetricButton } from '@seawatts/analytics/components';
+import { useORPC } from '@seawatts/api/react/react';
 import { Icons } from '@seawatts/ui/custom/icons';
-import { useAction } from 'next-safe-action/hooks';
+import { useMutation } from '@tanstack/react-query';
 import posthog from 'posthog-js';
 import { useCallback, useState } from 'react';
-import { createAuthCode } from '../actions';
 
 export function AuthCodeLoginButton({
   disabled,
@@ -20,23 +20,16 @@ export function AuthCodeLoginButton({
 }) {
   const [error, setError] = useState<string>();
 
-  const { executeAsync, status } = useAction(createAuthCode);
-  const isPending = status === 'executing';
-  // const hasSucceeded = status === 'hasSucceeded';
+  const api = useORPC();
+  const { mutateAsync: createAuthCode, isPending } = useMutation(
+    api.auth.createAuthCode.mutationOptions(),
+  );
 
   const onLogin = useCallback(async () => {
     try {
       setError(undefined);
       posthog.capture('auth_code_login_started');
-      const result = await executeAsync();
-
-      if (!result?.data) {
-        setError('Failed to generate token');
-        posthog?.capture('auth_code_login_failed', {
-          error: 'no_token_generated',
-        });
-        return;
-      }
+      const result = await createAuthCode({});
 
       // Call onSuccess callback if provided
       if (onSuccess) {
@@ -50,14 +43,14 @@ export function AuthCodeLoginButton({
       if (source === 'extension' && redirectUri) {
         // Handle VS Code OAuth flow
         const redirectUrl = new URL(redirectUri);
-        redirectUrl.searchParams.set('code', result.data.authCode.id);
+        redirectUrl.searchParams.set('code', result.authCode.id);
         window.location.href = redirectUrl.href;
       } else {
         // Handle CLI flow
         const port = currentUrl.searchParams.get('port');
         const csrfToken = currentUrl.searchParams.get('csrf');
         const redirectUrl = new URL(`http://localhost:${port ?? 54321}`);
-        redirectUrl.searchParams.set('code', result.data.authCode.id);
+        redirectUrl.searchParams.set('code', result.authCode.id);
         redirectUrl.searchParams.set('csrf', csrfToken || '');
         window.location.href = redirectUrl.href;
       }
@@ -72,7 +65,7 @@ export function AuthCodeLoginButton({
       setError('Failed to authenticate. Please try again.');
       posthog?.captureException(error);
     }
-  }, [executeAsync, onSuccess]);
+  }, [createAuthCode, onSuccess]);
 
   return (
     <div className="flex flex-col gap-2">

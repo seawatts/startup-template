@@ -24,12 +24,8 @@ import {
 } from '@seawatts/ui/tooltip';
 import { IconCurrencyDollar, IconInfoCircle } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useAction } from 'next-safe-action/hooks';
 import { useMemo } from 'react';
-import {
-  createBillingPortalSessionAction,
-  createCheckoutSessionAction,
-} from '../actions';
+import { useBillingPortal, useCheckout } from '~/lib/use-billing-redirects';
 
 // Usage data hook that fetches real data from the API
 function useWebhookUsage() {
@@ -84,13 +80,8 @@ function useWebhookUsage() {
 
 export function SubscriptionStatusSection() {
   const api = useORPC();
-  // Safe actions
-  const {
-    executeAsync: executeCreateBillingPortal,
-    status: billingPortalStatus,
-  } = useAction(createBillingPortalSessionAction);
-  const { executeAsync: executeCreateCheckout, status: checkoutStatus } =
-    useAction(createCheckoutSessionAction);
+  const billingPortal = useBillingPortal();
+  const checkout = useCheckout();
   const subscriptionStatus = useQuery(
     api.billing.getSubscriptionStatus.queryOptions(),
   );
@@ -102,12 +93,12 @@ export function SubscriptionStatusSection() {
   // Usage data
   const usage = useWebhookUsage();
 
-  const isManagingBilling = billingPortalStatus === 'executing';
-  const isSubscribing = checkoutStatus === 'executing';
+  const isManagingBilling = billingPortal.isPending;
+  const isSubscribing = checkout.isPending;
 
   const handleManageBilling = async () => {
     try {
-      await executeCreateBillingPortal();
+      await billingPortal.open();
     } catch (error) {
       console.error('Failed to open billing portal:', error);
     }
@@ -115,7 +106,7 @@ export function SubscriptionStatusSection() {
 
   const handleSubscribe = async () => {
     try {
-      await executeCreateCheckout();
+      await checkout.start();
     } catch (error) {
       console.error('Failed to create checkout session:', error);
     }

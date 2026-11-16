@@ -54,6 +54,7 @@ export const apiKeyContext = (principal: ApiKeyPrincipal): Context => ({
   apiKey: { id: principal.apiKeyId },
   auth: { orgId: principal.orgId, userId: principal.userId },
   authDb,
+  headers: new Headers(),
   organizationId: principal.orgId,
   session: null,
   user: null,

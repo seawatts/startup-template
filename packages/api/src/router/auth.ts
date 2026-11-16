@@ -8,12 +8,48 @@ import { Users } from '@seawatts/db/schema/users';
 import { tenantOf } from '@seawatts/db/tenant-lookup';
 import { inTenant } from '@seawatts/db/transaction';
 import { createId } from '@seawatts/id';
-import { and, desc, eq, gte, isNull } from 'drizzle-orm';
+import { and, desc, eq, gt, gte, isNull } from 'drizzle-orm';
 import { z } from 'zod';
 import { protectedProcedure, publicProcedure } from '../orpc';
 import { upsertOrg } from '../services/upsert-org';
 
 export const authRouter = {
+  // A one-time code that signs the CLI or an editor extension in as the
+  // signed-in person: an unused, unexpired code is reused, else a new one.
+  createAuthCode: protectedProcedure.handler(async ({ context: ctx }) => {
+    const userId = ctx.auth.userId;
+    const orgId = ctx.auth.orgId;
+    const sessionId = ctx.session?.session.id;
+    if (!userId || !orgId || !sessionId)
+      throw new ORPCError('BAD_REQUEST', {
+        message: 'Sign in and choose an organization first.',
+      });
+    return inTenant(orgId, async (tx) => {
+      const [existing] = await tx
+        .select()
+        .from(AuthCodes)
+        .where(
+          and(
+            eq(AuthCodes.userId, userId),
+            eq(AuthCodes.organizationId, orgId),
+            isNull(AuthCodes.usedAt),
+            gt(AuthCodes.expiresAt, new Date()),
+          ),
+        )
+        .limit(1);
+      if (existing) return { authCode: existing, isNew: false };
+      const [authCode] = await tx
+        .insert(AuthCodes)
+        .values({ organizationId: orgId, sessionId, userId })
+        .returning();
+      if (!authCode)
+        throw new ORPCError('INTERNAL_SERVER_ERROR', {
+          message: 'The sign-in code could not be made.',
+        });
+      return { authCode, isNew: true };
+    });
+  }),
+
   exchangeAuthCode: publicProcedure
     .input(
       z.object({

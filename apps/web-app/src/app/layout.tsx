@@ -11,8 +11,8 @@ import '@seawatts/ui/globals.css';
 
 import { AnalyticsProviders } from '@seawatts/analytics/providers';
 import { ORPCReactProvider } from '@seawatts/api/react/react';
-import { StripeProvider } from '@seawatts/stripe/guards/client';
 import { Suspense } from 'react';
+import { BillingProvider } from '~/components/billing-provider';
 import { env } from '~/env';
 
 export const metadata: Metadata = {
@@ -63,10 +63,10 @@ export default function RootLayout(props: { children: React.ReactNode }) {
             <ORPCReactProvider>
               <Suspense>
                 <AnalyticsProviders identifyUser>
-                  <StripeProvider>
+                  <BillingProvider>
                     {props.children}
                     <Toaster />
-                  </StripeProvider>
+                  </BillingProvider>
                 </AnalyticsProviders>
               </Suspense>
             </ORPCReactProvider>

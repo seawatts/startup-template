@@ -8,12 +8,44 @@ import {
   PLAN_TYPES,
   stripe,
 } from '@seawatts/stripe';
+import type { EntitlementsRecord } from '@seawatts/stripe/guards/entitlement-types';
+import { customerEntitlements } from '@seawatts/stripe/guards/entitlements-server';
+import { subscriptionInfo } from '@seawatts/stripe/guards/subscription-server';
 import { eq } from 'drizzle-orm';
 import type Stripe from 'stripe';
 import { z } from 'zod';
-import { protectedProcedure } from '../orpc';
+import { protectedProcedure, publicProcedure } from '../orpc';
 
 export const billingRouter = {
+  // What the app's plan guards read (StripeProvider): the subscription flags
+  // and the entitlements of the active organization. Signed out, or with no
+  // organization yet, it answers "no plan" instead of failing, because the
+  // provider wraps the marketing pages too.
+  access: publicProcedure
+    .route({ method: 'GET' })
+    .handler(async ({ context: ctx }) => {
+      const none = {
+        entitlements: {} as EntitlementsRecord,
+        subscriptionInfo: subscriptionInfo(null, null),
+      };
+      if (!ctx.auth.orgId) return none;
+      const [org] = await ctx.authDb
+        .select({
+          customerId: Orgs.stripeCustomerId,
+          status: Orgs.stripeSubscriptionStatus,
+        })
+        .from(Orgs)
+        .where(eq(Orgs.id, ctx.auth.orgId))
+        .limit(1);
+      if (!org) return none;
+      return {
+        entitlements: org.customerId
+          ? await customerEntitlements(org.customerId)
+          : none.entitlements,
+        subscriptionInfo: subscriptionInfo(org.status, org.customerId),
+      };
+    }),
+
   // Cancel subscription at period end
   cancelSubscription: protectedProcedure.handler(async ({ context: ctx }) => {
     if (!ctx.auth.orgId)
