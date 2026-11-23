@@ -5,7 +5,6 @@ import { inTenant } from '@seawatts/db/transaction';
 import { and, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { protectedProcedure } from '../orpc';
-import { createOrg } from '../services/create-org';
 import { activeAdmin, membership } from '../services/org-role';
 
 export const orgRouter = {
@@ -206,6 +205,9 @@ export const orgRouter = {
       }
 
       try {
+        // The Stripe SDK loads with this write, not with the area's reads on a
+        // cold server (docs/agents/speed.md).
+        const { createOrg } = await import('../services/create-org');
         const result = await createOrg({
           name: input.name,
           userId: ctx.auth.userId,
