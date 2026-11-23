@@ -73,13 +73,20 @@ export async function warmApi(request: Request) {
   )
     return new Response('Unauthorized', { status: 401 });
   const started = performance.now();
-  // Every area's code, and each role's connections (`fill`): the ping
-  // refreshes their idle timer. Outside any transaction and one query per
-  // connection, so nothing is pipelined.
-  await Promise.all([
-    ...Object.values(rpcRouter).map((area) => unlazy(area)),
-    ...fill(),
-  ]);
+  // Each role's connections (`fill`): the ping refreshes their idle timer.
+  // Outside any transaction and one query per connection, so nothing is
+  // pipelined.
+  const connections = Promise.all(fill());
+  // Every area's code, one area at a time with a turn of the event loop
+  // between them. On a fresh server loading every area is seconds of module
+  // evaluation; loading them all at once holds the event loop for all of it,
+  // so a person's first reads that reach this server meanwhile wait behind
+  // the whole router (docs/agents/speed.md).
+  for (const area of Object.values(rpcRouter)) {
+    await unlazy(area);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+  }
+  await connections;
   return Response.json(
     { ms: Math.round(performance.now() - started) },
     { headers: { 'Cache-Control': 'no-store' } },

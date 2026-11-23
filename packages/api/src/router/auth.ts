@@ -11,7 +11,6 @@ import { createId } from '@seawatts/id';
 import { and, desc, eq, gt, gte, isNull } from 'drizzle-orm';
 import { z } from 'zod';
 import { protectedProcedure, publicProcedure } from '../orpc';
-import { upsertOrg } from '../services/upsert-org';
 
 export const authRouter = {
   // A one-time code that signs the CLI or an editor extension in as the
@@ -116,7 +115,9 @@ export const authRouter = {
           });
         }
 
-        // Use the upsertOrg utility function
+        // The Stripe SDK loads with this write, not with the area's reads on a
+        // cold server (docs/agents/speed.md).
+        const { upsertOrg } = await import('../services/upsert-org');
         await upsertOrg({
           name: `org-${authCode.organizationId}`,
           orgId: authCode.organizationId,

@@ -29,7 +29,10 @@ A read costs about its serial round trips times the round-trip time, and a page 
 - No schema registry on the database client; import each table from its file.
 - Keep the proxy (middleware) thin: a cookie check, not a database session lookup, and skip it for prefetches.
 - `instrumentation.ts` uses `await import()`, since static imports there run on every function's cold start.
-- If the host scales to zero, a scheduled ping that loads every API area and runs one `select 1` keeps the next person's first screen warm. Loading every area at once also catches circular imports that lazy loading hides.
+- A package only a rare write needs (payments, email, PDFs, an AI SDK, HTML parsing, the whole public API contract) loads with `await import()` inside that write, never at the top of an area or of a helper its reads also import. A small constant, predicate, error class or input schema many files need lives in its own small file, so a read that needs one line does not load the module beside it. On a real app one list of operation names pulled a 1.2 MB contract into every admin's first screen (about 200 ms of a cold server); cutting that and four write-only packages took an administrator's first batch from 1,132 to 934 ms cold, and its code from 574 to 318 ms. `packages/api/tests/cold-start-graph.test.ts` names what each area must not load up front.
+- Measure a whole first screen on a fresh server, not one read: a production build, a fresh server per run, and the page's first batch as the browser sends it. One read hides the areas the rest of the batch loads.
+- If the host scales to zero, a scheduled ping that loads every API area and runs one `select 1` keeps the next person's first screen warm. Loading every area also catches circular imports that lazy loading hides. Load them one at a time with a turn of the event loop between (`warm-api.ts`): all at once holds the event loop for seconds on a fresh server, and a person's reads that land there wait behind it.
+- Reading the host's cold starts: the ping's own start is a cold start of the API function, and it loads every area, so it dominates the route's cold numbers. On a real app 68 of 74 cold starts in a week were the ping at about 5 s, and people met 6 at about 3.3 s. Group by request path and leave the ping out before calling it user latency.
 
 ## Fewer requests, sent sooner
 
